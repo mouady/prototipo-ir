@@ -4,20 +4,21 @@
  */
 
 import { Estado } from "../shared/types";
+import { FormatoPlato } from "../inventario/types";
 
 // Re-export Estado para uso en comandas
 export { Estado };
 
-// ============================================
-// ENUMERACIONES DE COMANDAS
-// ============================================
+// Re-export FormatoPlato desde inventario (fuente de verdad)
+export { FormatoPlato };
 
-export enum FormatoPlato {
-  ESTANDAR = "Estándar",
-  TAPA = "Tapa",
-  MEDIA = "1/2",
-  RACION = "Entera",
-}
+// Labels para mostrar FormatoPlato en la UI
+export const FORMATO_PLATO_LABELS: Record<FormatoPlato, string> = {
+  [FormatoPlato.ESTANDAR]: "Estándar",
+  [FormatoPlato.TAPA]: "Tapa",
+  [FormatoPlato.MEDIA]: "1/2",
+  [FormatoPlato.RACION]: "Entera",
+};
 
 // ============================================
 // INTERFACES: COMANDAS

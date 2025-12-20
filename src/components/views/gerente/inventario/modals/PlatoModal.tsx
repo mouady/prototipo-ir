@@ -18,10 +18,13 @@ import { ArrowLeft, Upload, X, Trash2 } from "lucide-react";
 import { 
   Plato,
   CategoriaCarta,
+  FormatoP,
+  FormatoPlato,
   agregarPlato,
   actualizarPlato,
 } from "@/mock";
 import { EliminarPlatoModal } from "./EliminarPlatoModal";
+import { FormatosSection } from "./FormatosSection";
 
 interface PlatoModalProps {
   open: boolean;
@@ -45,21 +48,33 @@ const CATEGORIA_LABELS: Record<CategoriaCarta, string> = {
   [CategoriaCarta.OTROS]: "Otros",
 };
 
+// Formato por defecto para nuevos platos
+const getDefaultFormato = (): FormatoP => ({
+  id: `temp-${Date.now()}`,
+  formatoPlato: FormatoPlato.ESTANDAR,
+  precio: 0,
+  tiempoPreparacion: 10,
+});
+
 export function PlatoModal({
   open,
   onOpenChange,
   platoParaEditar,
   onSuccess,
 }: PlatoModalProps) {
+  const esEdicion = !!platoParaEditar;
+  
   // Form state - inicializado con los datos del plato si existe
   const [nombre, setNombre] = useState(platoParaEditar?.nombre || "");
   const [categoria, setCategoria] = useState<CategoriaCarta | "">(platoParaEditar?.categoriaCarta || "");
   const [imagen, setImagen] = useState(platoParaEditar?.imagen || "");
-  const [imagenNombre, setImagenNombre] = useState(platoParaEditar?.imagen.split("/").pop() || "");
+  const [imagenNombre, setImagenNombre] = useState(platoParaEditar?.imagen?.split("/").pop() || "");
+  const [formatos, setFormatos] = useState<FormatoP[]>(
+    platoParaEditar?.formatos || [getDefaultFormato()]
+  );
   const [eliminarModalOpen, setEliminarModalOpen] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const esEdicion = !!platoParaEditar;
 
   const handleFileUpload = () => {
     fileInputRef.current?.click();
@@ -81,9 +96,14 @@ export function PlatoModal({
     }
   };
 
+  // Validación de formatos: al menos uno con precio > 0
+  const formatosValidos = formatos.length > 0 && formatos.every(
+    (f) => f.formatoPlato && f.precio > 0 && f.tiempoPreparacion > 0
+  );
+
   const handleSubmit = () => {
     // Validaciones básicas
-    if (!nombre.trim() || !categoria || !imagen) {
+    if (!nombre.trim() || !categoria || !imagen || !formatosValidos) {
       return;
     }
 
@@ -92,6 +112,7 @@ export function PlatoModal({
       nombre: nombre.trim(),
       imagen,
       categoriaCarta: categoria as CategoriaCarta,
+      formatos: formatos,
     };
 
     if (esEdicion && platoParaEditar) {
@@ -109,18 +130,31 @@ export function PlatoModal({
     onSuccess?.();
   };
 
+  // Resetear formulario cuando se cierra
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      // Resetear a valores por defecto al cerrar
+      setNombre("");
+      setCategoria("");
+      setImagen("");
+      setImagenNombre("");
+      setFormatos([getDefaultFormato()]);
+    }
+    onOpenChange(newOpen);
+  };
+
   return (
     <>
       <Dialog 
         key={platoParaEditar?.id || 'new'} 
         open={open} 
-        onOpenChange={onOpenChange}
+        onOpenChange={handleOpenChange}
       >
-        <DialogContent className="sm:max-w-[450px] p-0 gap-0 max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[500px] p-0 gap-0 max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
             <button
-              onClick={() => onOpenChange(false)}
+              onClick={() => handleOpenChange(false)}
               className="p-1 hover:bg-gray-100 rounded transition-colors"
             >
               <ArrowLeft className="h-5 w-5 text-gray-600" />
@@ -207,6 +241,12 @@ export function PlatoModal({
                 )}
               </div>
             </div>
+
+            {/* Formatos */}
+            <FormatosSection
+              formatos={formatos}
+              onChange={setFormatos}
+            />
           </div>
 
           {/* Footer */}
@@ -222,12 +262,12 @@ export function PlatoModal({
               </Button>
             )}
             <div className="flex-1" />
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button variant="outline" onClick={() => handleOpenChange(false)}>
               Cancelar
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={!nombre.trim() || !categoria || !imagen}
+              disabled={!nombre.trim() || !categoria || !imagen || !formatosValidos}
             >
               {esEdicion ? "Guardar" : "Crear"}
             </Button>

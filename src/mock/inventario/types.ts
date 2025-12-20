@@ -33,6 +33,17 @@ export enum CategoriaCarta {
   OTROS = "OTROS",
 }
 
+/**
+ * FormatoPlato - Define los diferentes tamaños o presentaciones de un plato
+ * Según el modelo: ESTANDAR, TAPA, MEDIA, RACION
+ */
+export enum FormatoPlato {
+  ESTANDAR = "ESTANDAR",
+  TAPA = "TAPA",
+  MEDIA = "MEDIA",
+  RACION = "RACION",
+}
+
 // ============================================
 // INTERFACES: INVENTARIO
 // ============================================
@@ -75,16 +86,25 @@ export interface Proveedor {
 }
 
 /**
- * Lote de producto (simplificado para mocks)
+ * Lote de producto
  * Según el modelo: caducidad, precio, cantidad
+ * RN-18: Si el lote ha caducado no puede usarse para venderse.
  */
 export interface Lote {
   id: string;
   productoId: string;
+  /** Fecha de caducidad (opcional según el modelo) */
   caducidad?: Date;
+  /** Precio de compra del lote */
   precio: number;
+  /** Cantidad del lote */
   cantidad: number;
+  /** Fecha de entrada del lote al inventario */
+  fechaEntrada: Date;
 }
+
+/** Tipo para crear un nuevo lote (sin id) */
+export type NuevoLote = Omit<Lote, "id">;
 
 // ============================================
 // INTERFACES: PRODUCTOS VENDIBLES (Platos/Bebidas)
@@ -102,11 +122,25 @@ export interface ProductoVendible {
 }
 
 /**
+ * FormatoP - Define un formato específico de un plato
+ * Según el modelo: formatoPlato, precio, tiempoPreparacion
+ */
+export interface FormatoP {
+  id: string;
+  formatoPlato: FormatoPlato;
+  precio: number;
+  /** Tiempo de preparación en minutos */
+  tiempoPreparacion: number;
+}
+
+/**
  * Plato - extiende ProductoVendible
  * Tiene uno o más formatos (FormatoP)
  */
 export interface Plato extends ProductoVendible {
   tipo: "plato";
+  /** Formatos disponibles del plato (al menos uno según RN del modelo) */
+  formatos: FormatoP[];
 }
 
 /**
@@ -144,3 +178,9 @@ export interface MenuProveedor {
 
 // Tipo para crear un producto (sin id, se genera automáticamente)
 export type NuevoProducto = Omit<Producto, "id">;
+
+/** Tipo para editar un lote existente */
+export type ActualizarLote = Partial<Omit<Lote, "id" | "productoId">>;
+
+// Tipo para crear un formato (sin id, se genera automáticamente)
+export type NuevoFormato = Omit<FormatoP, "id">;

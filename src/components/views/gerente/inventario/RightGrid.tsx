@@ -6,6 +6,7 @@ import { PlatoCard } from "./cards/PlatoCard";
 import { ElementCard } from "./cards/ElementCard";
 import { AgregarProductoModal } from "./modales/AddModal";
 import { DeleteModal } from "./modales/DeleteModal";
+import { LotesModal } from "./modales/LotesModal";
 import { PlatoModal } from "./modals";
 import { AvisosPage } from "@/components/views/gerente/avisos";
 import { GeneradorMensajes } from "@/components/views/gerente/generador-mensajes";
@@ -20,8 +21,10 @@ interface ProductGridProps {
 export function RightGrid({ categoriaActiva }: ProductGridProps) {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modalPlatoAbierto, setModalPlatoAbierto] = useState(false);
+  const [modalLotesAbierto, setModalLotesAbierto] = useState(false);
   const [productoParaEditar, setProductoParaEditar] = useState<Producto | undefined>();
   const [productoParaEliminar, setProductoParaEliminar] = useState<Producto | null>(null);
+  const [productoParaLotes, setProductoParaLotes] = useState<Producto | null>(null);
   const [modalEliminacionAbierto, setModalEliminacionAbierto] = useState(false);
 
   const tipoActivo: TipoProducto =
@@ -63,6 +66,18 @@ export function RightGrid({ categoriaActiva }: ProductGridProps) {
     }
   };
 
+  const handleViewLotes = (producto: Producto) => {
+    setProductoParaLotes(producto);
+    setModalLotesAbierto(true);
+  };
+
+  const handleCloseLotesModal = (open: boolean) => {
+    setModalLotesAbierto(open);
+    if (!open) {
+      setProductoParaLotes(null);
+    }
+  };
+
   // Categorías de inventario (ingredientes/bebidas/recursos)
   if (categoriaActiva === "ingredientes" || categoriaActiva === "bebidas" || categoriaActiva === "recursos") {
     return (
@@ -94,6 +109,7 @@ export function RightGrid({ categoriaActiva }: ProductGridProps) {
               ingrediente={ingrediente}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onViewLotes={handleViewLotes}
             />
           ))}
         </div>
@@ -113,6 +129,15 @@ export function RightGrid({ categoriaActiva }: ProductGridProps) {
           producto={productoParaEliminar}
           onConfirm={handleConfirmDelete}
         />
+
+        {/* Modal de gestión de lotes */}
+        {productoParaLotes && (
+          <LotesModal
+            open={modalLotesAbierto}
+            onOpenChange={handleCloseLotesModal}
+            producto={productoParaLotes}
+          />
+        )}
       </div>
     );
   }

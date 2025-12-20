@@ -13,9 +13,15 @@ import {
   getProveedores,
   agregarProducto as storeAgregarProducto,
   eliminarProducto as storeEliminarProducto,
+  getLotes,
+  getLotesByProductoId,
+  getLotesValidosByProductoId,
+  agregarLote as storeAgregarLote,
+  actualizarLote as storeActualizarLote,
+  eliminarLote as storeEliminarLote,
 } from "./store";
 import { subscribe } from "../shared/store-base";
-import type { Producto, NuevoProducto, Proveedor } from "./types";
+import type { Producto, NuevoProducto, Proveedor, Lote, NuevoLote, ActualizarLote } from "./types";
 import { TipoProducto } from "./types";
 
 /**
@@ -134,4 +140,103 @@ export function useProveedores() {
   }, []);
 
   return { proveedores };
+}
+
+/**
+ * Hook para acceder a todos los lotes con reactividad
+ */
+export function useLotes() {
+  const [lotes, setLotes] = useState<Lote[]>(() => getLotes());
+
+  useEffect(() => {
+    const unsubscribe = subscribe(() => {
+      setLotes(getLotes());
+    });
+    return unsubscribe;
+  }, []);
+
+  const agregar = useCallback((nuevo: NuevoLote) => {
+    return storeAgregarLote(nuevo);
+  }, []);
+
+  const actualizar = useCallback((id: string, cambios: ActualizarLote) => {
+    return storeActualizarLote(id, cambios);
+  }, []);
+
+  const eliminar = useCallback((id: string) => {
+    return storeEliminarLote(id);
+  }, []);
+
+  return {
+    lotes,
+    agregar,
+    actualizar,
+    eliminar,
+  };
+}
+
+/**
+ * Hook para acceder a los lotes de un producto específico con reactividad
+ */
+export function useLotesByProducto(productoId: string) {
+  const [lotes, setLotes] = useState<Lote[]>(() =>
+    getLotesByProductoId(productoId)
+  );
+
+  // Actualizar cuando cambia el productoId
+  useEffect(() => {
+    setLotes(getLotesByProductoId(productoId));
+  }, [productoId]);
+
+  // Suscribirse a cambios del store
+  useEffect(() => {
+    const unsubscribe = subscribe(() => {
+      setLotes(getLotesByProductoId(productoId));
+    });
+    return unsubscribe;
+  }, [productoId]);
+
+  const agregar = useCallback(
+    (datos: Omit<NuevoLote, "productoId">) => {
+      return storeAgregarLote({ ...datos, productoId });
+    },
+    [productoId]
+  );
+
+  const actualizar = useCallback((id: string, cambios: ActualizarLote) => {
+    return storeActualizarLote(id, cambios);
+  }, []);
+
+  const eliminar = useCallback((id: string) => {
+    return storeEliminarLote(id);
+  }, []);
+
+  return {
+    lotes,
+    agregar,
+    actualizar,
+    eliminar,
+  };
+}
+
+/**
+ * Hook para acceder a los lotes válidos (no caducados) de un producto
+ */
+export function useLotesValidos(productoId: string) {
+  const [lotes, setLotes] = useState<Lote[]>(() =>
+    getLotesValidosByProductoId(productoId)
+  );
+
+  useEffect(() => {
+    setLotes(getLotesValidosByProductoId(productoId));
+  }, [productoId]);
+
+  useEffect(() => {
+    const unsubscribe = subscribe(() => {
+      setLotes(getLotesValidosByProductoId(productoId));
+    });
+    return unsubscribe;
+  }, [productoId]);
+
+  return { lotes };
 }

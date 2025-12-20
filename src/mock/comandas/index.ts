@@ -11,6 +11,7 @@ export type {
 export {
   Estado,
   FormatoPlato,
+  FORMATO_PLATO_LABELS,
 } from "./types";
 
 // Seed

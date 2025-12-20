@@ -13,6 +13,8 @@ import {
   TipoProducto,
   UnidadMedida,
   CategoriaCarta,
+  FormatoPlato,
+  Lote,
 } from "./types";
 
 // ============================================
@@ -51,6 +53,11 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/bravas.png",
     categoriaCarta: CategoriaCarta.CALENTITO,
+    formatos: [
+      { id: "formato-1-1", formatoPlato: FormatoPlato.TAPA, precio: 3.5, tiempoPreparacion: 8 },
+      { id: "formato-1-2", formatoPlato: FormatoPlato.MEDIA, precio: 5.5, tiempoPreparacion: 10 },
+      { id: "formato-1-3", formatoPlato: FormatoPlato.RACION, precio: 8.0, tiempoPreparacion: 12 },
+    ],
   },
   {
     id: "plato-2",
@@ -58,6 +65,10 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/whisky.png",
     categoriaCarta: CategoriaCarta.CALENTITO,
+    formatos: [
+      { id: "formato-2-1", formatoPlato: FormatoPlato.MEDIA, precio: 9.0, tiempoPreparacion: 15 },
+      { id: "formato-2-2", formatoPlato: FormatoPlato.RACION, precio: 14.5, tiempoPreparacion: 20 },
+    ],
   },
   {
     id: "plato-3",
@@ -65,6 +76,11 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/chocos.png",
     categoriaCarta: CategoriaCarta.PESCADO_FRITO,
+    formatos: [
+      { id: "formato-3-1", formatoPlato: FormatoPlato.TAPA, precio: 4.0, tiempoPreparacion: 10 },
+      { id: "formato-3-2", formatoPlato: FormatoPlato.MEDIA, precio: 7.0, tiempoPreparacion: 12 },
+      { id: "formato-3-3", formatoPlato: FormatoPlato.RACION, precio: 11.0, tiempoPreparacion: 15 },
+    ],
   },
   {
     id: "plato-4",
@@ -72,6 +88,11 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/albondigas.png",
     categoriaCarta: CategoriaCarta.CALENTITO,
+    formatos: [
+      { id: "formato-4-1", formatoPlato: FormatoPlato.TAPA, precio: 3.0, tiempoPreparacion: 5 },
+      { id: "formato-4-2", formatoPlato: FormatoPlato.MEDIA, precio: 5.0, tiempoPreparacion: 8 },
+      { id: "formato-4-3", formatoPlato: FormatoPlato.RACION, precio: 8.5, tiempoPreparacion: 10 },
+    ],
   },
   {
     id: "plato-5",
@@ -79,6 +100,9 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/sanJacobo.png",
     categoriaCarta: CategoriaCarta.EN_FRIO,
+    formatos: [
+      { id: "formato-5-1", formatoPlato: FormatoPlato.ESTANDAR, precio: 6.5, tiempoPreparacion: 12 },
+    ],
   },
   {
     id: "plato-6",
@@ -86,6 +110,9 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/mixta.png",
     categoriaCarta: CategoriaCarta.ENSALADAS,
+    formatos: [
+      { id: "formato-6-1", formatoPlato: FormatoPlato.ESTANDAR, precio: 7.0, tiempoPreparacion: 8 },
+    ],
   },
 ];
 
@@ -283,4 +310,95 @@ export const SEED_PROVEEDORES: Proveedor[] = [
 export const SEED_MENU_PROVEEDORES: MenuProveedor[] = [
   { id: "listado", nombre: "Listado" },
   { id: "generador", nombre: "Generador de mensajes" },
+];
+
+// ============================================
+// LOTES (según modelo: caducidad, precio, cantidad)
+// ============================================
+export const SEED_LOTES: Lote[] = [
+  // Lotes de Pimiento Rojo (prod-1)
+  {
+    id: "lote-1",
+    productoId: "prod-1",
+    caducidad: new Date("2025-01-15"),
+    precio: 2.50,
+    cantidad: 5,
+    fechaEntrada: new Date("2024-12-10"),
+  },
+  {
+    id: "lote-2",
+    productoId: "prod-1",
+    caducidad: new Date("2025-01-20"),
+    precio: 2.30,
+    cantidad: 7,
+    fechaEntrada: new Date("2024-12-15"),
+  },
+  // Lotes de Lentejas (prod-2)
+  {
+    id: "lote-3",
+    productoId: "prod-2",
+    caducidad: new Date("2026-06-01"),
+    precio: 1.80,
+    cantidad: 5,
+    fechaEntrada: new Date("2024-11-20"),
+  },
+  // Lotes de Carne Picada (prod-3)
+  {
+    id: "lote-4",
+    productoId: "prod-3",
+    caducidad: new Date("2024-12-28"),
+    precio: 8.50,
+    cantidad: 10,
+    fechaEntrada: new Date("2024-12-18"),
+  },
+  {
+    id: "lote-5",
+    productoId: "prod-3",
+    caducidad: new Date("2025-01-05"),
+    precio: 8.20,
+    cantidad: 11,
+    fechaEntrada: new Date("2024-12-20"),
+  },
+  // Lotes de Coca-Cola (prod-12)
+  {
+    id: "lote-6",
+    productoId: "prod-12",
+    caducidad: new Date("2025-12-01"),
+    precio: 0.45,
+    cantidad: 24,
+    fechaEntrada: new Date("2024-12-01"),
+  },
+  // Lotes de Agua (prod-13)
+  {
+    id: "lote-7",
+    productoId: "prod-13",
+    precio: 0.20,
+    cantidad: 18,
+    fechaEntrada: new Date("2024-12-05"),
+  },
+  // Lotes de Servilletas (prod-15) - recurso sin caducidad
+  {
+    id: "lote-8",
+    productoId: "prod-15",
+    precio: 0.01,
+    cantidad: 200,
+    fechaEntrada: new Date("2024-12-01"),
+  },
+  // Lotes de Bombona de gas (prod-16) - recurso sin caducidad
+  {
+    id: "lote-9",
+    productoId: "prod-16",
+    precio: 25.00,
+    cantidad: 2,
+    fechaEntrada: new Date("2024-11-15"),
+  },
+  // Lotes de Salmón (prod-5)
+  {
+    id: "lote-10",
+    productoId: "prod-5",
+    caducidad: new Date("2024-12-25"),
+    precio: 15.00,
+    cantidad: 3,
+    fechaEntrada: new Date("2024-12-19"),
+  },
 ];

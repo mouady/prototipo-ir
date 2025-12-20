@@ -40,17 +40,23 @@ export type {
   Lote,
   MenuProveedor,
   NuevoProducto,
+  FormatoP,
+  NuevoFormato,
+  NuevoLote,
+  ActualizarLote,
 } from "./inventario";
 
 export {
   TipoProducto,
   UnidadMedida,
   CategoriaCarta,
+  FormatoPlato,
   SEED_CATEGORIAS,
   SEED_PRODUCTOS,
   SEED_PLATOS,
   SEED_PROVEEDORES,
   SEED_MENU_PROVEEDORES,
+  SEED_LOTES,
   getProductos,
   getProductosByTipo,
   getIngredientes,
@@ -70,12 +76,26 @@ export {
   agregarPlato,
   actualizarPlato,
   eliminarPlato,
+  agregarFormatoPlato,
+  actualizarFormatoPlato,
+  eliminarFormatoPlato,
+  getFormatoById,
+  getLotes,
+  getLotesByProductoId,
+  getLoteById,
+  getLotesValidosByProductoId,
+  agregarLote,
+  actualizarLote,
+  eliminarLote,
   useProductos,
   useProductosByTipo,
   useIngredientes,
   useBebidas,
   useRecursos,
   useProveedores,
+  useLotes,
+  useLotesByProducto,
+  useLotesValidos,
 } from "./inventario";
 
 // ============================================
@@ -113,7 +133,6 @@ export type {
 } from "./comandas";
 
 export {
-  FormatoPlato,
   SEED_COMANDAS,
   getComandasPendientes,
   getComandasHechas,

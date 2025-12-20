@@ -1,15 +1,16 @@
 "use client";
 
 import { Producto, TipoProducto } from "@/mock";
-import { X, Package, Edit2, Trash2 } from "lucide-react";
+import { X, Package, Edit2, Trash2, Layers } from "lucide-react";
 
 interface IngredienteCardProps {
   ingrediente: Producto;
   onEdit?: (ingrediente: Producto) => void;
   onDelete?: (id: string) => void;
+  onViewLotes?: (ingrediente: Producto) => void;
 }
 
-export function ElementCard({ ingrediente, onEdit, onDelete }: IngredienteCardProps) {
+export function ElementCard({ ingrediente, onEdit, onDelete, onViewLotes }: IngredienteCardProps) {
   return (
     <div
       className={`flex items-center justify-between p-3 rounded-lg border transition-shadow hover:shadow-md ${
@@ -51,6 +52,15 @@ export function ElementCard({ ingrediente, onEdit, onDelete }: IngredienteCardPr
 
         {/* Botones de acción */}
         <div className="flex items-center gap-1 ml-2">
+          {onViewLotes && (
+            <button
+              onClick={() => onViewLotes(ingrediente)}
+              className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+              title="Ver lotes"
+            >
+              <Layers className="h-4 w-4" />
+            </button>
+          )}
           {onEdit && (
             <button
               onClick={() => onEdit(ingrediente)}

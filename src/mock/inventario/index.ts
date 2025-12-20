@@ -13,12 +13,17 @@ export type {
   Lote,
   MenuProveedor,
   NuevoProducto,
+  FormatoP,
+  NuevoFormato,
+  NuevoLote,
+  ActualizarLote,
 } from "./types";
 
 export {
   TipoProducto,
   UnidadMedida,
   CategoriaCarta,
+  FormatoPlato,
 } from "./types";
 
 // Seed
@@ -28,6 +33,7 @@ export {
   SEED_PLATOS,
   SEED_PROVEEDORES,
   SEED_MENU_PROVEEDORES,
+  SEED_LOTES,
 } from "./seed";
 
 // Store
@@ -51,6 +57,17 @@ export {
   agregarPlato,
   actualizarPlato,
   eliminarPlato,
+  agregarFormatoPlato,
+  actualizarFormatoPlato,
+  eliminarFormatoPlato,
+  getFormatoById,
+  getLotes,
+  getLotesByProductoId,
+  getLoteById,
+  getLotesValidosByProductoId,
+  agregarLote,
+  actualizarLote,
+  eliminarLote,
   resetInventarioRuntime,
   getInventarioDebugInfo,
 } from "./store";
@@ -63,4 +80,7 @@ export {
   useBebidas,
   useRecursos,
   useProveedores,
+  useLotes,
+  useLotesByProducto,
+  useLotesValidos,
 } from "./hooks";
