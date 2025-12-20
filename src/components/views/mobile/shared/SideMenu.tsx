@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export interface MenuOption {
   label: string;
-  href: string;
+  id: string;
   icon: React.ReactNode;
 }
 
@@ -22,6 +22,8 @@ interface SideMenuProps {
   onClose: () => void;
   profile: UserProfile;
   menuOptions: MenuOption[];
+  activeView: string;
+  onViewChange: (viewId: string) => void;
   accentColor?: string;
 }
 
@@ -30,8 +32,16 @@ export default function SideMenu({
   onClose,
   profile,
   menuOptions,
+  activeView,
+  onViewChange,
   accentColor = "#101828",
 }: SideMenuProps) {
+  
+  const handleOptionClick = (viewId: string) => {
+    onViewChange(viewId);
+    onClose();
+  };
+
   return (
     <>
       {/* Overlay */}
@@ -86,16 +96,20 @@ export default function SideMenu({
 
         {/* Menu Options */}
         <nav className="py-4">
-          {menuOptions.map((option, index) => (
-            <Link
-              key={index}
-              href={option.href}
-              onClick={onClose}
-              className="flex items-center gap-4 px-6 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
+          {menuOptions.map((option) => (
+            <button
+              key={option.id}
+              onClick={() => handleOptionClick(option.id)}
+              className={`w-full flex items-center gap-4 px-6 py-3 text-gray-700 hover:bg-gray-100 transition-colors ${
+                activeView === option.id ? "bg-gray-100 border-r-4" : ""
+              }`}
+              style={{
+                borderRightColor: activeView === option.id ? accentColor : "transparent",
+              }}
             >
               <span style={{ color: accentColor }}>{option.icon}</span>
               <span className="font-medium">{option.label}</span>
-            </Link>
+            </button>
           ))}
         </nav>
 
@@ -117,26 +131,40 @@ export default function SideMenu({
   );
 }
 
+// IDs de vistas para Camarero
+export enum CamareroView {
+  FICHAJES = "fichajes",
+  COMANDAS = "comandas",
+  MESAS = "mesas",
+  RESERVAS = "reservas",
+}
+
+// IDs de vistas para Cocinero
+export enum CocineroView {
+  FICHAJES = "fichajes",
+  AVISOS = "avisos",
+}
+
 // Opciones de menú predefinidas para Camarero
 export const CAMARERO_MENU_OPTIONS: MenuOption[] = [
   {
     label: "Fichajes",
-    href: "/mobile/camarero/fichajes",
+    id: CamareroView.FICHAJES,
     icon: <Clock className="w-5 h-5" />,
   },
   {
     label: "Comandas",
-    href: "/mobile/camarero/comandas",
+    id: CamareroView.COMANDAS,
     icon: <ClipboardList className="w-5 h-5" />,
   },
   {
     label: "Mesas",
-    href: "/mobile/camarero/mesas",
+    id: CamareroView.MESAS,
     icon: <LayoutGrid className="w-5 h-5" />,
   },
   {
     label: "Reservas",
-    href: "/mobile/camarero/reservas",
+    id: CamareroView.RESERVAS,
     icon: <CalendarDays className="w-5 h-5" />,
   },
 ];
@@ -145,12 +173,12 @@ export const CAMARERO_MENU_OPTIONS: MenuOption[] = [
 export const COCINERO_MENU_OPTIONS: MenuOption[] = [
   {
     label: "Fichajes",
-    href: "/mobile/cocinero/fichajes",
+    id: CocineroView.FICHAJES,
     icon: <Clock className="w-5 h-5" />,
   },
   {
     label: "Avisos",
-    href: "/mobile/cocinero/avisos",
+    id: CocineroView.AVISOS,
     icon: <Bell className="w-5 h-5" />,
   },
 ];
