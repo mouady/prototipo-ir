@@ -6,7 +6,7 @@ export default function CocineroPage() {
 
   return (
     <ContainerMobile>
-      <HeaderMobile title="Vista Cocinero" link="/" color="#1846c4ff" />
+      <HeaderMobile title="Vista Cocinero" link="/" color="#2147c2ff" />
     </ContainerMobile>
   );
 }

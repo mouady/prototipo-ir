@@ -8,7 +8,7 @@ export default function CamareroPage() {
 
   return (
     <ContainerMobile>
-          <HeaderMobile title="Vista Camarero" link="/" color="#335ed3ff" />
+          <HeaderMobile title="Vista Camarero" link="/" color="#34e64cff" />
         </ContainerMobile>
   );
 }

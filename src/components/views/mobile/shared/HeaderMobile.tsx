@@ -11,7 +11,10 @@ export default function HeaderMobile({ title, link, color = "#f97316" }: HeaderM
     return (
         <header 
           className="text-white p-4 sticky top-0 z-10 shadow-lg"
-          style={{ background: `linear-gradient(to right, ${color}, ${color}dd)` }}
+          style={{ 
+            background: `linear-gradient(to right, ${color}, ${color})`,
+            filter: 'brightness(0.95)'
+          }}
         >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
