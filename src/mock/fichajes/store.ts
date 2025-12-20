@@ -20,14 +20,14 @@ let nextFichajeId = 100; // Empezamos en 100 para evitar colisiones con seed
 // ============================================
 
 /**
- * Formatea una fecha ISO a formato YY/MM/DD
+ * Formatea una fecha ISO a formato DD/MM/YY (más común en España)
  */
 function formatearFechaCorta(fechaISO: string): string {
   const fecha = new Date(fechaISO);
   const year = fecha.getFullYear().toString().slice(-2);
   const month = (fecha.getMonth() + 1).toString().padStart(2, "0");
   const day = fecha.getDate().toString().padStart(2, "0");
-  return `${year}/${month}/${day}`;
+  return `${day}/${month}/${year}`;
 }
 
 /**
@@ -146,7 +146,7 @@ export function getJornadaActual(empleadoId: string): JornadaActual {
 
 /**
  * Obtiene el historial de fichajes de un empleado formateado para UI
- * Excluye el fichaje activo (jornada en curso)
+ * Incluye fichajes completados (con salida), incluyendo los de hoy si ya se finalizaron
  */
 export function getHistorialFichajes(
   empleadoId: string,
@@ -154,8 +154,7 @@ export function getHistorialFichajes(
   porPagina: number = 3
 ): { registros: RegistroHistorial[]; totalPaginas: number; totalRegistros: number } {
   const fichajes = getFichajesByEmpleado(empleadoId)
-    .filter((f) => f.salida) // Solo fichajes completados
-    .filter((f) => !esHoy(f.entrada)); // Excluir los de hoy (si acabó ya)
+    .filter((f) => f.salida); // Solo fichajes completados (incluye los de hoy si ya finalizaron)
 
   const totalRegistros = fichajes.length;
   const totalPaginas = Math.ceil(totalRegistros / porPagina);
