@@ -1,6 +1,6 @@
 "use client";
 
-import { Producto } from "@/mock/inventario";
+import { Producto } from "@/mock";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 

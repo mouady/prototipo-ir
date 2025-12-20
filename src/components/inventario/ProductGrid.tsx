@@ -1,8 +1,11 @@
 "use client";
 
-import { productos, ingredientes } from "@/mock/inventario";
+import { useState } from "react";
+import { productos } from "@/mock";
+import { useIngredientes } from "@/mock/hooks";
 import { ProductCard } from "./ProductCard";
 import { IngredienteCard } from "./IngredienteCard";
+import { AgregarIngredienteModal } from "./AgregarIngredienteModal";
 import { Button } from "@/components/ui/button";
 import { Filter, Plus, SquarePen } from "lucide-react";
 
@@ -11,6 +14,9 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ categoriaActiva }: ProductGridProps) {
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const { ingredientes } = useIngredientes();
+  
   const productosFiltrados = productos.filter(
     (p) => p.categoria === categoriaActiva
   );
@@ -26,7 +32,12 @@ export function ProductGrid({ categoriaActiva }: ProductGridProps) {
             Filtrar
           </Button>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2"
+              onClick={() => setModalAbierto(true)}
+            >
               <Plus className="h-4 w-4" />
               Crear
             </Button>
@@ -42,6 +53,12 @@ export function ProductGrid({ categoriaActiva }: ProductGridProps) {
             <IngredienteCard key={ingrediente.id} ingrediente={ingrediente} />
           ))}
         </div>
+
+        {/* Modal para agregar ingrediente */}
+        <AgregarIngredienteModal 
+          open={modalAbierto} 
+          onOpenChange={setModalAbierto} 
+        />
       </div>
     );
   }

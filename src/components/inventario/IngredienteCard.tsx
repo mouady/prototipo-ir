@@ -1,6 +1,6 @@
 "use client";
 
-import { Ingrediente } from "@/mock/inventario";
+import { Ingrediente } from "@/mock";
 import { X, Package } from "lucide-react";
 
 interface IngredienteCardProps {
