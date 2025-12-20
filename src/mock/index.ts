@@ -27,12 +27,17 @@ export type {
   AvisoReposicion,
   LineaAvisoReposicion,
   NuevoAvisoReposicion,
+  // Comandas
+  Comanda,
+  LineaComanda,
 } from "./types";
 
 export {
   TipoProducto,
   UnidadMedida,
   CategoriaCarta,
+  Estado,
+  FormatoPlato,
 } from "./types";
 
 // Re-export datos seed (solo lectura)
@@ -44,6 +49,7 @@ export {
   SEED_MENU_PROVEEDORES,
   SEED_COCINEROS,
   SEED_AVISOS_REPOSICION,
+  SEED_COMANDAS,
 } from "./seed";
 
 // Re-export funciones del store
@@ -63,6 +69,10 @@ export {
   getAvisosAtendidos,
   getAvisoById,
   getCocineros,
+  // Getters - Comandas
+  getComandasPendientes,
+  getComandasHechas,
+  getComandaById,
   // Mutations
   agregarProducto,
   actualizarProducto,
@@ -72,6 +82,9 @@ export {
   agregarAvisoReposicion,
   marcarAvisoAtendido,
   eliminarAvisoReposicion,
+  // Mutations - Comandas
+  marcarComandaComoLista,
+  restaurarComanda,
   // Utils
   subscribe,
   resetRuntime,
@@ -91,4 +104,7 @@ export {
   useAvisosPendientes,
   useAvisosAtendidos,
   useCocineros,
+  // Hooks - Comandas
+  useComandasPendientes,
+  useComandasHechas,
 } from "./hooks";

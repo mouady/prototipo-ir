@@ -47,7 +47,15 @@ export function Sidebar({ categoriaActiva, onCategoriaChange }: SidebarProps) {
         <ul className="space-y-1">
           {menuProveedores.map((item) => (
             <li key={item.id}>
-              <button className="w-full text-left px-2 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+              <button 
+                onClick={() => onCategoriaChange(item.id)}
+                className={cn(
+                  "w-full text-left px-2 py-1.5 rounded-md text-sm transition-colors",
+                  categoriaActiva === item.id
+                    ? "bg-gray-100 text-gray-900 font-medium"
+                    : "text-gray-700 hover:bg-gray-50"
+                )}
+              >
                 {item.nombre}
               </button>
             </li>

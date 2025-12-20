@@ -7,6 +7,8 @@ import { IngredienteCard } from "./IngredienteCard";
 import { AgregarProductoModal } from "./AgregarIngredienteModal";
 import { ConfirmarEliminacionModal } from "./ConfirmarEliminacionModal";
 import { AvisosPage } from "@/components/avisos";
+import { GeneradorMensajes } from "@/components/generador-mensajes";
+import { SEED_PROVEEDORES, SEED_PRODUCTOS } from "@/mock/seed";
 import { Button } from "@/components/ui/button";
 import { Filter, Plus } from "lucide-react";
 
@@ -148,6 +150,18 @@ export function ProductGrid({ categoriaActiva }: ProductGridProps) {
   // Para la categoría de avisos
   if (categoriaActiva === "avisos") {
     return <AvisosPage />;
+  }
+
+  // Para el generador de mensajes
+  if (categoriaActiva === "generador") {
+    return (
+      <div className="flex-1 bg-gray-100">
+        <GeneradorMensajes 
+          proveedores={SEED_PROVEEDORES}
+          productos={SEED_PRODUCTOS}
+        />
+      </div>
+    );
   }
 
   // Categoría vacía o no implementada

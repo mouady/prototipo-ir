@@ -4,15 +4,22 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { label: "Horarios", href: "#", active: false },
-  { label: "Comandas", href: "#", active: false },
-  { label: "Empleados", href: "#", active: false },
-  { label: "Inventario", href: "#", active: true },
-  { label: "Estadísticas", href: "#", active: false },
+export type SeccionActiva = "horarios" | "comandas" | "empleados" | "inventario" | "estadisticas";
+
+const navItems: { label: string; id: SeccionActiva }[] = [
+  { label: "Horarios", id: "horarios" },
+  { label: "Comandas", id: "comandas" },
+  { label: "Empleados", id: "empleados" },
+  { label: "Inventario", id: "inventario" },
+  { label: "Estadísticas", id: "estadisticas" },
 ];
 
-export function Header() {
+interface HeaderProps {
+  seccionActiva: SeccionActiva;
+  onSeccionChange: (seccion: SeccionActiva) => void;
+}
+
+export function Header({ seccionActiva, onSeccionChange }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="flex h-14 items-center justify-between px-4">
@@ -29,18 +36,18 @@ export function Header() {
           {/* Navigation */}
           <nav className="flex items-center gap-1">
             {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
+              <button
+                key={item.id}
+                onClick={() => onSeccionChange(item.id)}
                 className={cn(
                   "px-3 py-2 text-sm font-medium transition-colors rounded-md",
-                  item.active
+                  seccionActiva === item.id
                     ? "bg-gray-900 text-white"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 )}
               >
                 {item.label}
-              </a>
+              </button>
             ))}
           </nav>
         </div>

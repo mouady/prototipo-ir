@@ -16,14 +16,18 @@ import {
   getAvisosPendientes,
   getAvisosAtendidos,
   getCocineros,
+  getComandasPendientes,
+  getComandasHechas,
   agregarProducto as storeAgregarProducto,
   eliminarProducto as storeEliminarProducto,
   agregarAvisoReposicion as storeAgregarAviso,
   marcarAvisoAtendido as storeMarcarAvisoAtendido,
   eliminarAvisoReposicion as storeEliminarAviso,
+  marcarComandaComoLista as storeMarcarComandaLista,
+  restaurarComanda as storeRestaurarComanda,
   subscribe,
 } from "./store";
-import type { Producto, NuevoProducto, Proveedor, AvisoReposicion, NuevoAvisoReposicion, Cocinero } from "./types";
+import type { Producto, NuevoProducto, Proveedor, AvisoReposicion, NuevoAvisoReposicion, Cocinero, Comanda } from "./types";
 import { TipoProducto } from "./types";
 
 /**
@@ -223,4 +227,54 @@ export function useAvisosAtendidos() {
 export function useCocineros() {
   const [cocineros] = useState<Cocinero[]>(() => getCocineros());
   return { cocineros };
+}
+
+// ============================================
+// HOOKS: COMANDAS
+// ============================================
+
+/**
+ * Hook para acceder a las comandas pendientes (en preparación) con reactividad
+ */
+export function useComandasPendientes() {
+  const [comandas, setComandas] = useState<Comanda[]>(() => getComandasPendientes());
+
+  useEffect(() => {
+    const unsubscribe = subscribe(() => {
+      setComandas(getComandasPendientes());
+    });
+    return unsubscribe;
+  }, []);
+
+  const marcarComoLista = useCallback((id: string) => {
+    return storeMarcarComandaLista(id);
+  }, []);
+
+  return {
+    comandas,
+    marcarComoLista,
+  };
+}
+
+/**
+ * Hook para acceder a las comandas hechas (finalizadas) con reactividad
+ */
+export function useComandasHechas() {
+  const [comandas, setComandas] = useState<Comanda[]>(() => getComandasHechas());
+
+  useEffect(() => {
+    const unsubscribe = subscribe(() => {
+      setComandas(getComandasHechas());
+    });
+    return unsubscribe;
+  }, []);
+
+  const restaurar = useCallback((id: string) => {
+    return storeRestaurarComanda(id);
+  }, []);
+
+  return {
+    comandas,
+    restaurar,
+  };
 }

@@ -19,6 +19,8 @@ import {
   AvisoReposicion,
   NuevoAvisoReposicion,
   Cocinero,
+  Comanda,
+  Estado,
 } from "./types";
 import {
   SEED_CATEGORIAS,
@@ -28,6 +30,7 @@ import {
   SEED_MENU_PROVEEDORES,
   SEED_AVISOS_REPOSICION,
   SEED_COCINEROS,
+  SEED_COMANDAS,
 } from "./seed";
 
 // ============================================
@@ -39,8 +42,10 @@ let runtimeProveedores: Proveedor[] = [];
 let runtimeAvisos: AvisoReposicion[] = [];
 let modificacionesProductos: Map<string, Producto> = new Map(); // Para rastrear cambios a seed
 let modificacionesAvisos: Map<string, AvisoReposicion> = new Map(); // Para rastrear cambios a seed avisos
+let modificacionesComandas: Map<string, Comanda> = new Map(); // Para rastrear cambios a seed comandas
 let productosEliminados: Set<string> = new Set(); // Para rastrear seed eliminados
 let avisosEliminados: Set<string> = new Set(); // Para rastrear avisos seed eliminados
+let comandasFinalizadas: Set<string> = new Set(); // Para rastrear comandas marcadas como listas
 let nextProductoId = 1;
 let nextProveedorId = 1;
 let nextAvisoId = 1;
@@ -161,6 +166,39 @@ export function getAvisoById(id: string): AvisoReposicion | undefined {
 /** Obtiene los cocineros */
 export function getCocineros(): Cocinero[] {
   return SEED_COCINEROS;
+}
+
+// ============================================
+// GETTERS - Comandas
+// ============================================
+
+/** Obtiene todas las comandas pendientes (en preparación) */
+export function getComandasPendientes(): Comanda[] {
+  return SEED_COMANDAS
+    .filter((c) => !comandasFinalizadas.has(c.id))
+    .map((c) =>
+      modificacionesComandas.has(c.id)
+        ? modificacionesComandas.get(c.id)!
+        : c
+    );
+}
+
+/** Obtiene las comandas finalizadas (hechas) */
+export function getComandasHechas(): Comanda[] {
+  return SEED_COMANDAS
+    .filter((c) => comandasFinalizadas.has(c.id))
+    .map((c) =>
+      modificacionesComandas.has(c.id)
+        ? modificacionesComandas.get(c.id)!
+        : c
+    );
+}
+
+/** Obtiene una comanda por ID */
+export function getComandaById(id: string): Comanda | undefined {
+  const comanda = SEED_COMANDAS.find((c) => c.id === id);
+  if (!comanda) return undefined;
+  return modificacionesComandas.get(id) || comanda;
 }
 
 // ============================================
@@ -314,6 +352,50 @@ export function eliminarAvisoReposicion(id: string): boolean {
 }
 
 // ============================================
+// MUTATIONS - Comandas
+// ============================================
+
+/** Marca una comanda como lista (hecha) - cambia estado de todas las líneas a REALIZADO */
+export function marcarComandaComoLista(id: string): Comanda | null {
+  const comanda = SEED_COMANDAS.find((c) => c.id === id);
+  if (!comanda) return null;
+
+  const comandaActual = modificacionesComandas.get(id) || comanda;
+  const comandaActualizada: Comanda = {
+    ...comandaActual,
+    lineas: comandaActual.lineas.map((linea) => ({
+      ...linea,
+      estado: Estado.REALIZADO,
+    })),
+  };
+
+  modificacionesComandas.set(id, comandaActualizada);
+  comandasFinalizadas.add(id);
+  notifyListeners();
+  return comandaActualizada;
+}
+
+/** Restaura una comanda (de hechas a pendientes) */
+export function restaurarComanda(id: string): Comanda | null {
+  const comanda = SEED_COMANDAS.find((c) => c.id === id);
+  if (!comanda) return null;
+
+  const comandaActual = modificacionesComandas.get(id) || comanda;
+  const comandaRestaurada: Comanda = {
+    ...comandaActual,
+    lineas: comandaActual.lineas.map((linea) => ({
+      ...linea,
+      estado: Estado.EN_PREPARACION,
+    })),
+  };
+
+  modificacionesComandas.set(id, comandaRestaurada);
+  comandasFinalizadas.delete(id);
+  notifyListeners();
+  return comandaRestaurada;
+}
+
+// ============================================
 // RESET - Limpia solo datos runtime
 // ============================================
 
@@ -323,8 +405,10 @@ export function resetRuntime(): void {
   runtimeAvisos = [];
   modificacionesProductos.clear();
   modificacionesAvisos.clear();
+  modificacionesComandas.clear();
   productosEliminados.clear();
   avisosEliminados.clear();
+  comandasFinalizadas.clear();
   nextProductoId = 1;
   nextProveedorId = 1;
   nextAvisoId = 1;
@@ -348,5 +432,7 @@ export function getDebugInfo() {
     runtimeAvisos: runtimeAvisos.length,
     totalAvisos: getAvisosReposicion().length,
     avisosPendientes: getAvisosPendientes().length,
+    comandasPendientes: getComandasPendientes().length,
+    comandasHechas: getComandasHechas().length,
   };
 }
