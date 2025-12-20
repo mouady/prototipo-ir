@@ -62,4 +62,4 @@ export {
 } from "./store";
 
 // Re-export hooks
-export { useProductos, useProveedores } from "./hooks";
+export { useProductos, useProductosByTipo, useIngredientes, useBebidas, useRecursos, useProveedores } from "./hooks";

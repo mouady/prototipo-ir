@@ -18,6 +18,7 @@ export enum UnidadMedida {
   UNIDADES = "uds",
   LITROS = "l",
   GRAMOS = "g",
+  ML = "ml",
 }
 
 export enum CategoriaCarta {
@@ -51,6 +52,14 @@ export interface Producto {
   tipoProducto: TipoProducto;
   unidadMedida: UnidadMedida;
   umbral?: number; // Umbral de alerta de stock bajo
+  /**
+   * RN-03 / RN-19 (mc-ir.iuml):
+   * - Solo se puede especificar si tipoProducto es BEBIDA
+   * - litros >= 0
+   *
+   * En el prototipo representa el volumen del envase/formato (p. ej. 0.33L).
+   */
+  litros?: number;
   stock: number; // Simplificación: stock directo en lugar de Lotes
   proveedor?: string; // Referencia al proveedor (simplificado como string)
   destacado?: boolean; // Para UI: resaltar en amarillo

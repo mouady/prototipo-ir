@@ -10,12 +10,14 @@ import { useState, useEffect, useCallback } from "react";
 import {
   getProductos,
   getIngredientes,
+  getProductosByTipo,
   getProveedores,
   agregarProducto as storeAgregarProducto,
   eliminarProducto as storeEliminarProducto,
   subscribe,
 } from "./store";
 import type { Producto, NuevoProducto, Proveedor } from "./types";
+import { TipoProducto } from "./types";
 
 /**
  * Hook para acceder a los productos con reactividad
@@ -46,12 +48,43 @@ export function useProductos() {
 }
 
 /**
+ * Hook para acceder a productos por tipo con reactividad
+ */
+export function useProductosByTipo(tipo: TipoProducto) {
+  const [productos, setProductos] = useState<Producto[]>(() =>
+    getProductosByTipo(tipo)
+  );
+
+  useEffect(() => {
+    // Refrescar inmediatamente al cambiar el tipo activo.
+    setProductos(getProductosByTipo(tipo));
+
+    const unsubscribe = subscribe(() => {
+      setProductos(getProductosByTipo(tipo));
+    });
+    return unsubscribe;
+  }, [tipo]);
+
+  const agregar = useCallback((nuevo: NuevoProducto) => {
+    return storeAgregarProducto(nuevo);
+  }, []);
+
+  const eliminar = useCallback((id: string) => {
+    return storeEliminarProducto(id);
+  }, []);
+
+  return {
+    productos,
+    agregar,
+    eliminar,
+  };
+}
+
+/**
  * Hook para acceder solo a los ingredientes con reactividad
  */
 export function useIngredientes() {
-  const [ingredientes, setIngredientes] = useState<Producto[]>(() =>
-    getIngredientes()
-  );
+  const [ingredientes, setIngredientes] = useState<Producto[]>(() => getIngredientes());
 
   useEffect(() => {
     const unsubscribe = subscribe(() => {
@@ -73,6 +106,14 @@ export function useIngredientes() {
     agregar,
     eliminar,
   };
+}
+
+export function useBebidas() {
+  return useProductosByTipo(TipoProducto.BEBIDA);
+}
+
+export function useRecursos() {
+  return useProductosByTipo(TipoProducto.RECURSO);
 }
 
 /**

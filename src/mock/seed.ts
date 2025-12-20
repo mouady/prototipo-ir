@@ -204,6 +204,59 @@ export const SEED_PRODUCTOS: Producto[] = [
     proveedor: "CashSupremo",
     destacado: true,
   },
+
+  // BEBIDAS (Producto del inventario)
+  {
+    id: "prod-12",
+    nombre: "Coca-Cola",
+    tipoProducto: TipoProducto.BEBIDA,
+    unidadMedida: UnidadMedida.UNIDADES,
+    litros: 0.33,
+    stock: 24,
+    umbral: 12,
+    proveedor: "CashSupremo",
+  },
+  {
+    id: "prod-13",
+    nombre: "Agua",
+    tipoProducto: TipoProducto.BEBIDA,
+    unidadMedida: UnidadMedida.UNIDADES,
+    litros: 0.5,
+    stock: 18,
+    umbral: 12,
+    proveedor: "CashSupremo",
+  },
+  {
+    id: "prod-14",
+    nombre: "Vino tinto (copa)",
+    tipoProducto: TipoProducto.BEBIDA,
+    unidadMedida: UnidadMedida.UNIDADES,
+    litros: 0.15,
+    stock: 40,
+    umbral: 10,
+    proveedor: "Mercado Central",
+  },
+
+  // RECURSOS (no vendibles, material de operación)
+  {
+    id: "prod-15",
+    nombre: "Servilletas",
+    tipoProducto: TipoProducto.RECURSO,
+    unidadMedida: UnidadMedida.UNIDADES,
+    stock: 200,
+    umbral: 80,
+    proveedor: "CashSupremo",
+  },
+  {
+    id: "prod-16",
+    nombre: "Bombona de gas",
+    tipoProducto: TipoProducto.RECURSO,
+    unidadMedida: UnidadMedida.UNIDADES,
+    stock: 2,
+    umbral: 1,
+    proveedor: "Mercado Central",
+    destacado: true,
+  },
 ];
 
 // ============================================

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { getPlatos } from "@/mock";
-import { useIngredientes } from "@/mock/hooks";
+import { getPlatos, eliminarProducto, Producto, TipoProducto, useProductosByTipo } from "@/mock";
 import { ProductCard } from "./ProductCard";
 import { IngredienteCard } from "./IngredienteCard";
-import { AgregarIngredienteModal } from "./AgregarIngredienteModal";
+import { AgregarProductoModal } from "./AgregarIngredienteModal";
+import { ConfirmarEliminacionModal } from "./ConfirmarEliminacionModal";
 import { Button } from "@/components/ui/button";
-import { Filter, Plus, SquarePen } from "lucide-react";
+import { Filter, Plus } from "lucide-react";
 
 interface ProductGridProps {
   categoriaActiva: string;
@@ -15,13 +15,51 @@ interface ProductGridProps {
 
 export function ProductGrid({ categoriaActiva }: ProductGridProps) {
   const [modalAbierto, setModalAbierto] = useState(false);
-  const { ingredientes } = useIngredientes();
+  const [productoParaEditar, setProductoParaEditar] = useState<Producto | undefined>();
+  const [productoParaEliminar, setProductoParaEliminar] = useState<Producto | null>(null);
+  const [modalEliminacionAbierto, setModalEliminacionAbierto] = useState(false);
+
+  const tipoActivo: TipoProducto =
+    categoriaActiva === "bebidas"
+      ? TipoProducto.BEBIDA
+      : categoriaActiva === "recursos"
+        ? TipoProducto.RECURSO
+        : TipoProducto.INGREDIENTE;
+
+  const { productos: productosInventario } = useProductosByTipo(tipoActivo);
   
   // Obtener platos
   const platos = getPlatos();
 
-  // Si es la categoría de ingredientes, mostrar el nuevo diseño
-  if (categoriaActiva === "ingredientes") {
+  const handleEdit = (producto: Producto) => {
+    setProductoParaEditar(producto);
+    setModalAbierto(true);
+  };
+
+  const handleDelete = (id: string) => {
+    const producto = productosInventario.find((p) => p.id === id);
+    if (producto) {
+      setProductoParaEliminar(producto);
+      setModalEliminacionAbierto(true);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    if (productoParaEliminar) {
+      eliminarProducto(productoParaEliminar.id);
+      setProductoParaEliminar(null);
+    }
+  };
+
+  const handleCloseModal = (open: boolean) => {
+    setModalAbierto(open);
+    if (!open) {
+      setProductoParaEditar(undefined);
+    }
+  };
+
+  // Categorías de inventario (ingredientes/bebidas/recursos)
+  if (categoriaActiva === "ingredientes" || categoriaActiva === "bebidas" || categoriaActiva === "recursos") {
     return (
       <div className="flex-1 p-6 bg-gray-50">
         {/* Toolbar */}
@@ -40,23 +78,35 @@ export function ProductGrid({ categoriaActiva }: ProductGridProps) {
               <Plus className="h-4 w-4" />
               Crear
             </Button>
-            <Button variant="outline" size="icon" className="h-8 w-8">
-              <SquarePen className="h-4 w-4" />
-            </Button>
           </div>
         </div>
 
         {/* Grid de ingredientes - 2 columnas */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {ingredientes.map((ingrediente) => (
-            <IngredienteCard key={ingrediente.id} ingrediente={ingrediente} />
+          {productosInventario.map((ingrediente) => (
+            <IngredienteCard 
+              key={ingrediente.id} 
+              ingrediente={ingrediente}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
 
-        {/* Modal para agregar ingrediente */}
-        <AgregarIngredienteModal 
+        {/* Modal para agregar/editar producto */}
+        <AgregarProductoModal 
           open={modalAbierto} 
-          onOpenChange={setModalAbierto} 
+          onOpenChange={handleCloseModal}
+          tipoProducto={tipoActivo}
+          productoParaEditar={productoParaEditar}
+        />
+
+        {/* Modal de confirmación de eliminación */}
+        <ConfirmarEliminacionModal
+          open={modalEliminacionAbierto}
+          onOpenChange={setModalEliminacionAbierto}
+          producto={productoParaEliminar}
+          onConfirm={handleConfirmDelete}
         />
       </div>
     );

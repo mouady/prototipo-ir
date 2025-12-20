@@ -31,6 +31,8 @@ import {
 // ============================================
 let runtimeProductos: Producto[] = [];
 let runtimeProveedores: Proveedor[] = [];
+let modificacionesProductos: Map<string, Producto> = new Map(); // Para rastrear cambios a seed
+let productosEliminados: Set<string> = new Set(); // Para rastrear seed eliminados
 let nextProductoId = 1;
 let nextProveedorId = 1;
 
@@ -44,6 +46,27 @@ function notifyListeners() {
   listeners.forEach((listener) => listener());
 }
 
+function normalizeProductoDatos<T extends Partial<Omit<Producto, "id">>>(
+  datos: T
+): T {
+  // RN-03: Solo se pueden especificar litros si el TipoProducto es BEBIDA.
+  if (datos.tipoProducto && datos.tipoProducto !== TipoProducto.BEBIDA) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { litros, ...rest } = datos as any;
+    return rest;
+  }
+
+  // RN-19: litros >= 0
+  if (typeof (datos as any).litros === "number") {
+    const litros = (datos as any).litros;
+    if (Number.isNaN(litros) || litros < 0) {
+      return { ...(datos as any), litros: 0 };
+    }
+  }
+
+  return datos;
+}
+
 export function subscribe(listener: Listener): () => void {
   listeners.add(listener);
   return () => listeners.delete(listener);
@@ -55,7 +78,13 @@ export function subscribe(listener: Listener): () => void {
 
 /** Obtiene todos los productos del inventario */
 export function getProductos(): Producto[] {
-  return [...SEED_PRODUCTOS, ...runtimeProductos];
+  const seedProductos = SEED_PRODUCTOS.filter((p) => !productosEliminados.has(p.id))
+    .map((p) => 
+      modificacionesProductos.has(p.id) 
+        ? modificacionesProductos.get(p.id)!
+        : p
+    );
+  return [...seedProductos, ...runtimeProductos];
 }
 
 /** Obtiene productos filtrados por tipo (INGREDIENTE, BEBIDA, RECURSO) */
@@ -94,8 +123,9 @@ export function getMenuProveedores() {
 // ============================================
 
 export function agregarProducto(nuevo: NuevoProducto): Producto {
+  const normalizado = normalizeProductoDatos(nuevo);
   const producto: Producto = {
-    ...nuevo,
+    ...normalizado,
     id: `runtime-${nextProductoId++}`,
   };
   runtimeProductos.push(producto);
@@ -107,34 +137,41 @@ export function actualizarProducto(
   id: string,
   cambios: Partial<Omit<Producto, "id">>
 ): Producto | null {
+  const cambiosNormalizados = normalizeProductoDatos(cambios);
+
   // Buscar en runtime primero
   const runtimeIndex = runtimeProductos.findIndex((p) => p.id === id);
   if (runtimeIndex !== -1) {
     runtimeProductos[runtimeIndex] = {
       ...runtimeProductos[runtimeIndex],
-      ...cambios,
+      ...cambiosNormalizados,
     };
     notifyListeners();
     return runtimeProductos[runtimeIndex];
   }
 
-  // Si es un producto seed, crear una copia en runtime con los cambios
+  // Si es un producto seed, guardar los cambios en el mapa
   const seedProducto = SEED_PRODUCTOS.find((p) => p.id === id);
   if (seedProducto) {
-    console.warn(
-      "Modificando un producto seed. Los cambios se perderán al reiniciar."
-    );
-    const modificado: Producto = { ...seedProducto, ...cambios };
-    runtimeProductos.push(modificado);
+    const modificado = modificacionesProductos.get(id) || seedProducto;
+
+    // Si el tipo cambia a no-bebida, necesitamos limpiar litros aunque no venga en cambios.
+    const actualizadoBase: Producto = { ...modificado, ...cambiosNormalizados };
+    const actualizado: Producto =
+      actualizadoBase.tipoProducto !== TipoProducto.BEBIDA
+        ? (({ litros, ...rest }) => rest)(actualizadoBase)
+        : actualizadoBase;
+
+    modificacionesProductos.set(id, actualizado);
     notifyListeners();
-    return modificado;
+    return actualizado;
   }
 
   return null;
 }
 
 export function eliminarProducto(id: string): boolean {
-  // Solo se pueden eliminar productos runtime
+  // Se pueden eliminar productos runtime
   if (id.startsWith("runtime-")) {
     const index = runtimeProductos.findIndex((p) => p.id === id);
     if (index !== -1) {
@@ -142,9 +179,14 @@ export function eliminarProducto(id: string): boolean {
       notifyListeners();
       return true;
     }
-  } else {
-    console.warn("No se pueden eliminar productos base (seed).");
   }
+  // También se pueden eliminar seed marcándolos como eliminados
+  else if (SEED_PRODUCTOS.find((p) => p.id === id)) {
+    productosEliminados.add(id);
+    notifyListeners();
+    return true;
+  }
+  
   return false;
 }
 
@@ -167,6 +209,8 @@ export function agregarProveedor(
 export function resetRuntime(): void {
   runtimeProductos = [];
   runtimeProveedores = [];
+  modificacionesProductos.clear();
+  productosEliminados.clear();
   nextProductoId = 1;
   nextProveedorId = 1;
   notifyListeners();
