@@ -25,7 +25,7 @@ export default function WelcomePage() {
           
           {/* Opción Camarero */}
           <Link 
-            href="/camarero"
+            href="/mobile/camarero"
             className="group relative bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl shadow-xl border border-slate-700 p-8 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 overflow-hidden hover:from-slate-700 hover:to-slate-600"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform" />
@@ -60,7 +60,7 @@ export default function WelcomePage() {
 
           {/* Opción Cocinero */}
           <Link 
-            href="/cocinero"
+            href="/mobile/cocinero"
             className="group relative bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl shadow-xl border border-slate-700 p-8 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 overflow-hidden hover:from-slate-700 hover:to-slate-600"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-500/20 to-red-600/20 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform" />
@@ -96,7 +96,7 @@ export default function WelcomePage() {
 
           {/* Opción Gerente */}
           <Link 
-            href="/gerente"
+            href="/desktop"
             className="group relative bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl shadow-xl border border-slate-700 p-8 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 overflow-hidden hover:from-slate-700 hover:to-slate-600"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform" />
