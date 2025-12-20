@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Users, BarChart3, Utensils, ChefHat, Flame } from "lucide-react";
+import { Users, BarChart3, Utensils, ChefHat } from "lucide-react";
 
 export default function WelcomePage() {
   return (
@@ -32,7 +32,7 @@ export default function WelcomePage() {
             
             <div className="relative">
               <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
-                <ChefHat className="w-8 h-8 text-white" />
+                <Users className="w-8 h-8 text-white" />
               </div>
               
               <h2 className="text-2xl font-bold text-white mb-3">
@@ -67,7 +67,7 @@ export default function WelcomePage() {
             
             <div className="relative">
               <div className="w-16 h-16 bg-gradient-to-br from-red-400 to-red-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
-                <Flame className="w-8 h-8 text-white" />
+                <ChefHat className="w-8 h-8 text-white" />
               </div>
               
               <h2 className="text-2xl font-bold text-white mb-3">
@@ -135,7 +135,6 @@ export default function WelcomePage() {
       <footer className="p-6 text-center">
         <div className="flex items-center justify-center gap-4 text-sm text-slate-400">
           <div className="flex items-center gap-2">
-            <Users className="w-4 h-4" />
             <span>Demo interactiva</span>
           </div>
           <span>•</span>
