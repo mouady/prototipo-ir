@@ -10,14 +10,12 @@ import {
   getAvisosReposicion,
   getAvisosPendientes,
   getAvisosAtendidos,
-  getCocineros,
   agregarAvisoReposicion as storeAgregarAviso,
   marcarAvisoAtendido as storeMarcarAvisoAtendido,
   eliminarAvisoReposicion as storeEliminarAviso,
 } from "./store";
 import { subscribe } from "../shared/store-base";
 import type { AvisoReposicion, NuevoAvisoReposicion } from "./types";
-import type { Cocinero } from "../shared/types";
 
 /**
  * Hook para acceder a los avisos de reposición con reactividad
@@ -91,10 +89,5 @@ export function useAvisosAtendidos() {
   return { avisos };
 }
 
-/**
- * Hook para acceder a los cocineros
- */
-export function useCocineros() {
-  const [cocineros] = useState<Cocinero[]>(() => getCocineros());
-  return { cocineros };
-}
+// NOTA: Para obtener cocineros, usa getCocinerosEmpleados() de empleados/store.ts
+// Los cocineros son Empleados con rol COCINERO

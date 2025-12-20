@@ -4,8 +4,7 @@
  */
 
 import type { AvisoReposicion, NuevoAvisoReposicion } from "./types";
-import type { Cocinero } from "../shared/types";
-import { SEED_AVISOS_REPOSICION, SEED_COCINEROS } from "./seed";
+import { SEED_AVISOS_REPOSICION } from "./seed";
 import { notifyListeners } from "../shared/store-base";
 
 // ============================================
@@ -45,11 +44,6 @@ export function getAvisosAtendidos(): AvisoReposicion[] {
 /** Obtiene un aviso por ID */
 export function getAvisoById(id: string): AvisoReposicion | undefined {
   return getAvisosReposicion().find((a) => a.id === id);
-}
-
-/** Obtiene los cocineros */
-export function getCocineros(): Cocinero[] {
-  return SEED_COCINEROS;
 }
 
 // ============================================

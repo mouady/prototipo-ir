@@ -174,7 +174,22 @@ export const PRODUCTOS_VENDIBLES: ProductoVendibleSimple[] = [
 // COMANDAS POR MESA (estructura para el camarero)
 // ============================================
 
+import { FormatoPlato as FormatoEnum } from "../inventario/types";
+import { Estado } from "../shared/types";
+
+// Re-export FormatoPlato como tipo de string para compatibilidad con datos existentes
 export type FormatoPlato = "ESTANDAR" | "TAPA" | "MEDIA" | "RACION";
+
+// Estado de línea de comanda - usa los valores del enum Estado
+export type EstadoLineaMesa = "EN_PREPARACION" | "REALIZADO" | "SERVIDO";
+
+/**
+ * Estado de la comanda completa (calculado/derivado)
+ * EN_COCINA: Hay líneas en preparación
+ * REALIZADA: Todas las líneas están listas (REALIZADO) pero no servidas
+ * ENTREGADA: Todas las líneas han sido servidas
+ */
+export type EstadoComanda = "EN_COCINA" | "REALIZADA" | "ENTREGADA";
 
 export interface LineaComandaMesa {
   id: string;
@@ -182,7 +197,7 @@ export interface LineaComandaMesa {
   productoNombre: string;
   cantidad: number;
   precioUnitario: number;
-  estado: "EN_PREPARACION" | "REALIZADO" | "SERVIDO";
+  estado: EstadoLineaMesa; // Valores compatibles con enum Estado
   esPlato: boolean;
   formato?: FormatoPlato; // Solo aplica a platos
 }
@@ -192,7 +207,7 @@ export interface ComandaMesa {
   numComanda: number;
   mesaId: string;
   horaCreacion: string;
-  estado: "EN_COCINA" | "REALIZADA" | "ENTREGADA";
+  estado: EstadoComanda; // Estado derivado de las líneas
   lineas: LineaComandaMesa[];
 }
 
@@ -214,7 +229,7 @@ export const SEED_COMANDAS_MESA: ComandaMesa[] = [
     numComanda: 2,
     mesaId: "mesa-1",
     horaCreacion: "9:31",
-    estado: "REALIZADA",
+    estado: "EN_COCINA", // Una línea está lista (REALIZADO), otra en preparación
     lineas: [
       { id: "lm-1-3", productoId: "pv-10", productoNombre: "Papas Bravas", cantidad: 2, precioUnitario: 4.5, estado: "REALIZADO", esPlato: true, formato: "TAPA" },
       { id: "lm-1-4", productoId: "pv-11", productoNombre: "Chocos Fritos Plato", cantidad: 1, precioUnitario: 9.0, estado: "EN_PREPARACION", esPlato: true, formato: "RACION" },

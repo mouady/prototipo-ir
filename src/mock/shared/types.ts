@@ -76,13 +76,6 @@ export interface User {
   password?: string;
 }
 
-/**
- * Cocinero según el modelo: hereda de Empleado
- * Simplificado para el prototipo
- */
-export interface Cocinero {
-  id: string;
-  nombre: string;
-  apellidos: string;
-  imagenPerfil?: string;
-}
+// NOTA: Cocinero ya no se define aquí de forma simplificada.
+// Los cocineros son Empleados con rol COCINERO (ver empleados/types.ts).
+// Para obtener datos de cocineros, usar el módulo de empleados filtrando por RolEmpleado.COCINERO.

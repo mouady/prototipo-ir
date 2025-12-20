@@ -12,6 +12,7 @@ import { Estado, FormatoPlato } from "./types";
 // ============================================
 // COMANDAS (sincronizadas con comandas de mesa)
 // IDs coinciden para permitir sincronización bidireccional
+// Los estados deben coincidir con SEED_COMANDAS_MESA en mesas/seed.ts
 // ============================================
 export const SEED_COMANDAS: Comanda[] = [
   // Mesa 1 - Comanda 2 (la comanda 1 solo tiene bebidas)
@@ -27,7 +28,7 @@ export const SEED_COMANDAS: Comanda[] = [
         productoVendibleId: "pv-10",
         productoNombre: "Papas Bravas",
         cantidad: 2,
-        estado: Estado.EN_PREPARACION,
+        estado: Estado.REALIZADO, // Sincronizado con mesas/seed.ts
         formato: FormatoPlato.TAPA,
       },
       {

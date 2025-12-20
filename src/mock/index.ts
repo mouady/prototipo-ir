@@ -17,7 +17,7 @@
 // ============================================
 // RE-EXPORTS: SHARED
 // ============================================
-export type { User, Cocinero } from "./shared";
+export type { User } from "./shared";
 export {
   DiaSemana,
   TipoContrato,
@@ -108,20 +108,17 @@ export type {
 } from "./avisos";
 
 export {
-  SEED_COCINEROS,
   SEED_AVISOS_REPOSICION,
   getAvisosReposicion,
   getAvisosPendientes,
   getAvisosAtendidos,
   getAvisoById,
-  getCocineros,
   agregarAvisoReposicion,
   marcarAvisoAtendido,
   eliminarAvisoReposicion,
   useAvisosReposicion,
   useAvisosPendientes,
   useAvisosAtendidos,
-  useCocineros,
 } from "./avisos";
 
 // ============================================
@@ -176,7 +173,7 @@ export type {
   HorarioEspecial,
   Turno,
   AsignacionTurno,
-  Fichaje,
+  FichajeResumen,
   NuevoHorario,
   NuevoHorarioEspecial,
   NuevoTurno,

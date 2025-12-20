@@ -3,7 +3,7 @@
  */
 
 // Types
-export type { User, Cocinero } from "./types";
+export type { User } from "./types";
 
 export {
   DiaSemana,

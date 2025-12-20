@@ -14,11 +14,27 @@ interface ComandaCardProps {
 }
 
 function FormatoBadge({ formato }: { formato?: FormatoPlato }) {
-  if (!formato) return null;
+  let formatoTexto: string | null = null;
   
+  if (!formato) return null;
+  switch (formato) {
+    case FormatoPlato.ESTANDAR:
+      formatoTexto = "Estándar";
+      break;
+    case FormatoPlato.RACION:
+      formatoTexto = "Ración";
+      break;
+    case FormatoPlato.MEDIA:
+      formatoTexto = "1/2";
+      break;
+    case FormatoPlato.TAPA:
+      formatoTexto = "Tapa";
+      break;
+  }
+
   return (
     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-900 text-white">
-      {formato}
+      {formatoTexto}
     </span>
   );
 }

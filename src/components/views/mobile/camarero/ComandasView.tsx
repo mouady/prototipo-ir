@@ -11,11 +11,16 @@ type VistaActiva =
   | { tipo: "detalle"; mesaId: string }
   | { tipo: "crearComanda"; mesaId: string; numMesa: number };
 
+interface ComandasViewProps {
+  camareroId: string;
+  camareroNombre: string;
+}
+
 /**
  * Vista de comandas del camarero
  * Gestiona la navegación entre lista de mesas, detalle y creación de comanda
  */
-export default function ComandasView() {
+export default function ComandasView({ camareroId, camareroNombre }: ComandasViewProps) {
   const [vistaActiva, setVistaActiva] = useState<VistaActiva>({ tipo: "lista" });
 
   const handleSelectMesa = (mesaId: string) => {
@@ -58,6 +63,12 @@ export default function ComandasView() {
         />
       );
     default:
-      return <MesasView onSelectMesa={handleSelectMesa} />;
+      return (
+        <MesasView
+          onSelectMesa={handleSelectMesa}
+          camareroId={camareroId}
+          camareroNombre={camareroNombre}
+        />
+      );
   }
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
-import { useCocineros, useIngredientes, NuevoAvisoReposicion, Producto, Cocinero } from "@/mock";
+import { useEmpleados, useIngredientes, NuevoAvisoReposicion, Producto, Empleado, RolEmpleado } from "@/mock";
 
 interface NuevoAvisoModalProps {
   abierto: boolean;
@@ -11,10 +11,16 @@ interface NuevoAvisoModalProps {
 }
 
 export function NuevoAvisoModal({ abierto, onCerrar, onGuardar }: NuevoAvisoModalProps) {
-  const { cocineros } = useCocineros();
+  const { empleados } = useEmpleados();
   const { ingredientes } = useIngredientes();
 
-  const [cocineroSeleccionado, setCocineroSeleccionado] = useState<Cocinero | null>(null);
+  // Filtrar solo cocineros activos
+  const cocineros = useMemo(() => 
+    empleados.filter((e) => e.rol === RolEmpleado.COCINERO && e.activo),
+    [empleados]
+  );
+
+  const [cocineroSeleccionado, setCocineroSeleccionado] = useState<Empleado | null>(null);
   const [productosSeleccionados, setProductosSeleccionados] = useState<Producto[]>([]);
   const [comentario, setComentario] = useState("");
   const [productoActual, setProductoActual] = useState<string>("");

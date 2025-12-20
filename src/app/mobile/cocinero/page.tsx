@@ -31,7 +31,7 @@ export default function CocineroPage() {
       case CocineroView.FICHAJES:
         return <FichajesView empleadoId={COCINERO_PROFILE.id} />;
       case CocineroView.AVISOS:
-        return <AvisosView />;
+        return <AvisosView cocineroId={COCINERO_PROFILE.id} cocineroNombre={COCINERO_PROFILE.nombre} />;
       default:
         return null;
     }

@@ -1,12 +1,10 @@
 /**
  * Tipos para el módulo de avisos de reposición
  * Basado en el modelo conceptual (mc-ir.iuml)
+ * 
+ * Según el modelo: Cocinero "1" -- "0..*" AvisoReposicion : "avisa"
+ * Los cocineros son Empleados con rol COCINERO (ver empleados/types.ts)
  */
-
-import type { Cocinero } from "../shared/types";
-
-// Re-export Cocinero para uso en avisos
-export type { Cocinero };
 
 // ============================================
 // INTERFACES: AVISOS DE REPOSICIÓN
@@ -25,13 +23,15 @@ export interface LineaAvisoReposicion {
 /**
  * Aviso de reposición generado por un cocinero
  * Según el modelo: fechaSolicitud, atendido, comentario
+ * 
+ * cocineroId referencia a un Empleado con rol COCINERO
  */
 export interface AvisoReposicion {
   id: string;
   fechaSolicitud: Date;
   atendido: boolean;
   comentario?: string;
-  cocineroId: string;
+  cocineroId: string; // Referencia a empleado (emp-X) con rol COCINERO
   cocineroNombre: string; // Desnormalizado para facilitar UI
   lineas: LineaAvisoReposicion[];
 }

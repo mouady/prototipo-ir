@@ -33,7 +33,7 @@ export default function CamareroPage() {
       case CamareroView.FICHAJES:
         return <FichajesView empleadoId={CAMARERO_PROFILE.id} />;
       case CamareroView.MESAS:
-        return <ComandasView />;
+        return <ComandasView camareroId={CAMARERO_PROFILE.id} camareroNombre={CAMARERO_PROFILE.nombre} />;
       case CamareroView.RESERVAS:
         return <ReservasView />;
       default:

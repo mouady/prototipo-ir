@@ -7,12 +7,10 @@ export type {
   AvisoReposicion,
   LineaAvisoReposicion,
   NuevoAvisoReposicion,
-  Cocinero,
 } from "./types";
 
 // Seed
 export {
-  SEED_COCINEROS,
   SEED_AVISOS_REPOSICION,
 } from "./seed";
 
@@ -22,7 +20,6 @@ export {
   getAvisosPendientes,
   getAvisosAtendidos,
   getAvisoById,
-  getCocineros,
   agregarAvisoReposicion,
   marcarAvisoAtendido,
   eliminarAvisoReposicion,
@@ -35,5 +32,4 @@ export {
   useAvisosReposicion,
   useAvisosPendientes,
   useAvisosAtendidos,
-  useCocineros,
 } from "./hooks";

@@ -58,14 +58,18 @@ export interface HorarioEspecial {
 }
 
 /**
- * Fichaje de empleado según el modelo conceptual
+ * Resumen de fichaje para mostrar en el módulo de horarios.
+ * Formato simplificado para visualización en turnos.
+ * 
+ * NOTA: El fichaje completo se gestiona en fichajes/types.ts
+ * Esta interfaz es solo para visualización en horarios.
  */
-export interface Fichaje {
+export interface FichajeResumen {
   id: string;
   empleadoId: string;
   fecha: string; // Formato "YYYY-MM-DD"
-  entrada: string; // Formato "HH:MM"
-  salida?: string; // Formato "HH:MM" (opcional, puede no haber fichado salida)
+  entrada: string; // Formato "HH:MM" (simplificado para UI)
+  salida?: string; // Formato "HH:MM" (simplificado para UI)
 }
 
 // Tipos auxiliares para horarios

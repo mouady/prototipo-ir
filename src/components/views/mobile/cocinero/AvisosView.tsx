@@ -8,6 +8,11 @@ import { useProductos } from "@/mock/inventario/hooks";
 import { useAvisosReposicion } from "@/mock/avisos/hooks";
 import type { Producto } from "@/mock/inventario/types";
 
+interface AvisosViewProps {
+  cocineroId: string;
+  cocineroNombre: string;
+}
+
 /**
  * Vista de Avisos para el Cocinero (móvil)
  * 
@@ -19,7 +24,7 @@ import type { Producto } from "@/mock/inventario/types";
  * - LineaAvisoReposicion: corresponde a un Producto
  * - Cocinero "1" -- "0..*" AvisoReposicion : "avisa"
  */
-export default function AvisosView() {
+export default function AvisosView({ cocineroId, cocineroNombre }: AvisosViewProps) {
   const { productos } = useProductos();
   const { avisos, agregar } = useAvisosReposicion();
 
@@ -82,8 +87,8 @@ export default function AvisosView() {
       fechaSolicitud: new Date(),
       atendido: false,
       comentario: comentario.trim() || undefined,
-      cocineroId: "cocinero-1", // En producción vendría del contexto de auth
-      cocineroNombre: "Antonio",
+      cocineroId, // ID del empleado cocinero logueado
+      cocineroNombre,
       lineas: productosSeleccionados.map((p) => ({
         productoId: p.id,
         productoNombre: p.nombre,

@@ -29,6 +29,8 @@ export type {
   LineaComandaMesa,
   ComandaMesa,
   FormatoPlato,
+  EstadoLineaMesa,
+  EstadoComanda,
 } from "./seed";
 
 // Seed data

@@ -8,7 +8,7 @@ export type {
   HorarioEspecial,
   Turno,
   AsignacionTurno,
-  Fichaje,
+  FichajeResumen,
   NuevoHorario,
   NuevoHorarioEspecial,
   NuevoTurno,

@@ -38,11 +38,6 @@ export function EmpleadosPage() {
     setModalDetalle(true);
   };
 
-  const handleEditClick = (empleado: Empleado) => {
-    setEmpleadoParaEditar(empleado);
-    setModalCrearEditar(true);
-  };
-
   const handleAddClick = () => {
     setEmpleadoParaEditar(null);
     setModalCrearEditar(true);
@@ -82,7 +77,6 @@ export function EmpleadosPage() {
             key={empleado.id}
             empleado={empleado}
             onClick={handleCardClick}
-            onEdit={handleEditClick}
           />
         ))}
         

@@ -3,12 +3,10 @@
 import { Bell, BellRing, Umbrella, Home, ChevronRight } from "lucide-react";
 import { useMesas, MesaConEstado, EstadoMesa, Zona } from "@/mock/mesas";
 
-// Camarero actual (en producción vendría del estado de autenticación)
-const CAMARERO_ID = "emp-2";
-const CAMARERO_NOMBRE = "María";
-
 interface MesasViewProps {
   onSelectMesa?: (mesaId: string) => void;
+  camareroId: string;
+  camareroNombre: string;
 }
 
 /**
@@ -123,11 +121,11 @@ function MesaRow({
  * Vista principal de lista de mesas (Dashboard)
  * Según spec 2.5
  */
-export default function MesasView({ onSelectMesa }: MesasViewProps) {
+export default function MesasView({ onSelectMesa, camareroId, camareroNombre }: MesasViewProps) {
   const { mesas, crearCuenta } = useMesas();
 
   const handleCrearCuenta = (mesaId: string) => {
-    crearCuenta(mesaId, CAMARERO_ID, CAMARERO_NOMBRE);
+    crearCuenta(mesaId, camareroId, camareroNombre);
   };
 
   const handleSelectMesa = (mesaId: string) => {
@@ -170,7 +168,7 @@ export default function MesasView({ onSelectMesa }: MesasViewProps) {
                 mesa={mesa}
                 onSelect={() => handleSelectMesa(mesa.id)}
                 onCrearCuenta={() => handleCrearCuenta(mesa.id)}
-                esResponsable={mesa.camareroResponsable === CAMARERO_NOMBRE}
+                esResponsable={mesa.camareroResponsable === camareroNombre}
               />
             ))}
           </>
@@ -190,7 +188,7 @@ export default function MesasView({ onSelectMesa }: MesasViewProps) {
                 mesa={mesa}
                 onSelect={() => handleSelectMesa(mesa.id)}
                 onCrearCuenta={() => handleCrearCuenta(mesa.id)}
-                esResponsable={mesa.camareroResponsable === CAMARERO_NOMBRE}
+                esResponsable={mesa.camareroResponsable === camareroNombre}
               />
             ))}
           </>
