@@ -172,6 +172,35 @@ export {
 } from "./horarios";
 
 // ============================================
+// RE-EXPORTS: FICHAJES
+// ============================================
+export type {
+  Fichaje as FichajeType,
+  NuevoFichaje,
+  CerrarFichaje,
+  JornadaActual,
+  RegistroHistorial,
+} from "./fichajes";
+
+export {
+  EstadoJornada,
+  SEED_FICHAJES,
+  getFichajes,
+  getFichajesByEmpleado,
+  getFichajeActivo,
+  getJornadaActual,
+  getHistorialFichajes,
+  iniciarJornada,
+  detenerJornada,
+  formatearDuracionLarga,
+  resetFichajesRuntime,
+  getFichajesDebugInfo,
+  useJornadaActual,
+  useHistorialFichajes,
+  useFichajes,
+} from "./fichajes";
+
+// ============================================
 // FUNCIONES GLOBALES
 // ============================================
 import { resetInventarioRuntime, getInventarioDebugInfo } from "./inventario";
@@ -179,6 +208,7 @@ import { resetAvisosRuntime, getAvisosDebugInfo } from "./avisos";
 import { resetComandasRuntime, getComandasDebugInfo } from "./comandas";
 import { resetEmpleadosRuntime, getEmpleadosDebugInfo } from "./empleados";
 import { resetHorariosRuntime, getHorariosDebugInfo } from "./horarios";
+import { resetFichajesRuntime, getFichajesDebugInfo } from "./fichajes";
 import { notifyListeners } from "./shared";
 
 /**
@@ -190,6 +220,7 @@ export function resetRuntime(): void {
   resetComandasRuntime();
   resetEmpleadosRuntime();
   resetHorariosRuntime();
+  resetFichajesRuntime();
   notifyListeners();
 }
 
@@ -203,5 +234,6 @@ export function getDebugInfo() {
     ...getComandasDebugInfo(),
     ...getEmpleadosDebugInfo(),
     ...getHorariosDebugInfo(),
+    ...getFichajesDebugInfo(),
   };
 }
