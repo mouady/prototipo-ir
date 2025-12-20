@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Home, ClipboardList, Clock, Bell, LogOut, User, LayoutGrid, CalendarDays } from "lucide-react";
+import { X, Home, Clock, Bell, LogOut, User, LayoutGrid, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -134,7 +134,6 @@ export default function SideMenu({
 // IDs de vistas para Camarero
 export enum CamareroView {
   FICHAJES = "fichajes",
-  COMANDAS = "comandas",
   MESAS = "mesas",
   RESERVAS = "reservas",
 }
@@ -151,11 +150,6 @@ export const CAMARERO_MENU_OPTIONS: MenuOption[] = [
     label: "Fichajes",
     id: CamareroView.FICHAJES,
     icon: <Clock className="w-5 h-5" />,
-  },
-  {
-    label: "Comandas",
-    id: CamareroView.COMANDAS,
-    icon: <ClipboardList className="w-5 h-5" />,
   },
   {
     label: "Mesas",

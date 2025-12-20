@@ -5,7 +5,6 @@ import HeaderMobile from "@/components/views/mobile/shared/HeaderMobile";
 import SideMenu, { CAMARERO_MENU_OPTIONS, CamareroView } from "@/components/views/mobile/shared/SideMenu";
 import FichajesView from "@/components/views/mobile/shared/FichajesView";
 import ComandasView from "@/components/views/mobile/camarero/ComandasView";
-import MesasView from "@/components/views/mobile/camarero/MesasView";
 import ReservasView from "@/components/views/mobile/camarero/ReservasView";
 
 // Perfil del camarero (en producción vendría del estado de autenticación)
@@ -20,7 +19,6 @@ const CAMARERO_PROFILE = {
 // Mapa de vistas a títulos
 const VIEW_TITLES: Record<CamareroView, string> = {
   [CamareroView.FICHAJES]: "Registro de horario",
-  [CamareroView.COMANDAS]: "Comandas",
   [CamareroView.MESAS]: "Mesas",
   [CamareroView.RESERVAS]: "Reservas",
 };
@@ -34,10 +32,8 @@ export default function CamareroPage() {
     switch (activeView) {
       case CamareroView.FICHAJES:
         return <FichajesView empleadoId={CAMARERO_PROFILE.id} />;
-      case CamareroView.COMANDAS:
-        return <ComandasView />;
       case CamareroView.MESAS:
-        return <MesasView />;
+        return <ComandasView />;
       case CamareroView.RESERVAS:
         return <ReservasView />;
       default:

@@ -8,6 +8,8 @@
  * - comandas/    → Gestión de comandas
  * - empleados/   → Gestión de empleados
  * - horarios/    → Horarios generales y especiales
+ * - fichajes/    → Fichajes de empleados
+ * - mesas/       → Mesas, cuentas y reservas
  * 
  * Basado en el modelo conceptual (mc-ir.iuml)
  */
@@ -201,6 +203,70 @@ export {
 } from "./fichajes";
 
 // ============================================
+// RE-EXPORTS: MESAS (Mesas, Cuentas, Reservas)
+// ============================================
+export type {
+  Mesa,
+  Cuenta,
+  Propina,
+  Reserva,
+  MesaConEstado,
+  LineaComandaConPrecio,
+  ComandaConPrecios,
+  ResumenCuenta,
+  NuevaReserva,
+  NuevaCuenta,
+  NuevaPropina,
+  ProductoVendibleSimple,
+  LineaComandaMesa,
+  ComandaMesa,
+  TotalesCuenta,
+} from "./mesas";
+
+export {
+  Zona,
+  EstadoMesa,
+  SEED_MESAS,
+  SEED_CUENTAS,
+  SEED_PROPINAS,
+  SEED_RESERVAS,
+  SEED_COMANDAS_MESA,
+  PRODUCTOS_VENDIBLES,
+  getMesas,
+  getMesaById,
+  getMesasByZona,
+  getMesasConEstado,
+  getCuentas,
+  getCuentaActivaByMesa,
+  getCuentaById,
+  getComandasMesa,
+  getComandasByMesa,
+  getComandaMesaById,
+  getPropinaByIdCuenta,
+  getReservas,
+  getReservasByFecha,
+  getReservasActivasByFecha,
+  getReservaById,
+  getProductosVendibles,
+  buscarProductosVendibles,
+  crearCuenta,
+  cerrarCuenta,
+  agregarPropina,
+  crearComandaMesa,
+  marcarLineaServida,
+  crearReserva,
+  terminarReserva,
+  eliminarReserva,
+  calcularTotalesCuenta,
+  resetMesasRuntime,
+  getMesasDebugInfo,
+  useMesas,
+  useDetalleMesa,
+  useCrearComanda,
+  useReservas,
+} from "./mesas";
+
+// ============================================
 // FUNCIONES GLOBALES
 // ============================================
 import { resetInventarioRuntime, getInventarioDebugInfo } from "./inventario";
@@ -209,6 +275,7 @@ import { resetComandasRuntime, getComandasDebugInfo } from "./comandas";
 import { resetEmpleadosRuntime, getEmpleadosDebugInfo } from "./empleados";
 import { resetHorariosRuntime, getHorariosDebugInfo } from "./horarios";
 import { resetFichajesRuntime, getFichajesDebugInfo } from "./fichajes";
+import { resetMesasRuntime, getMesasDebugInfo } from "./mesas";
 import { notifyListeners } from "./shared";
 
 /**
@@ -221,6 +288,7 @@ export function resetRuntime(): void {
   resetEmpleadosRuntime();
   resetHorariosRuntime();
   resetFichajesRuntime();
+  resetMesasRuntime();
   notifyListeners();
 }
 
@@ -235,5 +303,6 @@ export function getDebugInfo() {
     ...getEmpleadosDebugInfo(),
     ...getHorariosDebugInfo(),
     ...getFichajesDebugInfo(),
+    ...getMesasDebugInfo(),
   };
 }

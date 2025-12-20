@@ -83,7 +83,7 @@ export default function AvisosView() {
       atendido: false,
       comentario: comentario.trim() || undefined,
       cocineroId: "cocinero-1", // En producción vendría del contexto de auth
-      cocineroNombre: "Cocinero",
+      cocineroNombre: "Antonio",
       lineas: productosSeleccionados.map((p) => ({
         productoId: p.id,
         productoNombre: p.nombre,
