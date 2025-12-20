@@ -17,7 +17,6 @@ import { notifyListeners } from "../shared/store-base";
 // ============================================
 // Importación dinámica para evitar dependencia circular
 let mesasStore: typeof import("../mesas/store") | null = null;
-let pendingMesasSync = false;
 
 async function getMesasStore() {
   if (!mesasStore) {
@@ -44,7 +43,6 @@ async function syncLineaToMesas(comandaId: string, lineaId: string, estado: Esta
 const modificacionesComandas: Map<string, Comanda> = new Map();
 const comandasFinalizadas: Set<string> = new Set();
 let runtimeComandas: Comanda[] = [];
-let nextComandaId = 100;
 
 // ============================================
 // GETTERS
