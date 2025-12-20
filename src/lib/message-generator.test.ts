@@ -14,7 +14,7 @@ import {
   MensajePedido,
   LineaPedido,
 } from "@/lib/message-generator";
-import { Proveedor, Producto, TipoProducto, UnidadMedida } from "@/mock/types";
+import { Proveedor, Producto, TipoProducto, UnidadMedida } from "@/mock";
 
 // Datos de prueba
 const proveedorTest: Proveedor = {

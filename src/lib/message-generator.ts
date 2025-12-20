@@ -4,7 +4,7 @@
  * Genera mensajes formateados para diferentes canales (WhatsApp, Email, contacto directo)
  */
 
-import { Proveedor, Producto } from "@/mock/types";
+import { Proveedor, Producto } from "@/mock";
 
 export interface LineaPedido {
   producto: Producto;

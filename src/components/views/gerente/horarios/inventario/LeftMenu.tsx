@@ -1,7 +1,11 @@
 "use client";
 
-import { categoriasProductos, menuProveedores } from "@/mock/inventario";
+import { SEED_CATEGORIAS, SEED_MENU_PROVEEDORES } from "@/mock";
 import { cn } from "@/lib/utils";
+
+// Alias para compatibilidad
+const categoriasProductos = SEED_CATEGORIAS;
+const menuProveedores = SEED_MENU_PROVEEDORES;
 
 interface SidebarProps {
   categoriaActiva: string;

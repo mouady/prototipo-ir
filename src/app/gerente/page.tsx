@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Header, SeccionActiva } from "@/components/Header";
-import { InventarioPage } from "@/components/inventario/InventarioPage";
-import { ComandasPage } from "@/components/comandas/ComandasPage";
-import { StatisticsPage } from "@/components/statistics";
-import { EmpleadosPage } from "@/components/empleados";
-import { HorariosPage } from "@/components/horarios";
+import { InventarioPage } from "@/components/views/gerente/horarios/inventario/InventarioPage";
+import { ComandasPage } from "@/components/views/gerente/comandas/ComandasPage";
+import { StatisticsPage } from "@/components/views/gerente/statistics";
+import { EmpleadosPage } from "@/components/views/gerente/empleados";
+import { HorariosPage } from "@/components/views/gerente/horarios";
 import SeccionConstruccion from "@/app/SeccionConstruccion";
 
 export default function GerentePage() {

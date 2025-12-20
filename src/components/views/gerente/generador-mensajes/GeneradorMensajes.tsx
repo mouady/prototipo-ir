@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Producto, Proveedor, TipoProducto } from "@/mock/types";
+import { Producto, Proveedor, TipoProducto } from "@/mock";
 import {
   generarMensaje,
   generarResumenPedido,

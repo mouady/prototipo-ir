@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { getPlatos, eliminarProducto, Producto, TipoProducto, useProductosByTipo } from "@/mock";
+import { getPlatos, eliminarProducto, Producto, TipoProducto, useProductosByTipo, SEED_PROVEEDORES, SEED_PRODUCTOS } from "@/mock";
 import { PlatoCard } from "./cards/PlatoCard";
 import { ElementCard } from "./cards/ElementCard";
 import { AgregarProductoModal } from "./modales/AddModal";
 import { DeleteModal } from "./modales/DeleteModal";
-import { AvisosPage } from "@/components/avisos";
-import { GeneradorMensajes } from "@/components/generador-mensajes";
-import { SEED_PROVEEDORES, SEED_PRODUCTOS } from "@/mock/seed";
+import { AvisosPage } from "@/components/views/gerente/avisos";
+import { GeneradorMensajes } from "@/components/views/gerente/generador-mensajes";
 import { Button } from "@/components/ui/button";
 import { Filter, Plus } from "lucide-react";
 

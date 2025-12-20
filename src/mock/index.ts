@@ -1,17 +1,33 @@
 /**
  * Punto de entrada principal para el módulo de mocks
  * 
- * Estructura:
- * - types.ts     → Definiciones de tipos y enums
- * - seed.ts      → Datos iniciales (inmutables, persisten al reiniciar)
- * - store.ts     → Store en memoria (datos runtime, se pierden al reiniciar)
- * - hooks.ts     → Hooks de React para reactividad
- * - index.ts     → Re-exports para facilitar imports
+ * Estructura modular:
+ * - shared/      → Tipos base, enums y utilidades compartidas
+ * - inventario/  → Productos, platos, proveedores
+ * - avisos/      → Avisos de reposición
+ * - comandas/    → Gestión de comandas
+ * - empleados/   → Gestión de empleados
+ * - horarios/    → Horarios generales y especiales
  * 
  * Basado en el modelo conceptual (mc-ir.iuml)
  */
 
-// Re-export tipos y enums
+// ============================================
+// RE-EXPORTS: SHARED
+// ============================================
+export type { User, Cocinero } from "./shared";
+export {
+  DiaSemana,
+  TipoContrato,
+  Genero,
+  RolEmpleado,
+  Estado,
+  subscribe,
+} from "./shared";
+
+// ============================================
+// RE-EXPORTS: INVENTARIO
+// ============================================
 export type {
   Producto,
   Plato,
@@ -22,64 +38,17 @@ export type {
   Lote,
   MenuProveedor,
   NuevoProducto,
-  // Avisos de reposición
-  Cocinero,
-  AvisoReposicion,
-  LineaAvisoReposicion,
-  NuevoAvisoReposicion,
-  // Comandas
-  Comanda,
-  LineaComanda,
-  // Empleados
-  User,
-  Empleado,
-  NuevoEmpleado,
-  ActualizarEmpleado,
-  // Horarios
-  Horario,
-  HorarioEspecial,
-  Turno,
-  AsignacionTurno,
-  Fichaje,
-  NuevoHorario,
-  NuevoHorarioEspecial,
-  NuevoTurno,
-} from "./types";
+} from "./inventario";
 
 export {
   TipoProducto,
   UnidadMedida,
   CategoriaCarta,
-  Estado,
-  FormatoPlato,
-  // Empleados
-  TipoContrato,
-  Genero,
-  RolEmpleado,
-  // Horarios
-  DiaSemana,
-} from "./types";
-
-// Re-export datos seed (solo lectura)
-export {
   SEED_CATEGORIAS,
   SEED_PRODUCTOS,
   SEED_PLATOS,
   SEED_PROVEEDORES,
   SEED_MENU_PROVEEDORES,
-  SEED_COCINEROS,
-  SEED_AVISOS_REPOSICION,
-  SEED_COMANDAS,
-  SEED_EMPLEADOS,
-  // Horarios
-  SEED_HORARIOS,
-  SEED_HORARIOS_ESPECIALES,
-  generarTurnosSemana,
-} from "./seed";
-
-// Re-export funciones del store
-export {
-  // Getters
   getProductos,
   getProductosByTipo,
   getIngredientes,
@@ -88,17 +57,75 @@ export {
   getCategorias,
   getPlatos,
   getMenuProveedores,
-  // Getters - Avisos
+  agregarProducto,
+  actualizarProducto,
+  eliminarProducto,
+  agregarProveedor,
+  useProductos,
+  useProductosByTipo,
+  useIngredientes,
+  useBebidas,
+  useRecursos,
+  useProveedores,
+} from "./inventario";
+
+// ============================================
+// RE-EXPORTS: AVISOS
+// ============================================
+export type {
+  AvisoReposicion,
+  LineaAvisoReposicion,
+  NuevoAvisoReposicion,
+} from "./avisos";
+
+export {
+  SEED_COCINEROS,
+  SEED_AVISOS_REPOSICION,
   getAvisosReposicion,
   getAvisosPendientes,
   getAvisosAtendidos,
   getAvisoById,
   getCocineros,
-  // Getters - Comandas
+  agregarAvisoReposicion,
+  marcarAvisoAtendido,
+  eliminarAvisoReposicion,
+  useAvisosReposicion,
+  useAvisosPendientes,
+  useAvisosAtendidos,
+  useCocineros,
+} from "./avisos";
+
+// ============================================
+// RE-EXPORTS: COMANDAS
+// ============================================
+export type {
+  Comanda,
+  LineaComanda,
+} from "./comandas";
+
+export {
+  FormatoPlato,
+  SEED_COMANDAS,
   getComandasPendientes,
   getComandasHechas,
   getComandaById,
-  // Getters - Empleados
+  marcarComandaComoLista,
+  restaurarComanda,
+  useComandasPendientes,
+  useComandasHechas,
+} from "./comandas";
+
+// ============================================
+// RE-EXPORTS: EMPLEADOS
+// ============================================
+export type {
+  Empleado,
+  NuevoEmpleado,
+  ActualizarEmpleado,
+} from "./empleados";
+
+export {
+  SEED_EMPLEADOS,
   getEmpleados,
   getEmpleadosByRol,
   getCamareros,
@@ -106,59 +133,75 @@ export {
   getEmpleadoById,
   getEmpleadosActivos,
   getEmpleadosInactivos,
-  // Getters - Horarios
+  agregarEmpleado,
+  actualizarEmpleado,
+  eliminarEmpleado,
+  toggleEmpleadoActivo,
+  useEmpleados,
+} from "./empleados";
+
+// ============================================
+// RE-EXPORTS: HORARIOS
+// ============================================
+export type {
+  Horario,
+  HorarioEspecial,
+  Turno,
+  AsignacionTurno,
+  Fichaje,
+  NuevoHorario,
+  NuevoHorarioEspecial,
+  NuevoTurno,
+} from "./horarios";
+
+export {
+  SEED_HORARIOS,
+  SEED_HORARIOS_ESPECIALES,
+  generarTurnosSemana,
   getHorarios,
   getHorarioByDia,
   getHorariosEspeciales,
   getHorarioEspecialByFecha,
   getTurnosSemana,
-  // Mutations
-  agregarProducto,
-  actualizarProducto,
-  eliminarProducto,
-  agregarProveedor,
-  // Mutations - Avisos
-  agregarAvisoReposicion,
-  marcarAvisoAtendido,
-  eliminarAvisoReposicion,
-  // Mutations - Comandas
-  marcarComandaComoLista,
-  restaurarComanda,
-  // Mutations - Empleados
-  agregarEmpleado,
-  actualizarEmpleado,
-  eliminarEmpleado,
-  toggleEmpleadoActivo,
-  // Mutations - Horarios
   actualizarHorario,
   guardarHorarioEspecial,
   eliminarHorarioEspecial,
-  // Utils
-  subscribe,
-  resetRuntime,
-  getDebugInfo,
-} from "./store";
-
-// Re-export hooks
-export { 
-  useProductos, 
-  useProductosByTipo, 
-  useIngredientes, 
-  useBebidas, 
-  useRecursos, 
-  useProveedores,
-  // Hooks - Avisos
-  useAvisosReposicion,
-  useAvisosPendientes,
-  useAvisosAtendidos,
-  useCocineros,
-  // Hooks - Comandas
-  useComandasPendientes,
-  useComandasHechas,
-  // Hooks - Empleados
-  useEmpleados,
-  // Hooks - Horarios
   useHorarios,
   useHorariosEspeciales,
   useTurnosSemana,
-} from "./hooks";
+} from "./horarios";
+
+// ============================================
+// FUNCIONES GLOBALES
+// ============================================
+import { resetInventarioRuntime, getInventarioDebugInfo } from "./inventario";
+import { resetAvisosRuntime, getAvisosDebugInfo } from "./avisos";
+import { resetComandasRuntime, getComandasDebugInfo } from "./comandas";
+import { resetEmpleadosRuntime, getEmpleadosDebugInfo } from "./empleados";
+import { resetHorariosRuntime, getHorariosDebugInfo } from "./horarios";
+import { notifyListeners } from "./shared";
+
+/**
+ * Resetea todos los datos runtime de todos los módulos
+ */
+export function resetRuntime(): void {
+  resetInventarioRuntime();
+  resetAvisosRuntime();
+  resetComandasRuntime();
+  resetEmpleadosRuntime();
+  resetHorariosRuntime();
+  notifyListeners();
+}
+
+/**
+ * Obtiene información de debug de todos los módulos
+ */
+export function getDebugInfo() {
+  return {
+    ...getInventarioDebugInfo(),
+    ...getAvisosDebugInfo(),
+    ...getComandasDebugInfo(),
+    ...getEmpleadosDebugInfo(),
+    ...getHorariosDebugInfo(),
+  };
+}

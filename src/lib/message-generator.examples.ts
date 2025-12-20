@@ -12,7 +12,7 @@ import {
   MensajePedido,
   LineaPedido,
 } from "@/lib/message-generator";
-import { Producto, Proveedor, TipoProducto, UnidadMedida } from "@/mock/types";
+import { Producto, Proveedor, TipoProducto, UnidadMedida } from "@/mock";
 
 /**
  * Ejemplo 1: Generar un pedido simple para WhatsApp
