@@ -33,9 +33,9 @@ export const productos: Producto[] = [
   },
   {
     id: "2",
-    nombre: "Secreto al whisky",
+    nombre: "Solomillo al whisky",
     categoria: "platos",
-    imagen: "/productos/secreto-whisky.jpg",
+    imagen: "/productos/solomillo-whisky.jpg",
     descripcion: "Carnes",
   },
   {

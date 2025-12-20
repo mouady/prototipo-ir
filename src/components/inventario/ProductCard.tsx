@@ -10,25 +10,24 @@ interface ProductCardProps {
 
 export function ProductCard({ plato }: ProductCardProps) {
   return (
-    <Card className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
-      <div className="relative aspect-[4/3] w-full bg-gray-100">
+    <Card className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow h-full flex flex-col">
+      <div className="relative w-full bg-gray-100 flex-shrink-0" style={{ aspectRatio: '1' }}>
         <Image
           src={plato.imagen}
           alt={plato.nombre}
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          onError={(e) => {
-            // Fallback si la imagen no existe
-            e.currentTarget.src = "/productos/placeholder.jpg";
-          }}
+          priority
         />
       </div>
-      <CardContent className="p-3">
-        <h4 className="font-medium text-sm text-gray-900">{plato.nombre}</h4>
-        {plato.descripcion && (
-          <p className="text-xs text-gray-500 mt-0.5">{plato.descripcion}</p>
-        )}
+      <CardContent className="p-2 flex-1 flex flex-col justify-between">
+        <div>
+          <h4 className="font-medium text-xs text-gray-900 line-clamp-1">{plato.nombre}</h4>
+          {plato.descripcion && (
+            <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{plato.descripcion}</p>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
