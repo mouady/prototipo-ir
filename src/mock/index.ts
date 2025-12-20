@@ -22,6 +22,11 @@ export type {
   Lote,
   MenuProveedor,
   NuevoProducto,
+  // Avisos de reposición
+  Cocinero,
+  AvisoReposicion,
+  LineaAvisoReposicion,
+  NuevoAvisoReposicion,
 } from "./types";
 
 export {
@@ -37,6 +42,8 @@ export {
   SEED_PLATOS,
   SEED_PROVEEDORES,
   SEED_MENU_PROVEEDORES,
+  SEED_COCINEROS,
+  SEED_AVISOS_REPOSICION,
 } from "./seed";
 
 // Re-export funciones del store
@@ -50,11 +57,21 @@ export {
   getCategorias,
   getPlatos,
   getMenuProveedores,
+  // Getters - Avisos
+  getAvisosReposicion,
+  getAvisosPendientes,
+  getAvisosAtendidos,
+  getAvisoById,
+  getCocineros,
   // Mutations
   agregarProducto,
   actualizarProducto,
   eliminarProducto,
   agregarProveedor,
+  // Mutations - Avisos
+  agregarAvisoReposicion,
+  marcarAvisoAtendido,
+  eliminarAvisoReposicion,
   // Utils
   subscribe,
   resetRuntime,
@@ -62,4 +79,16 @@ export {
 } from "./store";
 
 // Re-export hooks
-export { useProductos, useProductosByTipo, useIngredientes, useBebidas, useRecursos, useProveedores } from "./hooks";
+export { 
+  useProductos, 
+  useProductosByTipo, 
+  useIngredientes, 
+  useBebidas, 
+  useRecursos, 
+  useProveedores,
+  // Hooks - Avisos
+  useAvisosReposicion,
+  useAvisosPendientes,
+  useAvisosAtendidos,
+  useCocineros,
+} from "./hooks";

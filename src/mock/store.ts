@@ -16,6 +16,9 @@ import {
   Proveedor,
   NuevoProducto,
   TipoProducto,
+  AvisoReposicion,
+  NuevoAvisoReposicion,
+  Cocinero,
 } from "./types";
 import {
   SEED_CATEGORIAS,
@@ -23,6 +26,8 @@ import {
   SEED_PLATOS,
   SEED_PROVEEDORES,
   SEED_MENU_PROVEEDORES,
+  SEED_AVISOS_REPOSICION,
+  SEED_COCINEROS,
 } from "./seed";
 
 // ============================================
@@ -31,10 +36,15 @@ import {
 // ============================================
 let runtimeProductos: Producto[] = [];
 let runtimeProveedores: Proveedor[] = [];
+let runtimeAvisos: AvisoReposicion[] = [];
 let modificacionesProductos: Map<string, Producto> = new Map(); // Para rastrear cambios a seed
+let modificacionesAvisos: Map<string, AvisoReposicion> = new Map(); // Para rastrear cambios a seed avisos
 let productosEliminados: Set<string> = new Set(); // Para rastrear seed eliminados
+let avisosEliminados: Set<string> = new Set(); // Para rastrear avisos seed eliminados
 let nextProductoId = 1;
 let nextProveedorId = 1;
+let nextAvisoId = 1;
+let nextLineaAvisoId = 1;
 
 // ============================================
 // LISTENERS (para reactividad)
@@ -116,6 +126,41 @@ export function getPlatos(): Plato[] {
 
 export function getMenuProveedores() {
   return SEED_MENU_PROVEEDORES;
+}
+
+// ============================================
+// GETTERS - Avisos de Reposición
+// ============================================
+
+/** Obtiene todos los avisos de reposición */
+export function getAvisosReposicion(): AvisoReposicion[] {
+  const seedAvisos = SEED_AVISOS_REPOSICION.filter((a) => !avisosEliminados.has(a.id))
+    .map((a) =>
+      modificacionesAvisos.has(a.id)
+        ? modificacionesAvisos.get(a.id)!
+        : a
+    );
+  return [...seedAvisos, ...runtimeAvisos];
+}
+
+/** Obtiene avisos pendientes (no atendidos) */
+export function getAvisosPendientes(): AvisoReposicion[] {
+  return getAvisosReposicion().filter((a) => !a.atendido);
+}
+
+/** Obtiene avisos atendidos */
+export function getAvisosAtendidos(): AvisoReposicion[] {
+  return getAvisosReposicion().filter((a) => a.atendido);
+}
+
+/** Obtiene un aviso por ID */
+export function getAvisoById(id: string): AvisoReposicion | undefined {
+  return getAvisosReposicion().find((a) => a.id === id);
+}
+
+/** Obtiene los cocineros */
+export function getCocineros(): Cocinero[] {
+  return SEED_COCINEROS;
 }
 
 // ============================================
@@ -203,16 +248,87 @@ export function agregarProveedor(
 }
 
 // ============================================
+// MUTATIONS - Avisos de Reposición
+// ============================================
+
+/** Crea un nuevo aviso de reposición */
+export function agregarAvisoReposicion(nuevo: NuevoAvisoReposicion): AvisoReposicion {
+  const aviso: AvisoReposicion = {
+    ...nuevo,
+    id: `runtime-aviso-${nextAvisoId++}`,
+    lineas: nuevo.lineas.map((linea) => ({
+      ...linea,
+      id: `runtime-linea-${nextLineaAvisoId++}`,
+    })),
+  };
+  runtimeAvisos.push(aviso);
+  notifyListeners();
+  return aviso;
+}
+
+/** Marca un aviso como atendido */
+export function marcarAvisoAtendido(id: string): AvisoReposicion | null {
+  // Buscar en runtime primero
+  const runtimeIndex = runtimeAvisos.findIndex((a) => a.id === id);
+  if (runtimeIndex !== -1) {
+    runtimeAvisos[runtimeIndex] = {
+      ...runtimeAvisos[runtimeIndex],
+      atendido: true,
+    };
+    notifyListeners();
+    return runtimeAvisos[runtimeIndex];
+  }
+
+  // Si es un aviso seed, guardar los cambios en el mapa
+  const seedAviso = SEED_AVISOS_REPOSICION.find((a) => a.id === id);
+  if (seedAviso) {
+    const modificado = modificacionesAvisos.get(id) || seedAviso;
+    const actualizado: AvisoReposicion = { ...modificado, atendido: true };
+    modificacionesAvisos.set(id, actualizado);
+    notifyListeners();
+    return actualizado;
+  }
+
+  return null;
+}
+
+/** Elimina un aviso de reposición */
+export function eliminarAvisoReposicion(id: string): boolean {
+  // Se pueden eliminar avisos runtime
+  if (id.startsWith("runtime-aviso-")) {
+    const index = runtimeAvisos.findIndex((a) => a.id === id);
+    if (index !== -1) {
+      runtimeAvisos.splice(index, 1);
+      notifyListeners();
+      return true;
+    }
+  }
+  // También se pueden eliminar seed marcándolos como eliminados
+  else if (SEED_AVISOS_REPOSICION.find((a) => a.id === id)) {
+    avisosEliminados.add(id);
+    notifyListeners();
+    return true;
+  }
+
+  return false;
+}
+
+// ============================================
 // RESET - Limpia solo datos runtime
 // ============================================
 
 export function resetRuntime(): void {
   runtimeProductos = [];
   runtimeProveedores = [];
+  runtimeAvisos = [];
   modificacionesProductos.clear();
+  modificacionesAvisos.clear();
   productosEliminados.clear();
+  avisosEliminados.clear();
   nextProductoId = 1;
   nextProveedorId = 1;
+  nextAvisoId = 1;
+  nextLineaAvisoId = 1;
   notifyListeners();
 }
 
@@ -228,5 +344,9 @@ export function getDebugInfo() {
     seedProveedores: SEED_PROVEEDORES.length,
     runtimeProveedores: runtimeProveedores.length,
     totalProveedores: getProveedores().length,
+    seedAvisos: SEED_AVISOS_REPOSICION.length,
+    runtimeAvisos: runtimeAvisos.length,
+    totalAvisos: getAvisosReposicion().length,
+    avisosPendientes: getAvisosPendientes().length,
   };
 }

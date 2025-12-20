@@ -6,6 +6,7 @@ import { ProductCard } from "./ProductCard";
 import { IngredienteCard } from "./IngredienteCard";
 import { AgregarProductoModal } from "./AgregarIngredienteModal";
 import { ConfirmarEliminacionModal } from "./ConfirmarEliminacionModal";
+import { AvisosPage } from "@/components/avisos";
 import { Button } from "@/components/ui/button";
 import { Filter, Plus } from "lucide-react";
 
@@ -142,6 +143,11 @@ export function ProductGrid({ categoriaActiva }: ProductGridProps) {
         )}
       </div>
     );
+  }
+
+  // Para la categoría de avisos
+  if (categoriaActiva === "avisos") {
+    return <AvisosPage />;
   }
 
   // Categoría vacía o no implementada

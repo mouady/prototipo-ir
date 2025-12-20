@@ -142,6 +142,54 @@ export interface MenuProveedor {
 }
 
 // ============================================
+// INTERFACES: USUARIOS (simplificado para mocks)
+// ============================================
+
+/**
+ * Cocinero según el modelo: hereda de Empleado
+ * Simplificado para el prototipo
+ */
+export interface Cocinero {
+  id: string;
+  nombre: string;
+  apellidos: string;
+  imagenPerfil?: string;
+}
+
+// ============================================
+// INTERFACES: AVISOS DE REPOSICIÓN
+// ============================================
+
+/**
+ * Línea de un aviso de reposición
+ * Según el modelo: corresponde a un Producto
+ */
+export interface LineaAvisoReposicion {
+  id: string;
+  productoId: string;
+  productoNombre: string; // Desnormalizado para facilitar UI
+}
+
+/**
+ * Aviso de reposición generado por un cocinero
+ * Según el modelo: fechaSolicitud, atendido, comentario
+ */
+export interface AvisoReposicion {
+  id: string;
+  fechaSolicitud: Date;
+  atendido: boolean;
+  comentario?: string;
+  cocineroId: string;
+  cocineroNombre: string; // Desnormalizado para facilitar UI
+  lineas: LineaAvisoReposicion[];
+}
+
+// Tipo para crear un aviso (sin id, se genera automáticamente)
+export type NuevoAvisoReposicion = Omit<AvisoReposicion, "id" | "lineas"> & {
+  lineas: Omit<LineaAvisoReposicion, "id">[];
+};
+
+// ============================================
 // TIPOS AUXILIARES
 // ============================================
 
