@@ -1,0 +1,356 @@
+@startuml mc-ir
+' ********************************************
+' ENUMERACIONES
+' ********************************************
+
+enum TipoContrato {
+  INDEFINIDO
+  TEMPORAL
+}
+
+enum Género {
+  MASCULINO
+  FEMENINO
+  OTRO
+}
+
+enum TipoProducto {
+  INGREDIENTE
+  BEBIDA
+  RECURSO
+}
+
+enum UnidadMedida {
+  KG
+  UNIDADES 
+}
+
+enum Zona {
+  INTERIOR
+  TERRAZA
+}
+
+enum DiaSemana {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
+}
+
+enum Estado {
+  EN_PREPARACION
+  REALIZADO
+  SERVIDO
+  FINALIZADO
+}
+
+enum CategoriaCarta {
+  ENSALADAS
+  EN_FRIO
+  CALENTITO
+  PESCADO_FRITO
+  SUGERENCIAS
+  REFRESCOS
+  AGUA
+  CERVEZAS
+  VINOS
+  INFUSIONES_Y_CAFE
+  OTROS
+}
+
+enum FormatoPlato {
+  ESTANDAR
+  TAPA
+  MEDIA
+  RACION
+}
+
+' ********************************************
+' CLASES: RESTAURANTE
+' ********************************************
+
+class Restaurante {
+  - nombre
+  - direccion
+  - cif
+  - tlf
+  - email
+}
+
+class Horario {
+  - diaSemana : DiaSemana
+  - horaApertura
+  - horaCierre
+}
+
+class HorarioEspecial {
+  - diaEspecial
+  - horaApertura
+  - horaCierre
+}
+
+' ********************************************
+' CLASES: USUARIOS
+' ********************************************
+
+class User {
+  - nombre
+  - apellidos
+  - imagenPerfil
+  - email
+  - username
+  - password
+}
+
+class Gerente {}
+
+class Empleado {
+  - tipoContrato: TipoContrato
+  - finContrato
+  - fechaNacimiento
+  - dni
+  - activo
+  - genero: Género
+}
+
+class Camarero {}
+
+class Cocinero {}
+
+class Fichaje {
+  - entrada
+  - salida
+}
+
+' ********************************************
+' CLASES: MESAS Y RESERVAS
+' ********************************************
+
+class Mesa {
+  - numMesa
+  - capacidad
+  - zona: Zona
+}
+
+class Reserva {
+  - fechaHora
+  - anfitrion
+}
+
+' ********************************************
+' CLASES: CUENTAS Y COMANDAS
+' ********************************************
+
+class Cuenta {
+  - fecha
+  - cobrada
+  - cerrada
+}
+
+class Comanda {}
+
+class LineaComanda {
+  - estado: Estado
+  - cantidad
+}
+
+class Propina {
+  - abono
+}
+
+' ********************************************
+' CLASES: PLATO, BEBIDA, RECURSO Y STOCK
+' ********************************************
+
+class Producto {
+  - nombre
+  - umbral [0..1]
+  - litros [0..1]
+  - unidadMedida: UnidadMedida
+  - TipoProducto : TipoProducto
+}
+
+abstract ProductoVendible {
+  - nombre
+  - imagen
+  - categoriaCarta : CategoriaCarta
+}
+
+class AvisoReposicion {
+  - fechaSolicitud
+  - atendido
+  - comentario
+}
+
+class LineaAvisoReposicion {
+}
+
+class Lote {
+  - caducidad [0..1]
+  - precio
+  - cantidad
+}
+
+class FormatoP {
+  - formatoPlato : FormatoPlato
+  - precio
+  - tiempoPreparacion
+}
+
+class Plato {
+}
+
+class IngredienteReceta {
+  - cantidad
+  - unidadMedida : UnidadMedida
+}
+
+class Bebida {
+  - precio
+  - litros
+
+}
+
+class Proveedor {
+  - nombre
+  - cif
+  - tlf
+  - email
+}
+
+
+
+' ********************************************
+' RELACIONES: HERENCIA
+' ********************************************
+
+User <|-- Gerente
+User <|-- Empleado
+note on link
+{completa, disjunta}
+end note
+
+Empleado <|-- Camarero
+note on link
+{completa, disjunta}
+end note
+Empleado <|-- Cocinero
+
+
+ProductoVendible <|-- Plato
+note on link
+{completa, disjunta}
+end note
+ProductoVendible <|-- Bebida
+
+
+' ********************************************
+' RELACIONES: ASOCIACIONES
+' ********************************************
+
+Restaurante "1" -- "1" Gerente : "gestiona"
+Restaurante "0..1" -- "0..*" Horario : "tiene"
+Restaurante "0..1" -- "0..*" HorarioEspecial : "tiene"
+
+Horario "0..*" -- "0..*" Empleado : "tiene"
+HorarioEspecial "0..*" -- "0..*" Empleado : "tiene"
+
+Camarero "1" -- "0..*" Cuenta: cobra
+Empleado "1" -- "0..*" Fichaje : "tiene"
+
+Cuenta  *-- "1..*" Comanda: contiene
+Cuenta "1" -- "0..1" Propina : asocia
+Comanda "0..*" -- "1" Mesa
+Comanda *-- "1..*" LineaComanda
+LineaComanda *-- "1" ProductoVendible : "corresponde_a"
+
+Mesa "1" -- "0..*" Reserva : asigna
+FormatoP *-- "1..*" IngredienteReceta 
+IngredienteReceta "1" -- "1" Producto : "utiliza"
+
+Bebida "1" -- "1" Producto : "utiliza"
+Proveedor "1" -- "0..*" Producto : vende >
+Producto *-- "0..*" Lote : "corresponde_a >"
+
+Plato "1" -- "1..*" FormatoP
+Cocinero "1" -- "0..*" AvisoReposicion : "avisa"
+AvisoReposicion  *-- "1..*" LineaAvisoReposicion : "tiene"
+LineaAvisoReposicion "1" -- "1" Producto : "corresponde_a >"
+
+' ********************************************
+' REGLAS DE NEGOCIO (RN)
+' ********************************************
+
+note left of Restaurante
+RN-01: El restaurante debe tener un CIF, teléfono y email válidos.
+RN-02: Para poder interactuar con el sistema, el restaurante debe estar abierto.
+end note
+
+note left of Producto
+RN-03: Solo se pueden especificar litos si el TipoProducto es BEBIDA.
+end note
+
+note top of User
+RN-04: username debe ser único en todo el sistema.
+end note
+
+note left of Empleado
+RN-05: Un empleado debe tener al menos 16 años.
+RN-06: finContrato debe ser null si y solo si tipoContrato es INDEFINIDO.
+RN-07: El dni debe ser único en todo el sistema.
+RN-08: El dni sigue el formato válido (8 números y una letra).
+end note
+
+note right of Camarero
+RN-09: Un camarero solo tiene acceso a
+la vista de móvil para fichar y gestionar comandas.
+end note
+
+note right of Cocinero
+RN-10: Un cocinero en escritorio solo tiene acceso al dashboard de comandas
+y en móvil lo tiene para fichar.
+end note
+
+note right of Gerente
+RN-11: Un gerente tiene acceso a la vista de gerente en escritorio
+(inventario, gestión de horarios...) y al dashboard de comandas.
+end note
+
+note right of Reserva
+RN-12: Una Mesa no puede tener más de una Reserva activa al mismo tiempo.
+RN-14: fechaHora no puede estar en el pasado en el momento de
+hacer la reserva.
+end note
+
+note right of Cuenta
+RN-13: fecha no puede estar en el futuro.
+end note
+
+note left of Comanda
+RN-15: El estado de la Comanda depende
+del estado de sus LineasComanda.
+end note
+
+note left of LineaComanda
+RN-16: cantidad debe ser mayor que 0.
+RN-17: El estado nunca toma el valor de
+REALIZADO si el producto es una bebida.
+end note
+
+note right of Lote
+RN-18: Si el lote ha caducado no puede usarse para venderse.
+end note
+
+note left of Bebida
+RN-19: litros >= 0.
+end note
+
+note right of Proveedor
+RN-20: tlf, cif y email deben
+respetar formatos válidos.
+end note
+
+@enduml
