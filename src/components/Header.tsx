@@ -1,58 +1,57 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 const navItems = [
-  { label: "Horarios", href: "#" },
-  { label: "Comandas", href: "#" },
-  { label: "Empleados", href: "#" },
-  { label: "Inventario", href: "#" },
-  { label: "Estadísticas", href: "#" },
+  { label: "Horarios", href: "#", active: false },
+  { label: "Comandas", href: "#", active: false },
+  { label: "Empleados", href: "#", active: false },
+  { label: "Inventario", href: "#", active: true },
+  { label: "Estadísticas", href: "#", active: false },
 ];
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between px-4 mx-auto">
+    <header className="sticky top-0 z-50 w-full border-b bg-white">
+      <div className="flex h-14 items-center justify-between px-4">
         {/* Logo */}
-        <div className="flex items-center gap-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src="/logo.svg" alt="Logo" />
-            <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800">
-              <svg
-                className="h-5 w-5 text-zinc-600 dark:text-zinc-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        <div className="flex items-center gap-6">
+          <div className="flex items-center justify-center w-10 h-10">
+            <svg
+              viewBox="0 0 40 40"
+              className="w-10 h-10 text-gray-800"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="20" cy="20" r="16" />
+              <path d="M12 20 C12 14, 20 10, 28 16" />
+              <circle cx="28" cy="16" r="3" fill="currentColor" />
+            </svg>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex items-center gap-1">
+            {navItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className={cn(
+                  "px-3 py-2 text-sm font-medium transition-colors rounded-md",
+                  item.active
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                )}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-            </AvatarFallback>
-          </Avatar>
+                {item.label}
+              </a>
+            ))}
+          </nav>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex items-center gap-1">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className="px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-
         {/* User Button */}
-        <Button variant="outline" size="sm" className="gap-2">
-          <span className="h-2 w-2 rounded-full bg-green-500" />
+        <Button variant="outline" size="sm" className="gap-2 rounded-full">
           Gerente 1
         </Button>
       </div>
