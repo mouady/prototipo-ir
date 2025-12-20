@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -23,8 +25,19 @@ export function Header({ seccionActiva, onSeccionChange }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="flex h-14 items-center justify-between px-4">
-        {/* Logo */}
+        {/* Logo y Botón Atrás */}
         <div className="flex items-center gap-3">
+          <Link href="/">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2 rounded-md hover:bg-gray-100 transition-colors"
+              title="Volver a la página principal"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+          </Link>
+          
           <Image
               src="/logosuitepro.png"
               alt="Suite Pro Logo"
