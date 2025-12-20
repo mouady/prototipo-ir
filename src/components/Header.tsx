@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -16,20 +17,14 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="flex h-14 items-center justify-between px-4">
         {/* Logo */}
-        <div className="flex items-center gap-6">
-          <div className="flex items-center justify-center w-10 h-10">
-            <svg
-              viewBox="0 0 40 40"
-              className="w-10 h-10 text-gray-800"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <circle cx="20" cy="20" r="16" />
-              <path d="M12 20 C12 14, 20 10, 28 16" />
-              <circle cx="28" cy="16" r="3" fill="currentColor" />
-            </svg>
-          </div>
+        <div className="flex items-center gap-3">
+          <Image
+              src="/logosuitepro.png"
+              alt="Suite Pro Logo"
+              width={55}
+              height={55}
+              priority
+            />
 
           {/* Navigation */}
           <nav className="flex items-center gap-1">

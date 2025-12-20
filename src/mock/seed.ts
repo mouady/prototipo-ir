@@ -3,20 +3,25 @@
  * Estos son los datos iniciales con los que se carga la aplicación.
  * Son inmutables y sirven como base.
  * Al reiniciar la app, solo estos datos persistirán.
+ * 
+ * Basado en el modelo conceptual (mc-ir.iuml)
  */
 
 import {
   Producto,
-  CategoriaProducto,
-  Ingrediente,
+  Plato,
   Proveedor,
+  CategoriaInventario,
   MenuProveedor,
+  TipoProducto,
+  UnidadMedida,
+  CategoriaCarta,
 } from "./types";
 
 // ============================================
-// CATEGORÍAS
+// CATEGORÍAS DE NAVEGACIÓN (UI)
 // ============================================
-export const SEED_CATEGORIAS: CategoriaProducto[] = [
+export const SEED_CATEGORIAS: CategoriaInventario[] = [
   { id: "platos", nombre: "Platos", icono: "🍽️" },
   {
     id: "ingredientes",
@@ -40,171 +45,196 @@ export const SEED_CATEGORIAS: CategoriaProducto[] = [
 ];
 
 // ============================================
-// PRODUCTOS (PLATOS)
+// PLATOS (ProductoVendible)
 // ============================================
-export const SEED_PRODUCTOS: Producto[] = [
+export const SEED_PLATOS: Plato[] = [
   {
-    id: "1",
+    id: "plato-1",
     nombre: "Papas bravas",
-    categoria: "platos",
+    tipo: "plato",
     imagen: "/productos/papas-bravas.jpg",
+    categoriaCarta: CategoriaCarta.CALENTITO,
     descripcion: "Entrantes",
   },
   {
-    id: "2",
+    id: "plato-2",
     nombre: "Secreto al whisky",
-    categoria: "platos",
+    tipo: "plato",
     imagen: "/productos/secreto-whisky.jpg",
+    categoriaCarta: CategoriaCarta.CALENTITO,
     descripcion: "Carnes",
   },
   {
-    id: "3",
+    id: "plato-3",
     nombre: "Chocos Fritos",
-    categoria: "platos",
+    tipo: "plato",
     imagen: "/productos/chocos-fritos.jpg",
+    categoriaCarta: CategoriaCarta.PESCADO_FRITO,
     descripcion: "Pescados, Fritos",
   },
   {
-    id: "4",
+    id: "plato-4",
     nombre: "Alcachofas en salsa",
-    categoria: "platos",
+    tipo: "plato",
     imagen: "/productos/alcachofas-salsa.jpg",
+    categoriaCarta: CategoriaCarta.CALENTITO,
     descripcion: "Verduras",
   },
   {
-    id: "5",
+    id: "plato-5",
     nombre: "Con Jamón",
-    categoria: "platos",
+    tipo: "plato",
     imagen: "/productos/con-jamon.jpg",
+    categoriaCarta: CategoriaCarta.EN_FRIO,
     descripcion: "Entrantes",
   },
   {
-    id: "6",
+    id: "plato-6",
     nombre: "Ensalada mixta",
-    categoria: "platos",
+    tipo: "plato",
     imagen: "/productos/ensalada-mixta.jpg",
+    categoriaCarta: CategoriaCarta.ENSALADAS,
     descripcion: "Ensaladas",
   },
 ];
 
 // ============================================
-// INGREDIENTES
+// PRODUCTOS DEL INVENTARIO (Ingredientes, Bebidas, Recursos)
 // ============================================
-export const SEED_INGREDIENTES: Ingrediente[] = [
+export const SEED_PRODUCTOS: Producto[] = [
+  // INGREDIENTES
   {
-    id: "seed-1",
+    id: "prod-1",
     nombre: "Pimiento Rojo",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.KG,
+    stock: 12,
+    umbral: 5,
     proveedor: "Pimientos Juanito",
-    cantidad: 4,
-    stockActual: 12,
-    stockTotal: 2,
-    unidad: "kg",
   },
   {
-    id: "seed-2",
+    id: "prod-2",
     nombre: "Lentejas",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.KG,
+    stock: 5,
+    umbral: 3,
     proveedor: "CashSupremo",
-    cantidad: 3,
-    stockActual: 5,
-    stockTotal: 3,
-    unidad: "kg",
   },
   {
-    id: "seed-3",
+    id: "prod-3",
     nombre: "Carne Picada",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.KG,
+    stock: 21,
+    umbral: 10,
     proveedor: "CashSupremo",
-    cantidad: 6,
-    stockActual: 21,
-    stockTotal: 33,
-    unidad: "kg",
     destacado: true,
   },
   {
-    id: "seed-4",
+    id: "prod-4",
     nombre: "Lechuga",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.KG,
+    stock: 17,
+    umbral: 5,
     proveedor: "CashSupremo",
-    cantidad: 1,
-    stockActual: 17,
-    stockTotal: 2,
-    unidad: "kg",
   },
   {
-    id: "seed-5",
+    id: "prod-5",
     nombre: "Salmón",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.KG,
+    stock: 3,
+    umbral: 5,
     proveedor: "CashSupremo",
-    cantidad: 4,
-    stockActual: 3,
-    stockTotal: 0,
-    unidad: "kg",
   },
   {
-    id: "seed-6",
+    id: "prod-6",
     nombre: "Espárragos",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.KG,
+    stock: 7,
+    umbral: 4,
     proveedor: "CashSupremo",
-    cantidad: 8,
-    stockActual: 7,
-    stockTotal: 5,
-    unidad: "kg",
   },
   {
-    id: "seed-7",
+    id: "prod-7",
     nombre: "Gambas",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.KG,
+    stock: 20,
+    umbral: 8,
     proveedor: "CashSupremo",
-    cantidad: 6,
-    stockActual: 20,
-    stockTotal: 20,
-    unidad: "kg",
   },
   {
-    id: "seed-8",
+    id: "prod-8",
     nombre: "Huevos",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.UNIDADES,
+    stock: 36,
+    umbral: 12,
     proveedor: "CashSupremo",
-    cantidad: 11,
-    stockActual: 36,
-    stockTotal: 34,
-    unidad: "uds",
   },
   {
-    id: "seed-9",
+    id: "prod-9",
     nombre: "Pechuga Pollo",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.KG,
+    stock: 75,
+    umbral: 10,
     proveedor: "CashSupremo",
-    cantidad: 2,
-    stockActual: 75,
-    stockTotal: 60,
-    unidad: "kg",
   },
   {
-    id: "seed-10",
+    id: "prod-10",
     nombre: "Plátano",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.KG,
+    stock: 4,
+    umbral: 5,
     proveedor: "CashSupremo",
-    cantidad: 0,
-    stockActual: 4,
-    stockTotal: 3,
-    unidad: "kg",
   },
   {
-    id: "seed-11",
+    id: "prod-11",
     nombre: "Harina",
+    tipoProducto: TipoProducto.INGREDIENTE,
+    unidadMedida: UnidadMedida.KG,
+    stock: 13,
+    umbral: 5,
     proveedor: "CashSupremo",
-    cantidad: 3,
-    stockActual: 13,
-    stockTotal: 14,
-    unidad: "kg",
     destacado: true,
   },
 ];
 
 // ============================================
-// PROVEEDORES
+// PROVEEDORES (según modelo: nombre, cif, tlf, email)
 // ============================================
 export const SEED_PROVEEDORES: Proveedor[] = [
-  { id: "cashsupremo", nombre: "CashSupremo" },
-  { id: "pimientos-juanito", nombre: "Pimientos Juanito" },
-  { id: "mercado-central", nombre: "Mercado Central" },
+  {
+    id: "prov-1",
+    nombre: "CashSupremo",
+    cif: "B12345678",
+    tlf: "954123456",
+    email: "pedidos@cashsupremo.es",
+  },
+  {
+    id: "prov-2",
+    nombre: "Pimientos Juanito",
+    cif: "B87654321",
+    tlf: "954654321",
+    email: "juanito@pimientos.es",
+  },
+  {
+    id: "prov-3",
+    nombre: "Mercado Central",
+    cif: "B11223344",
+    tlf: "954112233",
+    email: "contacto@mercadocentral.es",
+  },
 ];
 
 // ============================================
-// MENÚ PROVEEDORES
+// MENÚ PROVEEDORES (UI)
 // ============================================
 export const SEED_MENU_PROVEEDORES: MenuProveedor[] = [
   { id: "listado", nombre: "Listado" },

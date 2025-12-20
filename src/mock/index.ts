@@ -2,30 +2,39 @@
  * Punto de entrada principal para el módulo de mocks
  * 
  * Estructura:
- * - types.ts     → Definiciones de tipos
+ * - types.ts     → Definiciones de tipos y enums
  * - seed.ts      → Datos iniciales (inmutables, persisten al reiniciar)
  * - store.ts     → Store en memoria (datos runtime, se pierden al reiniciar)
+ * - hooks.ts     → Hooks de React para reactividad
  * - index.ts     → Re-exports para facilitar imports
  * 
- * Uso:
- * import { getIngredientes, agregarIngrediente } from "@/mock";
+ * Basado en el modelo conceptual (mc-ir.iuml)
  */
 
-// Re-export tipos
+// Re-export tipos y enums
 export type {
   Producto,
-  CategoriaProducto,
-  Ingrediente,
+  Plato,
+  BebidaVendible,
+  ProductoVendible,
+  CategoriaInventario,
   Proveedor,
+  Lote,
   MenuProveedor,
-  NuevoIngrediente,
+  NuevoProducto,
+} from "./types";
+
+export {
+  TipoProducto,
+  UnidadMedida,
+  CategoriaCarta,
 } from "./types";
 
 // Re-export datos seed (solo lectura)
 export {
   SEED_CATEGORIAS,
   SEED_PRODUCTOS,
-  SEED_INGREDIENTES,
+  SEED_PLATOS,
   SEED_PROVEEDORES,
   SEED_MENU_PROVEEDORES,
 } from "./seed";
@@ -33,17 +42,18 @@ export {
 // Re-export funciones del store
 export {
   // Getters
+  getProductos,
+  getProductosByTipo,
   getIngredientes,
-  getIngredienteById,
+  getProductoById,
   getProveedores,
   getCategorias,
-  getProductos,
-  getProductosByCategoria,
+  getPlatos,
   getMenuProveedores,
   // Mutations
-  agregarIngrediente,
-  actualizarIngrediente,
-  eliminarIngrediente,
+  agregarProducto,
+  actualizarProducto,
+  eliminarProducto,
   agregarProveedor,
   // Utils
   subscribe,
@@ -51,19 +61,5 @@ export {
   getDebugInfo,
 } from "./store";
 
-// ============================================
-// EXPORTS LEGACY (para compatibilidad)
-// Mantiene compatibilidad con el código existente
-// TODO: Migrar gradualmente al nuevo sistema
-// ============================================
-import { SEED_CATEGORIAS, SEED_PRODUCTOS, SEED_MENU_PROVEEDORES } from "./seed";
-import { getIngredientes } from "./store";
-
-// Aliases para mantener compatibilidad con imports existentes
-export const categoriasProductos = SEED_CATEGORIAS;
-export const productos = SEED_PRODUCTOS;
-export const menuProveedores = SEED_MENU_PROVEEDORES;
-
-// Este getter se actualiza dinámicamente
-// Nota: Para reactividad completa, usa el hook useIngredientes
-export { getIngredientes as ingredientesGetter };
+// Re-export hooks
+export { useProductos, useProveedores } from "./hooks";

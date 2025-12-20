@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ArrowLeft, Plus } from "lucide-react";
-import { agregarIngrediente } from "@/mock";
+import { agregarProducto, TipoProducto, UnidadMedida } from "@/mock";
 
 interface AgregarIngredienteModalProps {
   open: boolean;
@@ -27,6 +27,14 @@ const PROVEEDORES_MAP: Record<string, string> = {
   cashsupremo: "CashSupremo",
   "pimientos-juanito": "Pimientos Juanito",
   "mercado-central": "Mercado Central",
+};
+
+// Mapeo de unidades del form al enum
+const UNIDAD_MAP: Record<string, UnidadMedida> = {
+  kg: UnidadMedida.KG,
+  g: UnidadMedida.GRAMOS,
+  l: UnidadMedida.LITROS,
+  uds: UnidadMedida.UNIDADES,
 };
 
 export function AgregarIngredienteModal({
@@ -53,17 +61,16 @@ export function AgregarIngredienteModal({
     }
 
     // Obtener el nombre del proveedor
-    const proveedorNombre = PROVEEDORES_MAP[proveedor] || proveedor || "Sin proveedor";
+    const proveedorNombre = PROVEEDORES_MAP[proveedor] || proveedor || undefined;
 
-    // Agregar el ingrediente al store
-    agregarIngrediente({
+    // Agregar el producto (ingrediente) al store
+    agregarProducto({
       nombre: nombre.trim(),
+      tipoProducto: TipoProducto.INGREDIENTE,
+      unidadMedida: UNIDAD_MAP[unidad] || UnidadMedida.KG,
+      umbral: umbralActivo ? Number(umbral) || undefined : undefined,
+      stock: 0, // Nuevo ingrediente empieza sin stock
       proveedor: proveedorNombre,
-      unidad,
-      umbral: umbralActivo ? Number(umbral) || 0 : undefined,
-      cantidad: 0, // Nuevo ingrediente empieza sin cantidad
-      stockActual: 0,
-      stockTotal: 0,
     });
 
     onOpenChange(false);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { productos } from "@/mock";
+import { getPlatos } from "@/mock";
 import { useIngredientes } from "@/mock/hooks";
 import { ProductCard } from "./ProductCard";
 import { IngredienteCard } from "./IngredienteCard";
@@ -17,9 +17,8 @@ export function ProductGrid({ categoriaActiva }: ProductGridProps) {
   const [modalAbierto, setModalAbierto] = useState(false);
   const { ingredientes } = useIngredientes();
   
-  const productosFiltrados = productos.filter(
-    (p) => p.categoria === categoriaActiva
-  );
+  // Obtener platos
+  const platos = getPlatos();
 
   // Si es la categoría de ingredientes, mostrar el nuevo diseño
   if (categoriaActiva === "ingredientes") {
@@ -63,32 +62,44 @@ export function ProductGrid({ categoriaActiva }: ProductGridProps) {
     );
   }
 
+  // Para la categoría de platos
+  if (categoriaActiva === "platos") {
+    return (
+      <div className="flex-1 p-6 bg-gray-50">
+        {/* Toolbar */}
+        <div className="flex justify-between items-center mb-6">
+          <Button variant="outline" size="sm" className="gap-2">
+            <Filter className="h-4 w-4" />
+            Filtrar
+          </Button>
+          <Button size="sm" className="gap-2">
+            <Plus className="h-4 w-4" />
+            Crear
+          </Button>
+        </div>
+
+        {/* Grid de platos */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {platos.map((plato) => (
+            <ProductCard key={plato.id} plato={plato} />
+          ))}
+        </div>
+
+        {platos.length === 0 && (
+          <div className="text-center py-12 text-gray-500">
+            No hay platos disponibles
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Categoría vacía o no implementada
   return (
     <div className="flex-1 p-6 bg-gray-50">
-      {/* Toolbar */}
-      <div className="flex justify-between items-center mb-6">
-        <Button variant="outline" size="sm" className="gap-2">
-          <Filter className="h-4 w-4" />
-          Filtrar
-        </Button>
-        <Button size="sm" className="gap-2">
-          <Plus className="h-4 w-4" />
-          Crear
-        </Button>
+      <div className="text-center py-12 text-gray-500">
+        Sección en desarrollo
       </div>
-
-      {/* Grid de productos */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {productosFiltrados.map((producto) => (
-          <ProductCard key={producto.id} producto={producto} />
-        ))}
-      </div>
-
-      {productosFiltrados.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
-          No hay productos en esta categoría
-        </div>
-      )}
     </div>
   );
 }
