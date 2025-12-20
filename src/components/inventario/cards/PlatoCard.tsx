@@ -8,7 +8,7 @@ interface ProductCardProps {
   plato: Plato;
 }
 
-export function ProductCard({ plato }: ProductCardProps) {
+export function PlatoCard({ plato }: ProductCardProps) {
   return (
     <Card className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow h-full flex flex-col">
       <div className="relative w-full bg-gray-100 flex-shrink-0" style={{ aspectRatio: '1' }}>

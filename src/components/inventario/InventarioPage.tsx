@@ -1,19 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Sidebar } from "./Sidebar";
-import { ProductGrid } from "./ProductGrid";
+import { LeftMenu } from "./LeftMenu";
+import { RightGrid } from "./RightGrid";
 
 export function InventarioPage() {
   const [categoriaActiva, setCategoriaActiva] = useState("platos");
 
   return (
     <div className="flex flex-1 h-[calc(100vh-56px)]">
-      <Sidebar
+      <LeftMenu
         categoriaActiva={categoriaActiva}
         onCategoriaChange={setCategoriaActiva}
       />
-      <ProductGrid categoriaActiva={categoriaActiva} />
+      <RightGrid categoriaActiva={categoriaActiva} />
     </div>
   );
 }

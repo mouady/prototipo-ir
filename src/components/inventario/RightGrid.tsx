@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { getPlatos, eliminarProducto, Producto, TipoProducto, useProductosByTipo } from "@/mock";
-import { ProductCard } from "./ProductCard";
-import { IngredienteCard } from "./IngredienteCard";
-import { AgregarProductoModal } from "./AgregarIngredienteModal";
-import { ConfirmarEliminacionModal } from "./ConfirmarEliminacionModal";
+import { PlatoCard } from "./cards/PlatoCard";
+import { ElementCard } from "./cards/ElementCard";
+import { AgregarProductoModal } from "./modales/AddModal";
+import { DeleteModal } from "./modales/DeleteModal";
 import { AvisosPage } from "@/components/avisos";
 import { GeneradorMensajes } from "@/components/generador-mensajes";
 import { SEED_PROVEEDORES, SEED_PRODUCTOS } from "@/mock/seed";
@@ -16,7 +16,7 @@ interface ProductGridProps {
   categoriaActiva: string;
 }
 
-export function ProductGrid({ categoriaActiva }: ProductGridProps) {
+export function RightGrid({ categoriaActiva }: ProductGridProps) {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [productoParaEditar, setProductoParaEditar] = useState<Producto | undefined>();
   const [productoParaEliminar, setProductoParaEliminar] = useState<Producto | null>(null);
@@ -87,7 +87,7 @@ export function ProductGrid({ categoriaActiva }: ProductGridProps) {
         {/* Grid de ingredientes - 2 columnas */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {productosInventario.map((ingrediente) => (
-            <IngredienteCard 
+            <ElementCard
               key={ingrediente.id} 
               ingrediente={ingrediente}
               onEdit={handleEdit}
@@ -105,7 +105,7 @@ export function ProductGrid({ categoriaActiva }: ProductGridProps) {
         />
 
         {/* Modal de confirmación de eliminación */}
-        <ConfirmarEliminacionModal
+        <DeleteModal
           open={modalEliminacionAbierto}
           onOpenChange={setModalEliminacionAbierto}
           producto={productoParaEliminar}
@@ -134,7 +134,7 @@ export function ProductGrid({ categoriaActiva }: ProductGridProps) {
         {/* Grid de platos */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
           {platos.map((plato) => (
-            <ProductCard key={plato.id} plato={plato} />
+            <PlatoCard key={plato.id} plato={plato} />
           ))}
         </div>
 

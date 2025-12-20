@@ -17,8 +17,6 @@ export enum UnidadMedida {
   KG = "kg",
   UNIDADES = "uds",
   LITROS = "l",
-  GRAMOS = "g",
-  ML = "ml",
 }
 
 export enum CategoriaCarta {

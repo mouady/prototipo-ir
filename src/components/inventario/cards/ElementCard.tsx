@@ -9,7 +9,7 @@ interface IngredienteCardProps {
   onDelete?: (id: string) => void;
 }
 
-export function IngredienteCard({ ingrediente, onEdit, onDelete }: IngredienteCardProps) {
+export function ElementCard({ ingrediente, onEdit, onDelete }: IngredienteCardProps) {
   return (
     <div
       className={`flex items-center justify-between p-3 rounded-lg border transition-shadow hover:shadow-md ${

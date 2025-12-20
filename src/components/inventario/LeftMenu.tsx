@@ -8,7 +8,7 @@ interface SidebarProps {
   onCategoriaChange: (id: string) => void;
 }
 
-export function Sidebar({ categoriaActiva, onCategoriaChange }: SidebarProps) {
+export function LeftMenu({ categoriaActiva, onCategoriaChange }: SidebarProps) {
   return (
     <aside className="w-64 bg-white border-r border-gray-200 p-4 flex flex-col gap-6">
       {/* Productos Section */}

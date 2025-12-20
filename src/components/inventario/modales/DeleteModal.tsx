@@ -15,7 +15,7 @@ interface ConfirmarEliminacionModalProps {
   onConfirm: () => void;
 }
 
-export function ConfirmarEliminacionModal({
+export function DeleteModal({
   open,
   onOpenChange,
   producto,

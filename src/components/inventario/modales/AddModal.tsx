@@ -34,9 +34,7 @@ const PROVEEDORES_MAP: Record<string, string> = {
 // Mapeo de unidades del form al enum
 const UNIDAD_MAP: Record<string, UnidadMedida> = {
   kg: UnidadMedida.KG,
-  g: UnidadMedida.GRAMOS,
   l: UnidadMedida.LITROS,
-  ml: UnidadMedida.ML,
   uds: UnidadMedida.UNIDADES,
 };
 
@@ -321,6 +319,6 @@ export function AgregarProductoModal({
 /**
  * Compat: mantiene el nombre anterior para el flujo de ingredientes.
  */
-export function AgregarIngredienteModal(props: Omit<AgregarProductoModalProps, "tipoProducto">) {
+export function AddModal(props: Omit<AgregarProductoModalProps, "tipoProducto">) {
   return <AgregarProductoModal {...props} tipoProducto={TipoProducto.INGREDIENTE} />;
 }
