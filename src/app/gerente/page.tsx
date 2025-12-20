@@ -6,6 +6,7 @@ import { InventarioPage } from "@/components/inventario/InventarioPage";
 import { ComandasPage } from "@/components/comandas/ComandasPage";
 import { StatisticsPage } from "@/components/statistics";
 import { EmpleadosPage } from "@/components/empleados";
+import { HorariosPage } from "@/components/horarios";
 import SeccionConstruccion from "@/app/SeccionConstruccion";
 
 export default function GerentePage() {
@@ -22,6 +23,7 @@ export default function GerentePage() {
       case "estadisticas":
         return <StatisticsPage />;
       case "horarios":
+        return <HorariosPage />;
       default:
         return (
           <SeccionConstruccion />

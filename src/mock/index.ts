@@ -35,6 +35,15 @@ export type {
   Empleado,
   NuevoEmpleado,
   ActualizarEmpleado,
+  // Horarios
+  Horario,
+  HorarioEspecial,
+  Turno,
+  AsignacionTurno,
+  Fichaje,
+  NuevoHorario,
+  NuevoHorarioEspecial,
+  NuevoTurno,
 } from "./types";
 
 export {
@@ -47,6 +56,8 @@ export {
   TipoContrato,
   Genero,
   RolEmpleado,
+  // Horarios
+  DiaSemana,
 } from "./types";
 
 // Re-export datos seed (solo lectura)
@@ -60,6 +71,10 @@ export {
   SEED_AVISOS_REPOSICION,
   SEED_COMANDAS,
   SEED_EMPLEADOS,
+  // Horarios
+  SEED_HORARIOS,
+  SEED_HORARIOS_ESPECIALES,
+  generarTurnosSemana,
 } from "./seed";
 
 // Re-export funciones del store
@@ -91,6 +106,12 @@ export {
   getEmpleadoById,
   getEmpleadosActivos,
   getEmpleadosInactivos,
+  // Getters - Horarios
+  getHorarios,
+  getHorarioByDia,
+  getHorariosEspeciales,
+  getHorarioEspecialByFecha,
+  getTurnosSemana,
   // Mutations
   agregarProducto,
   actualizarProducto,
@@ -108,6 +129,10 @@ export {
   actualizarEmpleado,
   eliminarEmpleado,
   toggleEmpleadoActivo,
+  // Mutations - Horarios
+  actualizarHorario,
+  guardarHorarioEspecial,
+  eliminarHorarioEspecial,
   // Utils
   subscribe,
   resetRuntime,
@@ -132,4 +157,8 @@ export {
   useComandasHechas,
   // Hooks - Empleados
   useEmpleados,
+  // Hooks - Horarios
+  useHorarios,
+  useHorariosEspeciales,
+  useTurnosSemana,
 } from "./hooks";
