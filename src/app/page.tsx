@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Header, SeccionActiva } from "@/components/Header";
 import { InventarioPage } from "@/components/inventario/InventarioPage";
 import { ComandasPage } from "@/components/comandas/ComandasPage";
+import { StatisticsPage } from "@/components/statistics";
+import { EmpleadosPage } from "@/components/empleados";
 import SeccionConstruccion from "@/app/SeccionConstruccion";
 
 export default function Home() {
@@ -13,11 +15,13 @@ export default function Home() {
     switch (seccionActiva) {
       case "comandas":
         return <ComandasPage />;
+      case "empleados":
+        return <EmpleadosPage />;
       case "inventario":
         return <InventarioPage />;
-      case "horarios":
-      case "empleados":
       case "estadisticas":
+        return <StatisticsPage />;
+      case "horarios":
       default:
         return (
           <SeccionConstruccion />

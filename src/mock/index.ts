@@ -30,6 +30,11 @@ export type {
   // Comandas
   Comanda,
   LineaComanda,
+  // Empleados
+  User,
+  Empleado,
+  NuevoEmpleado,
+  ActualizarEmpleado,
 } from "./types";
 
 export {
@@ -38,6 +43,10 @@ export {
   CategoriaCarta,
   Estado,
   FormatoPlato,
+  // Empleados
+  TipoContrato,
+  Genero,
+  RolEmpleado,
 } from "./types";
 
 // Re-export datos seed (solo lectura)
@@ -50,6 +59,7 @@ export {
   SEED_COCINEROS,
   SEED_AVISOS_REPOSICION,
   SEED_COMANDAS,
+  SEED_EMPLEADOS,
 } from "./seed";
 
 // Re-export funciones del store
@@ -73,6 +83,14 @@ export {
   getComandasPendientes,
   getComandasHechas,
   getComandaById,
+  // Getters - Empleados
+  getEmpleados,
+  getEmpleadosByRol,
+  getCamareros,
+  getCocinerosEmpleados,
+  getEmpleadoById,
+  getEmpleadosActivos,
+  getEmpleadosInactivos,
   // Mutations
   agregarProducto,
   actualizarProducto,
@@ -85,6 +103,11 @@ export {
   // Mutations - Comandas
   marcarComandaComoLista,
   restaurarComanda,
+  // Mutations - Empleados
+  agregarEmpleado,
+  actualizarEmpleado,
+  eliminarEmpleado,
+  toggleEmpleadoActivo,
   // Utils
   subscribe,
   resetRuntime,
@@ -107,4 +130,6 @@ export {
   // Hooks - Comandas
   useComandasPendientes,
   useComandasHechas,
+  // Hooks - Empleados
+  useEmpleados,
 } from "./hooks";

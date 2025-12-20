@@ -21,6 +21,11 @@ import {
   Cocinero,
   Comanda,
   Estado,
+  Empleado,
+  NuevoEmpleado,
+  ActualizarEmpleado,
+  TipoContrato,
+  RolEmpleado,
 } from "./types";
 import {
   SEED_CATEGORIAS,
@@ -31,6 +36,7 @@ import {
   SEED_AVISOS_REPOSICION,
   SEED_COCINEROS,
   SEED_COMANDAS,
+  SEED_EMPLEADOS,
 } from "./seed";
 
 // ============================================
@@ -40,14 +46,18 @@ import {
 let runtimeProductos: Producto[] = [];
 let runtimeProveedores: Proveedor[] = [];
 let runtimeAvisos: AvisoReposicion[] = [];
+let runtimeEmpleados: Empleado[] = [];
 let modificacionesProductos: Map<string, Producto> = new Map(); // Para rastrear cambios a seed
 let modificacionesAvisos: Map<string, AvisoReposicion> = new Map(); // Para rastrear cambios a seed avisos
 let modificacionesComandas: Map<string, Comanda> = new Map(); // Para rastrear cambios a seed comandas
+let modificacionesEmpleados: Map<string, Empleado> = new Map(); // Para rastrear cambios a seed empleados
 let productosEliminados: Set<string> = new Set(); // Para rastrear seed eliminados
 let avisosEliminados: Set<string> = new Set(); // Para rastrear avisos seed eliminados
+let empleadosEliminados: Set<string> = new Set(); // Para rastrear empleados seed eliminados
 let comandasFinalizadas: Set<string> = new Set(); // Para rastrear comandas marcadas como listas
 let nextProductoId = 1;
 let nextProveedorId = 1;
+let nextEmpleadoId = 7; // Empezamos en 7 porque hay 6 empleados seed
 let nextAvisoId = 1;
 let nextLineaAvisoId = 1;
 
@@ -396,6 +406,158 @@ export function restaurarComanda(id: string): Comanda | null {
 }
 
 // ============================================
+// GETTERS - Empleados
+// ============================================
+
+/** Obtiene todos los empleados */
+export function getEmpleados(): Empleado[] {
+  const seedEmpleados = SEED_EMPLEADOS.filter((e) => !empleadosEliminados.has(e.id))
+    .map((e) =>
+      modificacionesEmpleados.has(e.id)
+        ? modificacionesEmpleados.get(e.id)!
+        : e
+    );
+  return [...seedEmpleados, ...runtimeEmpleados];
+}
+
+/** Obtiene empleados filtrados por rol */
+export function getEmpleadosByRol(rol: RolEmpleado): Empleado[] {
+  return getEmpleados().filter((e) => e.rol === rol);
+}
+
+/** Obtiene solo los camareros */
+export function getCamareros(): Empleado[] {
+  return getEmpleadosByRol(RolEmpleado.CAMARERO);
+}
+
+/** Obtiene solo los cocineros empleados (con todos sus datos) */
+export function getCocinerosEmpleados(): Empleado[] {
+  return getEmpleadosByRol(RolEmpleado.COCINERO);
+}
+
+/** Obtiene un empleado por ID */
+export function getEmpleadoById(id: string): Empleado | undefined {
+  return getEmpleados().find((e) => e.id === id);
+}
+
+/** Obtiene empleados activos */
+export function getEmpleadosActivos(): Empleado[] {
+  return getEmpleados().filter((e) => e.activo);
+}
+
+/** Obtiene empleados inactivos */
+export function getEmpleadosInactivos(): Empleado[] {
+  return getEmpleados().filter((e) => !e.activo);
+}
+
+// ============================================
+// MUTATIONS - Empleados
+// ============================================
+
+/**
+ * Agrega un nuevo empleado
+ * RN-06: Si tipoContrato es INDEFINIDO, finContrato debe ser undefined
+ */
+export function agregarEmpleado(datos: NuevoEmpleado): Empleado {
+  // Normalizar datos según reglas de negocio
+  const datosNormalizados = { ...datos };
+  
+  // RN-06: finContrato debe ser null si y solo si tipoContrato es INDEFINIDO
+  if (datosNormalizados.tipoContrato === TipoContrato.INDEFINIDO) {
+    datosNormalizados.finContrato = undefined;
+  }
+
+  const nuevoEmpleado: Empleado = {
+    ...datosNormalizados,
+    id: `emp-runtime-${nextEmpleadoId++}`,
+  };
+
+  runtimeEmpleados.push(nuevoEmpleado);
+  notifyListeners();
+  return nuevoEmpleado;
+}
+
+/**
+ * Actualiza un empleado existente
+ * RN-06: Si tipoContrato es INDEFINIDO, finContrato debe ser undefined
+ */
+export function actualizarEmpleado(id: string, datos: ActualizarEmpleado): Empleado | null {
+  // Buscar en runtime primero
+  const runtimeIndex = runtimeEmpleados.findIndex((e) => e.id === id);
+  if (runtimeIndex !== -1) {
+    const empleadoActual = runtimeEmpleados[runtimeIndex];
+    const datosNormalizados = normalizarDatosEmpleado(datos, empleadoActual);
+    
+    runtimeEmpleados[runtimeIndex] = {
+      ...empleadoActual,
+      ...datosNormalizados,
+    };
+    notifyListeners();
+    return runtimeEmpleados[runtimeIndex];
+  }
+
+  // Buscar en seed
+  const seedEmpleado = SEED_EMPLEADOS.find((e) => e.id === id);
+  if (seedEmpleado && !empleadosEliminados.has(id)) {
+    const empleadoActual = modificacionesEmpleados.get(id) || seedEmpleado;
+    const datosNormalizados = normalizarDatosEmpleado(datos, empleadoActual);
+    
+    const empleadoActualizado: Empleado = {
+      ...empleadoActual,
+      ...datosNormalizados,
+    };
+    modificacionesEmpleados.set(id, empleadoActualizado);
+    notifyListeners();
+    return empleadoActualizado;
+  }
+
+  return null;
+}
+
+/** Helper para normalizar datos de empleado según reglas de negocio */
+function normalizarDatosEmpleado(datos: ActualizarEmpleado, empleadoActual: Empleado): ActualizarEmpleado {
+  const resultado = { ...datos };
+  
+  // RN-06: finContrato debe ser null si y solo si tipoContrato es INDEFINIDO
+  const tipoContratoFinal = datos.tipoContrato ?? empleadoActual.tipoContrato;
+  if (tipoContratoFinal === TipoContrato.INDEFINIDO) {
+    resultado.finContrato = undefined;
+  }
+  
+  return resultado;
+}
+
+/** Elimina un empleado */
+export function eliminarEmpleado(id: string): boolean {
+  // Buscar en runtime primero
+  const runtimeIndex = runtimeEmpleados.findIndex((e) => e.id === id);
+  if (runtimeIndex !== -1) {
+    runtimeEmpleados.splice(runtimeIndex, 1);
+    notifyListeners();
+    return true;
+  }
+
+  // Buscar en seed
+  const seedEmpleado = SEED_EMPLEADOS.find((e) => e.id === id);
+  if (seedEmpleado) {
+    empleadosEliminados.add(id);
+    modificacionesEmpleados.delete(id);
+    notifyListeners();
+    return true;
+  }
+
+  return false;
+}
+
+/** Cambia el estado activo/inactivo de un empleado */
+export function toggleEmpleadoActivo(id: string): Empleado | null {
+  const empleado = getEmpleadoById(id);
+  if (!empleado) return null;
+  
+  return actualizarEmpleado(id, { activo: !empleado.activo });
+}
+
+// ============================================
 // RESET - Limpia solo datos runtime
 // ============================================
 
@@ -403,14 +565,18 @@ export function resetRuntime(): void {
   runtimeProductos = [];
   runtimeProveedores = [];
   runtimeAvisos = [];
+  runtimeEmpleados = [];
   modificacionesProductos.clear();
   modificacionesAvisos.clear();
   modificacionesComandas.clear();
+  modificacionesEmpleados.clear();
   productosEliminados.clear();
   avisosEliminados.clear();
+  empleadosEliminados.clear();
   comandasFinalizadas.clear();
   nextProductoId = 1;
   nextProveedorId = 1;
+  nextEmpleadoId = 7;
   nextAvisoId = 1;
   nextLineaAvisoId = 1;
   notifyListeners();
@@ -434,5 +600,9 @@ export function getDebugInfo() {
     avisosPendientes: getAvisosPendientes().length,
     comandasPendientes: getComandasPendientes().length,
     comandasHechas: getComandasHechas().length,
+    seedEmpleados: SEED_EMPLEADOS.length,
+    runtimeEmpleados: runtimeEmpleados.length,
+    totalEmpleados: getEmpleados().length,
+    empleadosActivos: getEmpleadosActivos().length,
   };
 }

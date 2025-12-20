@@ -7,6 +7,33 @@
 // ENUMERACIONES (del modelo conceptual)
 // ============================================
 
+/**
+ * TipoContrato según el modelo conceptual
+ * Define los tipos de contrato laboral (RN-06)
+ */
+export enum TipoContrato {
+  INDEFINIDO = "INDEFINIDO",
+  TEMPORAL = "TEMPORAL",
+}
+
+/**
+ * Género según el modelo conceptual
+ * Representa el género de un empleado
+ */
+export enum Genero {
+  MASCULINO = "MASCULINO",
+  FEMENINO = "FEMENINO",
+  OTRO = "OTRO",
+}
+
+/**
+ * Rol del empleado en el restaurante
+ */
+export enum RolEmpleado {
+  CAMARERO = "CAMARERO",
+  COCINERO = "COCINERO",
+}
+
 export enum TipoProducto {
   INGREDIENTE = "INGREDIENTE",
   BEBIDA = "BEBIDA",
@@ -241,4 +268,47 @@ export interface Comanda {
 
 // Tipo para crear un producto (sin id, se genera automáticamente)
 export type NuevoProducto = Omit<Producto, "id">;
+
+// ============================================
+// INTERFACES: USUARIOS Y EMPLEADOS
+// ============================================
+
+/**
+ * User base según el modelo conceptual
+ * Contiene información común a todos los usuarios
+ */
+export interface User {
+  id: string;
+  nombre: string;
+  apellidos: string;
+  imagenPerfil?: string;
+  email?: string;
+  username: string;
+  password?: string;
+}
+
+/**
+ * Empleado según el modelo conceptual
+ * Hereda de User y añade datos laborales específicos
+ * 
+ * RN-05: Un empleado debe tener al menos 16 años
+ * RN-06: finContrato debe ser null si y solo si tipoContrato es INDEFINIDO
+ * RN-07: El dni debe ser único en todo el sistema
+ * RN-08: El dni sigue el formato válido (8 números y una letra)
+ */
+export interface Empleado extends User {
+  tipoContrato: TipoContrato;
+  finContrato?: string; // Fecha en formato ISO (solo si TEMPORAL)
+  fechaNacimiento: string; // Fecha en formato ISO
+  dni: string;
+  activo: boolean;
+  genero: Genero;
+  rol: RolEmpleado;
+}
+
+// Tipo para crear un empleado (sin id, se genera automáticamente)
+export type NuevoEmpleado = Omit<Empleado, "id">;
+
+// Tipo para actualizar un empleado (todos los campos opcionales excepto id)
+export type ActualizarEmpleado = Partial<Omit<Empleado, "id">>;
 
