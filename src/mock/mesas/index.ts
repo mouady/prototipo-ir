@@ -28,6 +28,7 @@ export type {
   ProductoVendibleSimple,
   LineaComandaMesa,
   ComandaMesa,
+  FormatoPlato,
 } from "./seed";
 
 // Seed data
@@ -70,6 +71,8 @@ export {
   calcularTotalesCuenta,
   resetMesasRuntime,
   getMesasDebugInfo,
+  sincronizarEstadoDesdeGerente,
+  sincronizarLineaDesdeGerente,
 } from "./store";
 
 export type { TotalesCuenta } from "./store";

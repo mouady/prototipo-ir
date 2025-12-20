@@ -11,6 +11,8 @@ import {
   getComandasHechas,
   marcarComandaComoLista as storeMarcarComandaLista,
   restaurarComanda as storeRestaurarComanda,
+  marcarLineaComoLista as storeMarcarLineaLista,
+  desmarcarLinea as storeDesmarcarLinea,
 } from "./store";
 import { subscribe } from "../shared/store-base";
 import type { Comanda } from "./types";
@@ -32,9 +34,19 @@ export function useComandasPendientes() {
     return storeMarcarComandaLista(id);
   }, []);
 
+  const marcarLineaLista = useCallback((comandaId: string, lineaId: string) => {
+    return storeMarcarLineaLista(comandaId, lineaId);
+  }, []);
+
+  const desmarcarLinea = useCallback((comandaId: string, lineaId: string) => {
+    return storeDesmarcarLinea(comandaId, lineaId);
+  }, []);
+
   return {
     comandas,
     marcarComoLista,
+    marcarLineaLista,
+    desmarcarLinea,
   };
 }
 

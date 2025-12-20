@@ -159,11 +159,6 @@ export default function FichajesView({ empleadoId }: FichajesViewProps) {
 
                 {/* Duración */}
                 <span className="text-sm text-gray-500">{registro.duracion}</span>
-
-                {/* Menú de opciones */}
-                <button className="p-1 hover:bg-gray-100 rounded">
-                  <MoreHorizontal className="w-4 h-4 text-gray-400" />
-                </button>
               </div>
             ))
           )}

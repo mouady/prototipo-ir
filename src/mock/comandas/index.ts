@@ -27,6 +27,9 @@ export {
   restaurarComanda,
   resetComandasRuntime,
   getComandasDebugInfo,
+  agregarComandaDesdeCarmarero,
+  marcarLineaComoLista,
+  desmarcarLinea,
 } from "./store";
 
 // Hooks

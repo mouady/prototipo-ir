@@ -174,6 +174,8 @@ export const PRODUCTOS_VENDIBLES: ProductoVendibleSimple[] = [
 // COMANDAS POR MESA (estructura para el camarero)
 // ============================================
 
+export type FormatoPlato = "ESTANDAR" | "TAPA" | "MEDIA" | "RACION";
+
 export interface LineaComandaMesa {
   id: string;
   productoId: string;
@@ -182,6 +184,7 @@ export interface LineaComandaMesa {
   precioUnitario: number;
   estado: "EN_PREPARACION" | "REALIZADO" | "SERVIDO";
   esPlato: boolean;
+  formato?: FormatoPlato; // Solo aplica a platos
 }
 
 export interface ComandaMesa {
@@ -213,8 +216,8 @@ export const SEED_COMANDAS_MESA: ComandaMesa[] = [
     horaCreacion: "9:31",
     estado: "REALIZADA",
     lineas: [
-      { id: "lm-1-3", productoId: "pv-10", productoNombre: "Papas Bravas", cantidad: 2, precioUnitario: 4.5, estado: "REALIZADO", esPlato: true },
-      { id: "lm-1-4", productoId: "pv-11", productoNombre: "Chocos Fritos Plato", cantidad: 1, precioUnitario: 9.0, estado: "EN_PREPARACION", esPlato: true },
+      { id: "lm-1-3", productoId: "pv-10", productoNombre: "Papas Bravas", cantidad: 2, precioUnitario: 4.5, estado: "REALIZADO", esPlato: true, formato: "TAPA" },
+      { id: "lm-1-4", productoId: "pv-11", productoNombre: "Chocos Fritos Plato", cantidad: 1, precioUnitario: 9.0, estado: "EN_PREPARACION", esPlato: true, formato: "RACION" },
     ],
   },
   // Mesa 3 - 1 comanda
@@ -225,7 +228,7 @@ export const SEED_COMANDAS_MESA: ComandaMesa[] = [
     horaCreacion: "13:05",
     estado: "EN_COCINA",
     lineas: [
-      { id: "lm-3-1", productoId: "pv-13", productoNombre: "Secreto al Whisky", cantidad: 2, precioUnitario: 12.0, estado: "EN_PREPARACION", esPlato: true },
+      { id: "lm-3-1", productoId: "pv-13", productoNombre: "Secreto al Whisky", cantidad: 2, precioUnitario: 12.0, estado: "EN_PREPARACION", esPlato: true, formato: "RACION" },
       { id: "lm-3-2", productoId: "pv-3", productoNombre: "Tercio Cruzcampo", cantidad: 2, precioUnitario: 2.0, estado: "SERVIDO", esPlato: false },
     ],
   },
@@ -237,8 +240,8 @@ export const SEED_COMANDAS_MESA: ComandaMesa[] = [
     horaCreacion: "13:20",
     estado: "EN_COCINA",
     lineas: [
-      { id: "lm-5-1", productoId: "pv-14", productoNombre: "Albóndigas", cantidad: 3, precioUnitario: 7.5, estado: "EN_PREPARACION", esPlato: true },
-      { id: "lm-5-2", productoId: "pv-12", productoNombre: "Ensalada Mixta", cantidad: 1, precioUnitario: 6.5, estado: "EN_PREPARACION", esPlato: true },
+      { id: "lm-5-1", productoId: "pv-14", productoNombre: "Albóndigas", cantidad: 3, precioUnitario: 7.5, estado: "EN_PREPARACION", esPlato: true, formato: "MEDIA" },
+      { id: "lm-5-2", productoId: "pv-12", productoNombre: "Ensalada Mixta", cantidad: 1, precioUnitario: 6.5, estado: "EN_PREPARACION", esPlato: true, formato: "RACION" },
     ],
   },
   // Mesa 7 - 2 comandas  
@@ -259,8 +262,8 @@ export const SEED_COMANDAS_MESA: ComandaMesa[] = [
     horaCreacion: "12:15",
     estado: "REALIZADA",
     lineas: [
-      { id: "lm-7-2", productoId: "pv-18", productoNombre: "Gambas al ajillo", cantidad: 1, precioUnitario: 10.0, estado: "REALIZADO", esPlato: true },
-      { id: "lm-7-3", productoId: "pv-19", productoNombre: "Tortilla española", cantidad: 1, precioUnitario: 5.5, estado: "REALIZADO", esPlato: true },
+      { id: "lm-7-2", productoId: "pv-18", productoNombre: "Gambas al ajillo", cantidad: 1, precioUnitario: 10.0, estado: "REALIZADO", esPlato: true, formato: "TAPA" },
+      { id: "lm-7-3", productoId: "pv-19", productoNombre: "Tortilla española", cantidad: 1, precioUnitario: 5.5, estado: "REALIZADO", esPlato: true, formato: "MEDIA" },
     ],
   },
 ];

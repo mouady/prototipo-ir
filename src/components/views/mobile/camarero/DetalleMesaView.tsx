@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowLeft, Bell, Plus, X, Check, Clock, CheckCircle2 } from "lucide-react";
-import { useDetalleMesa, ComandaMesa, LineaComandaMesa } from "@/mock/mesas";
+import { useDetalleMesa, ComandaMesa, LineaComandaMesa, FormatoPlato } from "@/mock/mesas";
 
 type VistaDetalle = "comandas" | "resumen";
 
@@ -30,6 +30,26 @@ function BadgeEstadoComanda({ estado }: { estado: ComandaMesa["estado"] }) {
   return (
     <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${estilos[estado]}`}>
       {textos[estado]}
+    </span>
+  );
+}
+
+/**
+ * Badge de formato de plato
+ */
+function BadgeFormato({ formato }: { formato?: FormatoPlato }) {
+  if (!formato) return null;
+  
+  const textos: Record<FormatoPlato, string> = {
+    ESTANDAR: "Estándar",
+    TAPA: "Tapa",
+    MEDIA: "1/2",
+    RACION: "Entera",
+  };
+
+  return (
+    <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-900 text-white">
+      {textos[formato]}
     </span>
   );
 }
@@ -78,14 +98,17 @@ function LineaComandaItem({
         <IconoEstadoLinea estado={linea.estado} esPlato={linea.esPlato} />
       </button>
 
-      {/* Nombre del producto */}
-      <span
-        className={`flex-1 text-sm ${
-          requiereAtencion ? "text-red-600 font-medium" : "text-gray-900"
-        } ${linea.estado === "SERVIDO" ? "line-through" : ""}`}
-      >
-        {linea.productoNombre}
-      </span>
+      {/* Nombre del producto y formato */}
+      <div className="flex-1 flex items-center gap-2">
+        <span
+          className={`text-sm ${
+            requiereAtencion ? "text-red-600 font-medium" : "text-gray-900"
+          } ${linea.estado === "SERVIDO" ? "line-through" : ""}`}
+        >
+          {linea.productoNombre}
+        </span>
+        {linea.esPlato && <BadgeFormato formato={linea.formato} />}
+      </div>
 
       {/* Cantidad */}
       <span className="text-sm text-gray-600 w-8 text-center">{linea.cantidad}</span>
@@ -239,10 +262,10 @@ function VistaResumenCuenta({
         </button>
         <button
           onClick={onConfirmarCierre}
-          className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-gray-100 hover:bg-gray-200 rounded-xl border border-gray-200 transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-red-100 hover:bg-red-200 rounded-xl border border-red-200 transition-colors"
         >
-          <X className="w-5 h-5 text-gray-600" />
-          <span className="font-medium text-gray-700">Confirmar cierre</span>
+          <X className="w-5 h-5 text-red-600" />
+          <span className="font-medium text-red-700">Confirmar cierre</span>
         </button>
       </div>
     </div>
@@ -362,11 +385,11 @@ export default function DetalleMesaView({ mesaId, onBack, onCrearComanda }: Deta
       </div>
 
       {/* Tabs de navegación */}
-      <div className="bg-white border-b border-gray-200 px-4">
-        <div className="flex gap-4">
+      <div className="bg-white border-b border-gray-200">
+        <div className="flex gap-0">
           <button
             onClick={() => setVista("comandas")}
-            className={`py-3 px-1 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex-1 py-4 px-4 text-base font-semibold border-b-2 transition-colors text-center ${
               vista === "comandas"
                 ? "border-gray-900 text-gray-900"
                 : "border-transparent text-gray-500 hover:text-gray-700"
@@ -376,13 +399,13 @@ export default function DetalleMesaView({ mesaId, onBack, onCrearComanda }: Deta
           </button>
           <button
             onClick={() => setVista("resumen")}
-            className={`py-3 px-1 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex-1 py-4 px-4 text-base font-semibold border-b-2 transition-colors text-center ${
               vista === "resumen"
                 ? "border-gray-900 text-gray-900"
                 : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
-            Resumen
+            Resumen y cierre
           </button>
         </div>
       </div>
@@ -429,22 +452,13 @@ export default function DetalleMesaView({ mesaId, onBack, onCrearComanda }: Deta
       {/* Footer con acciones (solo en vista comandas) */}
       {vista === "comandas" && (
         <div className="flex-shrink-0 p-4 bg-white border-t border-gray-200">
-          <div className="flex gap-3">
-            <button
-              onClick={onCrearComanda}
-              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-gray-100 hover:bg-gray-200 rounded-xl border border-gray-200 transition-colors"
-            >
-              <Plus className="w-5 h-5 text-gray-600" />
-              <span className="font-medium text-gray-700">Añadir comanda</span>
-            </button>
-            <button
-              onClick={() => setVista("resumen")}
-              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-gray-100 hover:bg-gray-200 rounded-xl border border-gray-200 transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-600" />
-              <span className="font-medium text-gray-700">Cerrar cuenta</span>
-            </button>
-          </div>
+          <button
+            onClick={onCrearComanda}
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gray-100 hover:bg-gray-200 rounded-xl border border-gray-200 transition-colors"
+          >
+            <Plus className="w-5 h-5 text-gray-600" />
+            <span className="font-medium text-gray-700">Añadir comanda</span>
+          </button>
         </div>
       )}
 

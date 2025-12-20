@@ -10,46 +10,82 @@ interface CrearComandaViewProps {
   onConfirmar: () => void;
 }
 
+type FormatoPlato = "ESTANDAR" | "TAPA" | "MEDIA" | "RACION";
+
+const FORMATOS: { value: FormatoPlato; label: string }[] = [
+  { value: "TAPA", label: "Tapa" },
+  { value: "MEDIA", label: "1/2" },
+  { value: "RACION", label: "Entera" },
+];
+
 /**
  * Item del carrito de comanda
  */
 function CarritoItem({
   producto,
   cantidad,
+  formato,
   onEliminar,
   onCambiarCantidad,
+  onCambiarFormato,
 }: {
   producto: ProductoVendibleSimple;
   cantidad: number;
+  formato?: FormatoPlato;
   onEliminar: () => void;
   onCambiarCantidad: (cantidad: number) => void;
+  onCambiarFormato?: (formato: FormatoPlato) => void;
 }) {
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-gray-100">
-      {/* Botón eliminar */}
-      <button
-        onClick={onEliminar}
-        className="flex-shrink-0 p-1 text-gray-400 hover:text-red-500 transition-colors"
-      >
-        <Trash2 className="w-5 h-5" />
-      </button>
+    <div className="flex flex-col gap-2 py-3 border-b border-gray-100">
+      <div className="flex items-center gap-3">
+        {/* Botón eliminar */}
+        <button
+          onClick={onEliminar}
+          className="flex-shrink-0 p-1 text-gray-400 hover:text-red-500 transition-colors"
+        >
+          <Trash2 className="w-5 h-5" />
+        </button>
 
-      {/* Nombre del producto */}
-      <span className="flex-1 text-sm text-gray-900">{producto.nombre}</span>
+        {/* Nombre del producto */}
+        <span className="flex-1 text-sm text-gray-900">{producto.nombre}</span>
 
-      {/* Precio unitario */}
-      <span className="text-sm text-gray-500 w-16 text-right">
-        {producto.precio.toFixed(2)}€
-      </span>
+        {/* Precio unitario */}
+        <span className="text-sm text-gray-500 w-16 text-right">
+          {producto.precio.toFixed(2)}€
+        </span>
 
-      {/* Input de cantidad */}
-      <input
-        type="number"
-        min="1"
-        value={cantidad}
-        onChange={(e) => onCambiarCantidad(parseInt(e.target.value) || 1)}
-        className="w-12 h-8 text-center border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-      />
+        {/* Input de cantidad */}
+        <input
+          type="number"
+          min="1"
+          value={cantidad}
+          onChange={(e) => onCambiarCantidad(parseInt(e.target.value) || 1)}
+          className="w-12 h-8 text-center border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+        />
+      </div>
+      
+      {/* Selector de formato (solo para platos) */}
+      {producto.esPlato && onCambiarFormato && (
+        <div className="flex items-center gap-2 ml-8">
+          <span className="text-xs text-gray-500">Formato:</span>
+          <div className="flex gap-1">
+            {FORMATOS.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => onCambiarFormato(f.value)}
+                className={`px-2 py-1 text-xs rounded transition-colors ${
+                  formato === f.value
+                    ? "bg-gray-900 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -93,6 +129,7 @@ export default function CrearComandaView({
     agregarAlCarrito,
     quitarDelCarrito,
     actualizarCantidad,
+    cambiarFormato,
     confirmarComanda,
     cancelarComanda,
     totalCarrito,
@@ -164,9 +201,13 @@ export default function CrearComandaView({
                   key={item.producto.id}
                   producto={item.producto}
                   cantidad={item.cantidad}
+                  formato={item.formato}
                   onEliminar={() => quitarDelCarrito(item.producto.id)}
                   onCambiarCantidad={(cantidad) =>
                     actualizarCantidad(item.producto.id, cantidad)
+                  }
+                  onCambiarFormato={(formato) =>
+                    cambiarFormato(item.producto.id, formato)
                   }
                 />
               ))}

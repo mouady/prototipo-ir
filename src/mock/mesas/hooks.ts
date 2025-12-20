@@ -20,6 +20,7 @@ import {
   marcarLineaServida as storeMarcarLineaServida,
   agregarPropina as storeAgregarPropina,
   crearReserva as storeCrearReserva,
+  editarReserva as storeEditarReserva,
   terminarReserva as storeTerminarReserva,
   eliminarReserva as storeEliminarReserva,
   calcularTotalesCuenta,
@@ -58,7 +59,12 @@ export function useMesas() {
 export function useDetalleMesa(mesaId: string) {
   const [mesa, setMesa] = useState(() => getMesaById(mesaId));
   const [cuenta, setCuenta] = useState(() => getCuentaActivaByMesa(mesaId));
-  const [comandas, setComandas] = useState<ComandaMesa[]>(() => getComandasByMesa(mesaId));
+  const [comandas, setComandas] = useState<ComandaMesa[]>(() => {
+    const c = getCuentaActivaByMesa(mesaId);
+    if (!c) return [];
+    const todasComandas = getComandasByMesa(mesaId);
+    return todasComandas.filter((cmd) => c.comandaIds.includes(cmd.id));
+  });
   const [totales, setTotales] = useState(() => calcularTotalesCuenta(mesaId));
   const [propina, setPropina] = useState(() => {
     const c = getCuentaActivaByMesa(mesaId);
@@ -68,10 +74,15 @@ export function useDetalleMesa(mesaId: string) {
   useEffect(() => {
     const unsubscribe = subscribe(() => {
       setMesa(getMesaById(mesaId));
-      setCuenta(getCuentaActivaByMesa(mesaId));
-      setComandas(getComandasByMesa(mesaId));
-      setTotales(calcularTotalesCuenta(mesaId));
       const c = getCuentaActivaByMesa(mesaId);
+      setCuenta(c);
+      if (!c) {
+        setComandas([]);
+      } else {
+        const todasComandas = getComandasByMesa(mesaId);
+        setComandas(todasComandas.filter((cmd) => c.comandaIds.includes(cmd.id)));
+      }
+      setTotales(calcularTotalesCuenta(mesaId));
       setPropina(c ? getPropinaByIdCuenta(c.id) : null);
     });
     return unsubscribe;
@@ -128,7 +139,11 @@ export function useCrearComanda(mesaId: string) {
   const [productos] = useState<ProductoVendibleSimple[]>(() => getProductosVendibles());
   const [busqueda, setBusquedaInternal] = useState("");
   const [resultados, setResultados] = useState<ProductoVendibleSimple[]>([]);
-  const [carrito, setCarrito] = useState<Array<{ producto: ProductoVendibleSimple; cantidad: number }>>([]);
+  const [carrito, setCarrito] = useState<Array<{ 
+    producto: ProductoVendibleSimple; 
+    cantidad: number;
+    formato?: "ESTANDAR" | "TAPA" | "MEDIA" | "RACION";
+  }>>([]);
 
   // Función para cambiar búsqueda y actualizar resultados sincrónicamente
   const setBusqueda = useCallback((value: string) => {
@@ -150,7 +165,12 @@ export function useCrearComanda(mesaId: string) {
             : item
         );
       }
-      return [...prev, { producto, cantidad: 1 }];
+      // Si es un plato, añadir formato por defecto
+      return [...prev, { 
+        producto, 
+        cantidad: 1,
+        formato: producto.esPlato ? "RACION" as const : undefined,
+      }];
     });
     setBusquedaInternal("");
     setResultados([]);
@@ -172,11 +192,20 @@ export function useCrearComanda(mesaId: string) {
     );
   }, [quitarDelCarrito]);
 
+  const cambiarFormato = useCallback((productoId: string, formato: "ESTANDAR" | "TAPA" | "MEDIA" | "RACION") => {
+    setCarrito((prev) =>
+      prev.map((item) =>
+        item.producto.id === productoId ? { ...item, formato } : item
+      )
+    );
+  }, []);
+
   const confirmarComanda = useCallback(() => {
     if (carrito.length === 0) return null;
     const lineas = carrito.map((item) => ({
       productoId: item.producto.id,
       cantidad: item.cantidad,
+      formato: item.formato,
     }));
     const comanda = storeCrearComandaMesa(mesaId, lineas);
     setCarrito([]);
@@ -203,6 +232,7 @@ export function useCrearComanda(mesaId: string) {
     agregarAlCarrito,
     quitarDelCarrito,
     actualizarCantidad,
+    cambiarFormato,
     confirmarComanda,
     cancelarComanda,
     totalCarrito,
@@ -235,6 +265,13 @@ export function useReservas(fechaInicial?: Date) {
   const crearReserva = useCallback((datos: Omit<NuevaReserva, "terminada">) => {
     return storeCrearReserva({ ...datos, terminada: false });
   }, []);
+
+  const editarReserva = useCallback(
+    (id: string, datos: Partial<Pick<Reserva, "anfitrion" | "numPersonas" | "fechaHora" | "mesaId" | "numMesa">>) => {
+      return storeEditarReserva(id, datos);
+    },
+    []
+  );
 
   const terminarReserva = useCallback((id: string) => {
     return storeTerminarReserva(id);
@@ -283,6 +320,7 @@ export function useReservas(fechaInicial?: Date) {
     totalPaginas,
     setPagina,
     crearReserva,
+    editarReserva,
     terminarReserva,
     eliminarReserva,
     cambiarFecha,

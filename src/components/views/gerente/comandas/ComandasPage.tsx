@@ -6,11 +6,19 @@ import { ComandaCard } from "./ComandaCard";
 import { ComandasHechasModal } from "./ComandasHechasModal";
 
 export function ComandasPage() {
-  const { comandas, marcarComoLista } = useComandasPendientes();
+  const { comandas, marcarComoLista, marcarLineaLista, desmarcarLinea } = useComandasPendientes();
   const [showHechasModal, setShowHechasModal] = useState(false);
 
   const handleMarcarLista = (id: string) => {
     marcarComoLista(id);
+  };
+
+  const handleMarcarLineaLista = (comandaId: string, lineaId: string) => {
+    marcarLineaLista(comandaId, lineaId);
+  };
+
+  const handleDesmarcarLinea = (comandaId: string, lineaId: string) => {
+    desmarcarLinea(comandaId, lineaId);
   };
 
   return (
@@ -29,6 +37,8 @@ export function ComandasPage() {
                   key={comanda.id}
                   comanda={comanda}
                   onMarcarLista={handleMarcarLista}
+                  onMarcarLineaLista={handleMarcarLineaLista}
+                  onDesmarcarLinea={handleDesmarcarLinea}
                 />
               ))}
             </div>

@@ -1,6 +1,10 @@
 /**
  * Store del módulo de mesas, cuentas y reservas
  * Maneja el estado en memoria
+ * 
+ * IMPORTANTE: Este store está sincronizado con el store de comandas.
+ * Las comandas creadas aquí se registran en el store de comandas
+ * y los cambios del cocinero se reflejan aquí.
  */
 
 import type { Mesa, Cuenta, Propina, Reserva, MesaConEstado, NuevaReserva, NuevaPropina } from "./types";
@@ -15,8 +19,127 @@ import {
   ComandaMesa,
   LineaComandaMesa,
   ProductoVendibleSimple,
+  FormatoPlato,
 } from "./seed";
 import { notifyListeners } from "../shared/store-base";
+import { Estado } from "../shared/types";
+import { FormatoPlato as FormatoEnum } from "../comandas/types";
+
+// ============================================
+// MAPEO DE FORMATOS
+// ============================================
+
+/** Mapea el formato de mesa al enum de comandas */
+function mapFormatoToEnum(formato: FormatoPlato): FormatoEnum {
+  const mapping: Record<FormatoPlato, FormatoEnum> = {
+    ESTANDAR: FormatoEnum.ESTANDAR,
+    TAPA: FormatoEnum.TAPA,
+    MEDIA: FormatoEnum.MEDIA,
+    RACION: FormatoEnum.RACION,
+  };
+  return mapping[formato];
+}
+
+// ============================================
+// SINCRONIZACIÓN CON COMANDAS (GERENTE/COCINERO)
+// ============================================
+
+/**
+ * Mapeo entre IDs de comandas del store de gerente y comandas de mesa.
+ * Para las comandas seed, los IDs ya coinciden (comanda-mesaX-Y).
+ * Para las comandas runtime, se registran al crear.
+ */
+const comandasMapeadas: Map<string, string> = new Map();
+
+// Inicializar mapeo para comandas seed que tienen platos
+// Los IDs ya coinciden entre SEED_COMANDAS (gerente) y SEED_COMANDAS_MESA
+SEED_COMANDAS_MESA.forEach((comanda) => {
+  // Solo mapear si tiene platos (las que aparecen en vista gerente)
+  if (comanda.lineas.some((l) => l.esPlato)) {
+    comandasMapeadas.set(comanda.id, comanda.id);
+  }
+});
+
+/**
+ * Sincroniza el estado de una comanda desde la vista del gerente.
+ * Cuando el cocinero marca una comanda como lista, actualiza
+ * las líneas correspondientes en las comandas de mesa.
+ */
+export function sincronizarEstadoDesdeGerente(comandaId: string, estado: Estado): void {
+  // Buscar la comanda de mesa correspondiente
+  // Para seed, el ID es el mismo; para runtime, buscar en el mapeo
+  const comandaMesaId = comandasMapeadas.get(comandaId) || comandaId;
+
+  const comanda = getComandaMesaById(comandaMesaId);
+  if (!comanda) return;
+
+  // Actualizar estado de las líneas de platos
+  const estadoLinea = estado === Estado.REALIZADO ? "REALIZADO" : "EN_PREPARACION";
+  const estadoComanda = estado === Estado.REALIZADO ? "REALIZADA" : "EN_COCINA";
+
+  const comandaActualizada: ComandaMesa = {
+    ...comanda,
+    estado: estadoComanda,
+    lineas: comanda.lineas.map((linea) => ({
+      ...linea,
+      estado: linea.esPlato ? estadoLinea : linea.estado,
+    })),
+  };
+
+  // Guardar cambios
+  if (runtimeComandasMesa.find((c) => c.id === comandaMesaId)) {
+    const idx = runtimeComandasMesa.findIndex((c) => c.id === comandaMesaId);
+    runtimeComandasMesa[idx] = comandaActualizada;
+  } else {
+    modificacionesComandasMesa.set(comandaMesaId, comandaActualizada);
+  }
+
+  notifyListeners();
+}
+
+/**
+ * Sincroniza el estado de una línea específica desde la vista del gerente.
+ * Cuando el cocinero marca un plato individual como listo.
+ */
+export function sincronizarLineaDesdeGerente(comandaId: string, lineaId: string, estado: Estado): void {
+  const comandaMesaId = comandasMapeadas.get(comandaId) || comandaId;
+
+  const comanda = getComandaMesaById(comandaMesaId);
+  if (!comanda) return;
+
+  const estadoLinea = estado === Estado.REALIZADO ? "REALIZADO" : "EN_PREPARACION";
+
+  const comandaActualizada: ComandaMesa = {
+    ...comanda,
+    lineas: comanda.lineas.map((linea) => 
+      linea.id === lineaId ? { ...linea, estado: estadoLinea } : linea
+    ),
+  };
+
+  // Recalcular estado de la comanda
+  const todasServidas = comandaActualizada.lineas.every((l) => l.estado === "SERVIDO");
+  const todasRealizadasOServidas = comandaActualizada.lineas.every(
+    (l) => l.estado === "REALIZADO" || l.estado === "SERVIDO"
+  );
+  
+  if (todasServidas) {
+    comandaActualizada.estado = "ENTREGADA";
+  } else if (todasRealizadasOServidas) {
+    comandaActualizada.estado = "REALIZADA";
+  } else {
+    comandaActualizada.estado = "EN_COCINA";
+  }
+
+  // Guardar cambios
+  if (runtimeComandasMesa.find((c) => c.id === comandaMesaId)) {
+    const idx = runtimeComandasMesa.findIndex((c) => c.id === comandaMesaId);
+    runtimeComandasMesa[idx] = comandaActualizada;
+  } else {
+    modificacionesComandasMesa.set(comandaMesaId, comandaActualizada);
+  }
+
+  notifyListeners();
+}
 
 // ============================================
 // ESTADO EN MEMORIA (Runtime)
@@ -34,7 +157,6 @@ let nextCuentaId = 1;
 let nextPropinaId = 1;
 let nextReservaId = 100;
 let nextComandaMesaId = 100;
-let nextLineaId = 1000;
 
 // ============================================
 // GETTERS: MESAS
@@ -264,10 +386,20 @@ export function agregarPropina(datos: NuevaPropina): Propina {
 // MUTATIONS: COMANDAS DE MESA
 // ============================================
 
+// Importación dinámica del store de comandas para evitar dependencia circular
+let comandasStore: typeof import("../comandas/store") | null = null;
+
+async function getComandaStore() {
+  if (!comandasStore) {
+    comandasStore = await import("../comandas/store");
+  }
+  return comandasStore;
+}
+
 /** Crea una nueva comanda para una mesa */
 export function crearComandaMesa(
   mesaId: string,
-  lineas: Array<{ productoId: string; cantidad: number }>
+  lineas: Array<{ productoId: string; cantidad: number; formato?: FormatoPlato }>
 ): ComandaMesa {
   const mesa = getMesaById(mesaId);
   if (!mesa) throw new Error(`Mesa ${mesaId} no encontrada`);
@@ -276,23 +408,27 @@ export function crearComandaMesa(
   const comandasMesa = getComandasByMesa(mesaId);
   const numComanda = comandasMesa.length + 1;
 
+  // ID único para la comanda (usado en ambos stores)
+  const comandaId = `comanda-${Date.now()}-${nextComandaMesaId}`;
+
   // Crear líneas
-  const lineasComanda: LineaComandaMesa[] = lineas.map((l) => {
+  const lineasComanda: LineaComandaMesa[] = lineas.map((l, index) => {
     const producto = PRODUCTOS_VENDIBLES.find((p) => p.id === l.productoId);
     if (!producto) throw new Error(`Producto ${l.productoId} no encontrado`);
     return {
-      id: `linea-${nextLineaId++}`,
+      id: `linea-${comandaId}-${index}`,
       productoId: l.productoId,
       productoNombre: producto.nombre,
       cantidad: l.cantidad,
       precioUnitario: producto.precio,
       estado: producto.esPlato ? "EN_PREPARACION" : "SERVIDO",
       esPlato: producto.esPlato,
+      formato: producto.esPlato ? l.formato : undefined,
     };
   });
 
   const comanda: ComandaMesa = {
-    id: `comanda-mesa-${nextComandaMesaId++}`,
+    id: comandaId,
     numComanda,
     mesaId,
     horaCreacion: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
@@ -301,6 +437,32 @@ export function crearComandaMesa(
   };
 
   runtimeComandasMesa.push(comanda);
+  nextComandaMesaId++;
+
+  // Mapear esta comanda para sincronización
+  comandasMapeadas.set(comandaId, comandaId);
+
+  // Registrar en el store de comandas del gerente (solo platos)
+  const lineasPlatos = lineasComanda.filter((l) => l.esPlato);
+  if (lineasPlatos.length > 0) {
+    getComandaStore().then((store) => {
+      store.agregarComandaDesdeCarmarero({
+        id: comandaId,
+        numComanda,
+        mesaId,
+        numMesa: mesa.numMesa,
+        fechaCreacion: new Date(),
+        lineas: lineasPlatos.map((l) => ({
+          id: l.id,
+          productoVendibleId: l.productoId,
+          productoNombre: l.productoNombre,
+          cantidad: l.cantidad,
+          estado: Estado.EN_PREPARACION,
+          formato: l.formato ? mapFormatoToEnum(l.formato) : undefined,
+        })),
+      });
+    });
+  }
 
   // Agregar a la cuenta activa
   const cuenta = getCuentaActivaByMesa(mesaId);
@@ -408,6 +570,63 @@ export function terminarReserva(id: string): Reserva | null {
   return null;
 }
 
+/** Edita una reserva existente */
+export function editarReserva(
+  id: string,
+  datos: Partial<Pick<Reserva, "anfitrion" | "numPersonas" | "fechaHora" | "mesaId" | "numMesa">>
+): Reserva | null {
+  // Buscar en runtime
+  const runtimeIndex = runtimeReservas.findIndex((r) => r.id === id);
+  if (runtimeIndex !== -1) {
+    // Verificar conflictos si cambia mesa o fecha
+    if (datos.mesaId || datos.fechaHora) {
+      const reserva = runtimeReservas[runtimeIndex];
+      const nuevaFechaHora = datos.fechaHora || reserva.fechaHora;
+      const nuevaMesaId = datos.mesaId || reserva.mesaId;
+      const reservasExistentes = getReservasByFecha(nuevaFechaHora);
+      const conflicto = reservasExistentes.find(
+        (r) => r.mesaId === nuevaMesaId && !r.terminada && r.id !== id
+      );
+      if (conflicto) {
+        throw new Error(`Mesa ya tiene una reserva a esa hora`);
+      }
+    }
+    runtimeReservas[runtimeIndex] = {
+      ...runtimeReservas[runtimeIndex],
+      ...datos,
+    };
+    notifyListeners();
+    return runtimeReservas[runtimeIndex];
+  }
+
+  // Buscar en seed
+  const seedReserva = SEED_RESERVAS.find((r) => r.id === id);
+  if (seedReserva) {
+    const reservaActual = modificacionesReservas.get(id) || seedReserva;
+    // Verificar conflictos
+    if (datos.mesaId || datos.fechaHora) {
+      const nuevaFechaHora = datos.fechaHora || reservaActual.fechaHora;
+      const nuevaMesaId = datos.mesaId || reservaActual.mesaId;
+      const reservasExistentes = getReservasByFecha(nuevaFechaHora);
+      const conflicto = reservasExistentes.find(
+        (r) => r.mesaId === nuevaMesaId && !r.terminada && r.id !== id
+      );
+      if (conflicto) {
+        throw new Error(`Mesa ya tiene una reserva a esa hora`);
+      }
+    }
+    const modificada: Reserva = {
+      ...reservaActual,
+      ...datos,
+    };
+    modificacionesReservas.set(id, modificada);
+    notifyListeners();
+    return modificada;
+  }
+
+  return null;
+}
+
 /** Elimina una reserva */
 export function eliminarReserva(id: string): boolean {
   // Solo permitir eliminar reservas runtime
@@ -462,11 +681,11 @@ export function resetMesasRuntime(): void {
   modificacionesCuentas.clear();
   modificacionesReservas.clear();
   modificacionesComandasMesa.clear();
+  comandasMapeadas.clear();
   nextCuentaId = 1;
   nextPropinaId = 1;
   nextReservaId = 100;
   nextComandaMesaId = 100;
-  nextLineaId = 1000;
 }
 
 export function getMesasDebugInfo() {
