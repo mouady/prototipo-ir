@@ -51,7 +51,6 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/bravas.png",
     categoriaCarta: CategoriaCarta.CALENTITO,
-    descripcion: "Entrantes",
   },
   {
     id: "plato-2",
@@ -59,7 +58,6 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/whisky.png",
     categoriaCarta: CategoriaCarta.CALENTITO,
-    descripcion: "Carnes",
   },
   {
     id: "plato-3",
@@ -67,7 +65,6 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/chocos.png",
     categoriaCarta: CategoriaCarta.PESCADO_FRITO,
-    descripcion: "Pescados, Fritos",
   },
   {
     id: "plato-4",
@@ -75,7 +72,6 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/albondigas.png",
     categoriaCarta: CategoriaCarta.CALENTITO,
-    descripcion: "Carnes",
   },
   {
     id: "plato-5",
@@ -83,7 +79,6 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/sanJacobo.png",
     categoriaCarta: CategoriaCarta.EN_FRIO,
-    descripcion: "Entrantes",
   },
   {
     id: "plato-6",
@@ -91,7 +86,6 @@ export const SEED_PLATOS: Plato[] = [
     tipo: "plato",
     imagen: "/platos/mixta.png",
     categoriaCarta: CategoriaCarta.ENSALADAS,
-    descripcion: "Ensaladas",
   },
 ];
 

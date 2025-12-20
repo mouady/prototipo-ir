@@ -2,12 +2,11 @@
 
 import Image from "next/image";
 import { Empleado, RolEmpleado } from "@/mock";
-import { Edit2 } from "lucide-react";
+import { getRolLabel } from "@/lib/utils";
 
 interface EmpleadoCardProps {
   empleado: Empleado;
   onClick?: (empleado: Empleado) => void;
-  onEdit?: (empleado: Empleado) => void;
 }
 
 /**
@@ -15,20 +14,14 @@ interface EmpleadoCardProps {
  * - Foto de perfil
  * - Indicador de estado (activo/inactivo)
  * - Nombre completo
- * - Rol (Camarero/Cocinero)
- * - Botón de edición
+ * - Rol (Camarero/Camarera, Cocinero/Cocinera)
  */
-export function EmpleadoCard({ empleado, onClick, onEdit }: EmpleadoCardProps) {
+export function EmpleadoCard({ empleado, onClick }: EmpleadoCardProps) {
   const nombreCompleto = `${empleado.nombre} ${empleado.apellidos}`;
-  const rolLabel = empleado.rol === RolEmpleado.CAMARERO ? "Camarero" : "Cocinero";
+  const rolLabel = getRolLabel(empleado.rol, empleado.genero);
 
   const handleClick = () => {
     onClick?.(empleado);
-  };
-
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onEdit?.(empleado);
   };
 
   return (
@@ -36,15 +29,6 @@ export function EmpleadoCard({ empleado, onClick, onEdit }: EmpleadoCardProps) {
       className="relative bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group"
       onClick={handleClick}
     >
-      {/* Botón de edición */}
-      <button
-        onClick={handleEdit}
-        className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-        title="Editar empleado"
-      >
-        <Edit2 className="h-4 w-4" />
-      </button>
-
       {/* Contenido principal */}
       <div className="flex flex-col items-center text-center">
         {/* Avatar con indicador de estado */}

@@ -110,11 +110,8 @@ export function ComandaCard({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">
-          Comanda {comanda.numComanda}
+          Mesa {comanda.numMesa} - Comanda {comanda.numComanda}
         </h3>
-        <span className="text-xs text-gray-500">
-          Mesa {comanda.numMesa}
-        </span>
       </div>
       
       {/* Progreso */}

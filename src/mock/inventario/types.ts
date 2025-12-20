@@ -107,7 +107,6 @@ export interface ProductoVendible {
  */
 export interface Plato extends ProductoVendible {
   tipo: "plato";
-  descripcion?: string;
 }
 
 /**

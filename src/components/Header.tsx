@@ -47,7 +47,7 @@ export function Header({ seccionActiva, onSeccionChange }: HeaderProps) {
             />
 
           {/* Navigation */}
-          <nav className="flex items-center gap-1">
+          <nav className="flex items-center gap-5">
             {navItems.map((item) => (
               <button
                 key={item.id}

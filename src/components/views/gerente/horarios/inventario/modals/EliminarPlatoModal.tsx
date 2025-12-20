@@ -6,32 +6,35 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
-import { Empleado, RolEmpleado } from "@/mock";
-import { getRolLabel } from "@/lib/utils";
+import { Plato, eliminarPlato } from "@/mock";
 
-interface EliminarEmpleadoModalProps {
+interface EliminarPlatoModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  empleado: Empleado | null;
+  plato: Plato | null;
   onConfirm: () => void;
 }
 
-/**
- * Modal de confirmación de eliminación de empleado
- * Muestra un diálogo de alerta con el rol y nombre del empleado
- */
-export function EliminarEmpleadoModal({
+// Función para formatear la categoría
+const formatCategoria = (categoria: string) => {
+  return categoria
+    .split("_")
+    .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
+export function EliminarPlatoModal({
   open,
   onOpenChange,
-  empleado,
+  plato,
   onConfirm,
-}: EliminarEmpleadoModalProps) {
-  if (!empleado) return null;
+}: EliminarPlatoModalProps) {
+  if (!plato) return null;
 
-  const nombreCompleto = `${empleado.nombre} ${empleado.apellidos}`;
-  const rolLabel = getRolLabel(empleado.rol, empleado.genero).toLowerCase();
+  const categoriaLabel = formatCategoria(plato.categoriaCarta).toLowerCase();
 
   const handleConfirm = () => {
+    eliminarPlato(plato.id);
     onConfirm();
     onOpenChange(false);
   };
@@ -47,10 +50,10 @@ export function EliminarEmpleadoModal({
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900">
-                Vas a eliminar a un {rolLabel}
+                Vas a eliminar un plato
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                ¿Deseas eliminar a {nombreCompleto}?
+                ¿Deseas eliminar {plato.nombre}?
               </p>
             </div>
           </div>
@@ -58,19 +61,19 @@ export function EliminarEmpleadoModal({
 
         {/* Contenido */}
         <div className="px-6 py-4 space-y-4">
-          {/* Información del empleado */}
+          {/* Información del plato */}
           <div className="bg-gray-50 rounded-lg p-3">
             <p className="text-sm text-gray-700">
-              Esta acción eliminará permanentemente el registro de{" "}
-              <span className="font-semibold">{nombreCompleto}</span>{" "}
-              del sistema.
+              Esta acción eliminará permanentemente{" "}
+              <span className="font-semibold">{plato.nombre}</span>{" "}
+              de la categoría {categoriaLabel}.
             </p>
           </div>
 
           {/* Advertencia */}
           <p className="text-xs text-gray-500">
-            Esta acción no se puede deshacer. Se perderán todos los datos
-            asociados a este empleado.
+            Esta acción no se puede deshacer. El plato ya no estará disponible
+            en el inventario.
           </p>
         </div>
 
@@ -84,9 +87,8 @@ export function EliminarEmpleadoModal({
             Cancelar
           </Button>
           <Button
-            variant="destructive"
             onClick={handleConfirm}
-            className="flex-1 bg-red-600 hover:bg-red-700"
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white"
           >
             Eliminar
           </Button>

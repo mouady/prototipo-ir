@@ -30,9 +30,6 @@ export function DeleteModal({
   const platosQueUsan = esIngrediente
     ? platos.filter(
         (plato) =>
-          plato.descripcion
-            ?.toLowerCase()
-            .includes(producto.nombre.toLowerCase()) ||
           plato.nombre.toLowerCase().includes(producto.nombre.toLowerCase())
       )
     : [];

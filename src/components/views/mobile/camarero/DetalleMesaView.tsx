@@ -162,31 +162,6 @@ function ComandaSection({
 }
 
 /**
- * Notificación toast de platos listos
- */
-function NotificacionPlatosListos({
-  platosListos,
-  numComanda,
-  numMesa,
-}: {
-  platosListos: number;
-  numComanda: number;
-  numMesa: number;
-}) {
-  if (platosListos === 0) return null;
-
-  return (
-    <div className="bg-gray-100 rounded-lg px-4 py-3 flex items-center gap-2 mb-4">
-      <Bell className="w-4 h-4 text-gray-600" />
-      <span className="text-sm text-gray-700">
-        {platosListos} {platosListos === 1 ? "plato listo" : "platos listos"} de comanda{" "}
-        {numComanda} mesa {numMesa}
-      </span>
-    </div>
-  );
-}
-
-/**
  * Vista de resumen de cuenta para cerrar
  */
 function VistaResumenCuenta({
@@ -413,15 +388,6 @@ export default function DetalleMesaView({ mesaId, onBack, onCrearComanda }: Deta
       {/* Contenido según vista */}
       {vista === "comandas" ? (
         <div className="flex-1 overflow-y-auto p-4">
-          {/* Notificación de platos listos */}
-          {comandaConPlatosListos && (
-            <NotificacionPlatosListos
-              platosListos={platosListos}
-              numComanda={comandaConPlatosListos.numComanda}
-              numMesa={mesa.numMesa}
-            />
-          )}
-
           {/* Lista de comandas */}
           {comandas.length === 0 ? (
             <div className="text-center py-8 text-gray-500">

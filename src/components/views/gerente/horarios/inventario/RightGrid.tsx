@@ -6,8 +6,10 @@ import { PlatoCard } from "./cards/PlatoCard";
 import { ElementCard } from "./cards/ElementCard";
 import { AgregarProductoModal } from "./modales/AddModal";
 import { DeleteModal } from "./modales/DeleteModal";
+import { PlatoModal } from "./modals";
 import { AvisosPage } from "@/components/views/gerente/avisos";
 import { GeneradorMensajes } from "@/components/views/gerente/generador-mensajes";
+import { ProveedoresPage } from "@/components/views/gerente/proveedores";
 import { Button } from "@/components/ui/button";
 import { Filter, Plus } from "lucide-react";
 
@@ -17,6 +19,7 @@ interface ProductGridProps {
 
 export function RightGrid({ categoriaActiva }: ProductGridProps) {
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [modalPlatoAbierto, setModalPlatoAbierto] = useState(false);
   const [productoParaEditar, setProductoParaEditar] = useState<Producto | undefined>();
   const [productoParaEliminar, setProductoParaEliminar] = useState<Producto | null>(null);
   const [modalEliminacionAbierto, setModalEliminacionAbierto] = useState(false);
@@ -124,7 +127,11 @@ export function RightGrid({ categoriaActiva }: ProductGridProps) {
             <Filter className="h-4 w-4" />
             Filtrar
           </Button>
-          <Button size="sm" className="gap-2">
+          <Button 
+            size="sm" 
+            className="gap-2"
+            onClick={() => setModalPlatoAbierto(true)}
+          >
             <Plus className="h-4 w-4" />
             Crear
           </Button>
@@ -142,6 +149,12 @@ export function RightGrid({ categoriaActiva }: ProductGridProps) {
             No hay platos disponibles
           </div>
         )}
+
+        {/* Modal para crear plato */}
+        <PlatoModal 
+          open={modalPlatoAbierto} 
+          onOpenChange={setModalPlatoAbierto}
+        />
       </div>
     );
   }
@@ -149,6 +162,11 @@ export function RightGrid({ categoriaActiva }: ProductGridProps) {
   // Para la categoría de avisos
   if (categoriaActiva === "avisos") {
     return <AvisosPage />;
+  }
+
+  // Para el listado de proveedores
+  if (categoriaActiva === "listado") {
+    return <ProveedoresPage />;
   }
 
   // Para el generador de mensajes

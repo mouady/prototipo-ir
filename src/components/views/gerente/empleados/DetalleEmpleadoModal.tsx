@@ -8,6 +8,7 @@ import {
 import { Edit2, Trash2, Copy, X } from "lucide-react";
 import { Empleado, RolEmpleado, TipoContrato, Genero } from "@/mock";
 import { useState } from "react";
+import { getRolLabel } from "@/lib/utils";
 
 interface DetalleEmpleadoModalProps {
   open: boolean;
@@ -22,12 +23,6 @@ const GENERO_LABELS: Record<Genero, string> = {
   [Genero.MASCULINO]: "Masculino",
   [Genero.FEMENINO]: "Femenino",
   [Genero.OTRO]: "Otro",
-};
-
-// Mapeo de roles para mostrar en español
-const ROL_LABELS: Record<RolEmpleado, string> = {
-  [RolEmpleado.CAMARERO]: "Camarero",
-  [RolEmpleado.COCINERO]: "Cocinero",
 };
 
 /**
@@ -47,7 +42,7 @@ export function DetalleEmpleadoModal({
   if (!empleado) return null;
 
   const nombreCompleto = `${empleado.nombre} ${empleado.apellidos}`;
-  const rolLabel = ROL_LABELS[empleado.rol];
+  const rolLabel = getRolLabel(empleado.rol, empleado.genero);
   const generoLabel = GENERO_LABELS[empleado.genero];
 
   // Formatear fecha para mostrar
@@ -82,7 +77,7 @@ export function DetalleEmpleadoModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0 gap-0">
+      <DialogContent className="sm:max-w-[500px] p-0 gap-0" showCloseButton={false}>
         {/* Header con botón cerrar y acciones */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">
