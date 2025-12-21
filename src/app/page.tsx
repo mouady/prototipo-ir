@@ -1,22 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { Users, BarChart3, Utensils, ChefHat } from "lucide-react";
+import Image from "next/image";
+import { Users, BarChart3, ChefHat } from "lucide-react";
+import { getPublicPath } from "@/lib/path";
 
 export default function WelcomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
       {/* Header */}
       <header className="p-6 text-center">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-lg mb-4">
-          <Utensils className="w-10 h-10 text-white" />
+        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-lg mb-4 overflow-hidden">
+          <Image
+            src={getPublicPath("/logoFinal.jpg")}
+            alt="Bar El Punto Logo"
+            width={80}
+            height={80}
+            className="w-full h-full object-cover"
+            priority
+          />
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">
-          Prototipo Funcional IR
+          ¡Bienvenid@ al Prototipo Funcional de Bar El Punto!
         </h1>
-        <p className="text-slate-300 max-w-md mx-auto">
-          Sistema integral de gestión para restaurantes. Selecciona tu perfil para comenzar.
-        </p>
       </header>
 
       {/* Opciones de acceso */}
@@ -135,10 +141,10 @@ export default function WelcomePage() {
       <footer className="p-6 text-center">
         <div className="flex items-center justify-center gap-4 text-sm text-slate-400">
           <div className="flex items-center gap-2">
-            <span>Demo interactiva</span>
+            <span>Grupo IR2526-G1-BB-06</span>
           </div>
           <span>•</span>
-          <span>v1.0.0</span>
+          <span>v2.0.0</span>
         </div>
       </footer>
     </div>

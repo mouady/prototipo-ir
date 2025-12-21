@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Prototipo IR - Sistema de Gestión de Restaurante",
-  description: "Prototipo funcional para la gestión integral de restaurantes",
+  title: "Bar El Punto - Prototipo Funcional",
+  description: "Prototipo funcional de Bar El Punto para la asignatuira de Ingeniería de Requisitos 2025/2026."
 };
 
 export default function RootLayout({
