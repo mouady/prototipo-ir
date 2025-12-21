@@ -217,6 +217,8 @@ export default function MesasView({ onSelectMesa, camareroId, camareroNombre }: 
             <p className="text-xs text-gray-500">Libres</p>
           </div>
         </div>
+        {/* Espacio inferior para evitar solapamiento con el bisel */}
+          <div className="h-[34px]" />
       </div>
     </div>
   );

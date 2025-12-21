@@ -17,7 +17,7 @@ export default function ContainerMobile({ children }: { children: React.ReactNod
                 {/* Contenido de la app dentro del bisel */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[402px] h-[874px] rounded-[50px] overflow-hidden flex flex-col">
                     {/* Barra de estado del móvil */}
-                    <div className="h-[62px] w-full flex-shrink-0" style={{ backgroundColor: '#101828' }} />
+                    <div className="h-[62px] w-full flex-shrink-0" style={{ backgroundColor: '#0F1726' }} />
                     {/* Contenido de la app */}
                     <div className="flex-1 flex flex-col bg-gray-100 overflow-hidden">
                         {children}

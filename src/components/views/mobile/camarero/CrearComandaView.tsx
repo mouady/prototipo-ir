@@ -247,6 +247,8 @@ export default function CrearComandaView({
             <span className="font-medium text-gray-700">Cancelar</span>
           </button>
         </div>
+        {/* Espacio inferior para evitar solapamiento con el bisel */}
+          <div className="h-[34px]" />
       </div>
     </div>
   );

@@ -264,6 +264,8 @@ export default function AvisosView({ cocineroId, cocineroNombre }: AvisosViewPro
               </Button>
             </div>
           )}
+          {/* Espacio inferior para evitar solapamiento con el bisel */}
+          <div className="h-[34px]" />
         </div>
       ) : (
         /* Tab: Avisos enviados */

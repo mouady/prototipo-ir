@@ -115,7 +115,6 @@ function ReservaCard({
  * Formulario para crear nueva reserva
  */
 function FormularioReserva({
-  fecha,
   onCrear,
   onCancelar,
 }: {
@@ -230,7 +229,6 @@ function FormularioReserva({
  */
 function ModalEditarReserva({
   reserva,
-  fecha,
   onGuardar,
   onCancelar,
 }: {
@@ -346,6 +344,8 @@ function ModalEditarReserva({
             </button>
           </div>
         </form>
+        {/* Espacio inferior para evitar solapamiento con el bisel */}
+          <div className="h-[10px]" />
       </div>
     </div>
   );

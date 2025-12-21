@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Home, Clock, Bell, LogOut, User, LayoutGrid, CalendarDays } from "lucide-react";
+import { X, Clock, Bell, LogOut, User, LayoutGrid, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getPublicPath } from "@/lib/path";

@@ -298,6 +298,8 @@ function ModalPropina({
               Agregar propina
             </button>
           </div>
+          {/* Espacio inferior para evitar solapamiento con el bisel */}
+          <div className="h-[34px]" />
         </form>
       </div>
     </div>
@@ -425,7 +427,10 @@ export default function DetalleMesaView({ mesaId, onBack, onCrearComanda }: Deta
             <Plus className="w-5 h-5 text-gray-600" />
             <span className="font-medium text-gray-700">Añadir comanda</span>
           </button>
+          {/* Espacio inferior para evitar solapamiento con el bisel */}
+          <div className="h-[34px]" />
         </div>
+        
       )}
 
       {/* Modal de propina */}
