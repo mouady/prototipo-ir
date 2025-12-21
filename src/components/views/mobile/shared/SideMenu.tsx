@@ -61,7 +61,7 @@ export default function SideMenu({
       >
         {/* Profile Header */}
         <div
-          className="p-6 text-white"
+          className="pt-[62px] px-6 pb-6 text-white"
           style={{
             background: `linear-gradient(135deg, ${accentColor}, ${accentColor}dd)`,
           }}
