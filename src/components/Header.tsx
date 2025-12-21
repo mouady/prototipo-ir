@@ -39,7 +39,7 @@ export function Header({ seccionActiva, onSeccionChange }: HeaderProps) {
           </Link>
           
           <Image
-              src="/logosuitepro.png"
+              src="/logosuite.png"
               alt="Suite Pro Logo"
               width={55}
               height={55}
