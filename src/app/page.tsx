@@ -298,7 +298,7 @@ export default function WelcomePage() {
           <div className="flex items-center justify-center gap-4 text-sm text-slate-400">
             <span>Grupo IR2526-G1-BB-06</span>
             <span>•</span>
-            <span>v2.0.0</span>
+            <span>v2.0.1</span>
           </div>
           <p className="text-xs text-slate-500">
             Desarrollado con Next.js 15, TypeScript y Tailwind CSS
