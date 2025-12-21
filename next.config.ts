@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   output: "standalone",
-  basePath: "/prototipo-ir"
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || "/prototipo-ir",
 };
 
 export default nextConfig;
