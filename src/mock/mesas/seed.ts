@@ -90,7 +90,7 @@ export const SEED_RESERVAS: Reserva[] = [
     id: "reserva-1",
     mesaId: "mesa-2",
     numMesa: 2,
-    fechaHora: new Date("2025-12-20T14:00:00"),
+    fechaHora: new Date(`${new Date().toISOString().split('T')[0]}T14:00:00`),
     anfitrion: "García Pérez",
     numPersonas: 2,
     terminada: false,
@@ -99,7 +99,7 @@ export const SEED_RESERVAS: Reserva[] = [
     id: "reserva-2",
     mesaId: "mesa-4",
     numMesa: 4,
-    fechaHora: new Date("2025-12-20T14:30:00"),
+    fechaHora: new Date(`${new Date().toISOString().split('T')[0]}T14:30:00`),
     anfitrion: "López Martín",
     numPersonas: 4,
     terminada: false,
@@ -108,7 +108,7 @@ export const SEED_RESERVAS: Reserva[] = [
     id: "reserva-3",
     mesaId: "mesa-6",
     numMesa: 6,
-    fechaHora: new Date("2025-12-20T21:00:00"),
+    fechaHora: new Date(`${new Date().toISOString().split('T')[0]}T21:00:00`),
     anfitrion: "Fernández Ruiz",
     numPersonas: 3,
     terminada: false,
@@ -117,7 +117,7 @@ export const SEED_RESERVAS: Reserva[] = [
     id: "reserva-4",
     mesaId: "mesa-8",
     numMesa: 8,
-    fechaHora: new Date("2025-12-20T13:00:00"),
+    fechaHora: new Date(`${new Date().toISOString().split('T')[0]}T13:00:00`),
     anfitrion: "Sánchez Torres",
     numPersonas: 5,
     terminada: true,
@@ -126,7 +126,7 @@ export const SEED_RESERVAS: Reserva[] = [
     id: "reserva-5",
     mesaId: "mesa-10",
     numMesa: 10,
-    fechaHora: new Date("2025-12-20T21:30:00"),
+    fechaHora: new Date(`${new Date().toISOString().split('T')[0]}T21:30:00`),
     anfitrion: "Rodríguez Vila",
     numPersonas: 4,
     terminada: false,
@@ -173,9 +173,6 @@ export const PRODUCTOS_VENDIBLES: ProductoVendibleSimple[] = [
 // ============================================
 // COMANDAS POR MESA (estructura para el camarero)
 // ============================================
-
-import { FormatoPlato as FormatoEnum } from "../inventario/types";
-import { Estado } from "../shared/types";
 
 // Re-export FormatoPlato como tipo de string para compatibilidad con datos existentes
 export type FormatoPlato = "ESTANDAR" | "TAPA" | "MEDIA" | "RACION";
