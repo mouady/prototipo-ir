@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { Empleado, RolEmpleado } from "@/mock";
+import { Empleado } from "@/mock";
 import { getRolLabel } from "@/lib/utils";
+import { getPublicPath } from "@/lib/path";
 
 interface EmpleadoCardProps {
   empleado: Empleado;

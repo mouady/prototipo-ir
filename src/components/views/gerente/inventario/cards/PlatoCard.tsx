@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { Pencil } from "lucide-react";
 import { PlatoModal } from "../modals";
+import { getPublicPath } from "@/lib/path";
 
 interface ProductCardProps {
   plato: Plato;
