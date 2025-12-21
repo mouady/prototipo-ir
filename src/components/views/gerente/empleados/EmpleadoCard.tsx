@@ -36,7 +36,7 @@ export function EmpleadoCard({ empleado, onClick }: EmpleadoCardProps) {
           <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100">
             {empleado.imagenPerfil ? (
               <Image
-                src={empleado.imagenPerfil}
+                src={getPublicPath(empleado.imagenPerfil)}
                 alt={nombreCompleto}
                 width={96}
                 height={96}

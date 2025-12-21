@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getPublicPath } from "@/lib/path";
 
 export type SeccionActiva = "horarios" | "comandas" | "empleados" | "inventario" | "estadisticas";
 
@@ -39,7 +40,7 @@ export function Header({ seccionActiva, onSeccionChange }: HeaderProps) {
           </Link>
           
           <Image
-              src="/logosuite.png"
+              src={getPublicPath("/logosuite.png")}
               alt="Suite Pro Logo"
               width={55}
               height={55}

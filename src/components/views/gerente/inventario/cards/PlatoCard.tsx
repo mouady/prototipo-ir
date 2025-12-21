@@ -43,7 +43,7 @@ export function PlatoCard({ plato }: ProductCardProps) {
       <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-200 h-full flex flex-col">
         <div className="relative w-full overflow-hidden flex-shrink-0" style={{ aspectRatio: '1' }}>
           <Image
-            src={plato.imagen}
+            src={getPublicPath(plato.imagen)}
             alt={plato.nombre}
             fill
             className="object-cover"

@@ -3,6 +3,7 @@
 import { X, Home, Clock, Bell, LogOut, User, LayoutGrid, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { getPublicPath } from "@/lib/path";
 
 export interface MenuOption {
   label: string;
@@ -69,7 +70,7 @@ export default function SideMenu({
             <div className="w-16 h-16 rounded-full bg-white/20 overflow-hidden border-2 border-white/40">
               {profile.imagenPerfil ? (
                 <Image
-                  src={profile.imagenPerfil}
+                  src={getPublicPath(profile.imagenPerfil)}
                   alt={`${profile.nombre} ${profile.apellidos}`}
                   width={64}
                   height={64}

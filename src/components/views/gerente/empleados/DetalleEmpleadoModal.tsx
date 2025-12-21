@@ -8,6 +8,7 @@ import {
 import { Edit2, Trash2, Copy, X } from "lucide-react";
 import { Empleado, RolEmpleado, TipoContrato, Genero } from "@/mock";
 import { useState } from "react";
+import { getPublicPath } from "@/lib/path";
 import { getRolLabel } from "@/lib/utils";
 
 interface DetalleEmpleadoModalProps {
@@ -118,7 +119,7 @@ export function DetalleEmpleadoModal({
             <div className="w-32 h-32 rounded-xl overflow-hidden bg-gray-100">
               {empleado.imagenPerfil ? (
                 <Image
-                  src={empleado.imagenPerfil}
+                  src={getPublicPath(empleado.imagenPerfil)}
                   alt={nombreCompleto}
                   width={128}
                   height={128}
