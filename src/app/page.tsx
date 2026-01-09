@@ -4,13 +4,45 @@ import Link from "next/link";
 import Image from "next/image";
 import { Users, BarChart3, ChefHat, Info, Database, Clock, Bell, Package, Calendar, Utensils } from "lucide-react";
 import { getPublicPath } from "@/lib/path";
+import { useTelemetry, usePageViewDuration } from "@/lib/useTelemetry";
+
+const COMPONENT_NAME = "WelcomePage";
 
 export default function WelcomePage() {
+  // Hook de telemetría con configuración automática
+  const { trackClick, trackInteraction } = useTelemetry({
+    componentName: COMPONENT_NAME,
+    route: '/',
+    autoTrackPageLoad: true,
+    autoTrackNavigationMetrics: true,
+  });
+
+  // Rastrear duración de la vista
+  usePageViewDuration(COMPONENT_NAME);
+
+  // Función para rastrear clics en enlaces de roles
+  const handleLinkClick = (roleName: string, linkHref: string) => {
+    trackClick(roleName, linkHref, {
+      category: 'navigation',
+      roleType: roleName,
+    });
+  };
+
+  // Función para rastrear interacción con el logo
+  const handleLogoInteraction = () => {
+    trackInteraction('click', 'logo', {
+      location: 'header',
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
       {/* Header */}
       <header className="p-6 text-center border-b border-slate-700/50">
-        <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-lg mb-4 overflow-hidden">
+        <div 
+          className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-lg mb-4 overflow-hidden cursor-pointer"
+          onClick={handleLogoInteraction}
+        >
           <Image
             src={getPublicPath("/logoFinal.jpg")}
             alt="Bar El Punto Logo"
@@ -63,6 +95,7 @@ export default function WelcomePage() {
           <Link 
             href="/mobile/camarero"
             className="group relative bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl shadow-xl border border-slate-700 p-6 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 overflow-hidden hover:from-slate-700 hover:to-slate-600"
+            onClick={() => handleLinkClick('Camarero', '/mobile/camarero')}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform" />
             
@@ -104,6 +137,7 @@ export default function WelcomePage() {
           <Link 
             href="/mobile/cocinero"
             className="group relative bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl shadow-xl border border-slate-700 p-6 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 overflow-hidden hover:from-slate-700 hover:to-slate-600"
+            onClick={() => handleLinkClick('Cocinero Móvil', '/mobile/cocinero')}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-500/20 to-red-600/20 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform" />
             
@@ -144,6 +178,7 @@ export default function WelcomePage() {
           <Link 
             href="/desktop/cocinero"
             className="group relative bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl shadow-xl border border-slate-700 p-6 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 overflow-hidden hover:from-slate-700 hover:to-slate-600"
+            onClick={() => handleLinkClick('Cocinero Escritorio', '/desktop/cocinero')}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-500/20 to-amber-600/20 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform" />
             
@@ -185,6 +220,7 @@ export default function WelcomePage() {
           <Link 
             href="/desktop"
             className="group relative bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl shadow-xl border border-slate-700 p-6 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 overflow-hidden hover:from-slate-700 hover:to-slate-600"
+            onClick={() => handleLinkClick('Gerente', '/desktop')}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform" />
             
