@@ -7,7 +7,7 @@ export async function getServices() {
     return response.data;
 }
 
-export async function getTracesByService(serviceName, startDate, endDate, limit = 10, offset = 10) {
+export async function getTracesByService(serviceName, startDate, endDate, limit = 10, lookbackMinutes = 60) {
   
   let filters = {
     serviceName,
@@ -23,7 +23,7 @@ export async function getTracesByService(serviceName, startDate, endDate, limit 
   } else {
     filters = {
       ...filters,
-      lookback: offset * 60 * 1000
+      lookback: lookbackMinutes * 60 * 1000
     };
   }
   

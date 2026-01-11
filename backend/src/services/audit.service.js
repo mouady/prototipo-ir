@@ -9,8 +9,8 @@ const getAuditById = async (id) => {
  return await auditRepository.findByAuditId(id);
 };
 
-const auditTraces = async (startDate, endDate, limit, offset, thresholdMs = 200) => {
- const traces = await getTracesByService('prototipo-ir', startDate, endDate, limit, offset);
+const auditTraces = async (startDate, endDate, limit, lookbackMinutes, thresholdMs = 200) => {
+ const traces = await getTracesByService('prototipo-ir', startDate, endDate, limit, lookbackMinutes);
  
  const relevantTraces = traces.flatMap(trace => {
   return trace.filter(span => {

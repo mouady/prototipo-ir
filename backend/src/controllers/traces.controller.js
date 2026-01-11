@@ -19,14 +19,14 @@ export const getServices = async (req, res) => {
 export const getTracesByService = async (req, res) => {
     try {
         const { serviceName } = req.params;
-        const { startDate, endDate, limit, offset } = req.query;
+        const { startDate, endDate, limit, lookbackMinutes } = req.query;
         
         const traces = await zipkinService.getTracesByService(
             serviceName, 
             startDate,
             endDate,
             limit ? parseInt(limit) : undefined,
-            offset ? parseInt(offset) : undefined
+            lookbackMinutes ? parseInt(lookbackMinutes) : undefined
         );
         
         res.json({

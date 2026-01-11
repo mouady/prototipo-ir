@@ -11,6 +11,8 @@ servers:
 tags:
   - name: Traces
     description: Endpoints para consultar trazas de Zipkin
+  - name: Audits
+    description: Endpoints para gestionar audits de rendimiento
 
 paths:
   /api/v1/traces/services:
@@ -54,7 +56,7 @@ paths:
       tags:
         - Traces
       summary: Obtener trazas por servicio
-      description: Retorna las trazas de un servicio específico
+      description: Retorna las trazas de un servicio específico con filtrado por rango de fechas
       parameters:
         - name: serviceName
           in: path
@@ -62,7 +64,23 @@ paths:
           description: Nombre del servicio
           schema:
             type: string
-            example: "backend-service"
+            example: "prototipo-ir"
+        - name: startDate
+          in: query
+          required: false
+          description: Fecha de inicio en formato ISO8601
+          schema:
+            type: string
+            format: date-time
+            example: "2024-01-01T00:00:00Z"
+        - name: endDate
+          in: query
+          required: false
+          description: Fecha de fin en formato ISO8601 (debe ser igual o posterior a startDate)
+          schema:
+            type: string
+            format: date-time
+            example: "2024-01-02T00:00:00Z"
         - name: limit
           in: query
           required: false
@@ -71,6 +89,14 @@ paths:
             type: integer
             default: 10
             example: 20
+        - name: lookbackMinutes
+          in: query
+          required: false
+          description: Tiempo hacia atrás desde ahora en minutos (usado solo si no se especifican startDate y endDate)
+          schema:
+            type: integer
+            default: 60
+            example: 120
       responses:
         '200':
           description: Trazas obtenidas exitosamente
@@ -86,6 +112,17 @@ paths:
                   count:
                     type: integer
                     example: 10
+        '400':
+          description: Parámetros de validación inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
         '500':
           description: Error al obtener trazas del servicio
           content:
@@ -99,82 +136,49 @@ paths:
                   error:
                     type: string
 
-  /api/v1/traces/search:
+  /api/v1/audits:
     get:
       tags:
-        - Traces
-      summary: Buscar trazas con filtros
-      description: Busca trazas aplicando filtros específicos
-      parameters:
-        - name: serviceName
-          in: query
-          required: false
-          description: Nombre del servicio
-          schema:
-            type: string
-            example: "backend-service"
-        - name: spanName
-          in: query
-          required: false
-          description: Nombre del span
-          schema:
-            type: string
-            example: "GET /api/users"
-        - name: minDuration
-          in: query
-          required: false
-          description: Duración mínima en microsegundos
-          schema:
-            type: integer
-            example: 1000
-        - name: maxDuration
-          in: query
-          required: false
-          description: Duración máxima en microsegundos
-          schema:
-            type: integer
-            example: 5000000
-        - name: endTs
-          in: query
-          required: false
-          description: Timestamp de fin (milisegundos desde epoch)
-          schema:
-            type: integer
-            example: 1736592000000
-        - name: lookback
-          in: query
-          required: false
-          description: Tiempo hacia atrás desde endTs en milisegundos (por defecto 1 hora)
-          schema:
-            type: integer
-            default: 3600000
-            example: 7200000
-        - name: limit
-          in: query
-          required: false
-          description: Número máximo de trazas a retornar
-          schema:
-            type: integer
-            default: 10
-            example: 50
+        - Audits
+      summary: Obtener todos los audits
+      description: Retorna la lista de todos los audits realizados
       responses:
         '200':
-          description: Búsqueda exitosa
+          description: Lista de audits obtenida exitosamente
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  traces:
-                    type: array
-                    items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    auditId:
+                      type: string
+                      example: "audit-1736592000000"
+                    createdAt:
+                      type: string
+                      format: date-time
+                    compliant:
+                      type: boolean
+                    metadata:
                       type: object
-                  count:
-                    type: integer
-                  filters:
-                    type: object
+                      properties:
+                        totalTraces:
+                          type: integer
+                        tracesBelowThreshold:
+                          type: integer
+                        ratioBelowThreshold:
+                          type: number
+                        thresholdMs:
+                          type: integer
+                        operation:
+                          type: string
+                    evidences:
+                      type: array
+                      items:
+                        type: object
         '500':
-          description: Error en la búsqueda
+          description: Error al obtener audits
           content:
             application/json:
               schema:
@@ -182,8 +186,167 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Error en la búsqueda de trazas"
-                  error:
+
+  /api/v1/audits/{auditId}:
+    get:
+      tags:
+        - Audits
+      summary: Obtener audit por ID
+      description: Retorna los detalles de un audit específico
+      parameters:
+        - name: auditId
+          in: path
+          required: true
+          description: ID del audit
+          schema:
+            type: string
+            example: "audit-1736592000000"
+      responses:
+        '200':
+          description: Audit obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auditId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  compliant:
+                    type: boolean
+                  metadata:
+                    type: object
+                  evidences:
+                    type: array
+                    items:
+                      type: object
+        '404':
+          description: Audit no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Audit not found"
+        '500':
+          description: Error al obtener audit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/v1/audits/traces:
+    post:
+      tags:
+        - Audits
+      summary: Crear audit de rendimiento de trazas
+      description: Crea un audit analizando las trazas en un rango de fechas y compara su duración contra un threshold configurable
+      parameters:
+        - name: startDate
+          in: query
+          required: false
+          description: Fecha de inicio en formato ISO8601
+          schema:
+            type: string
+            format: date-time
+            example: "2024-01-01T00:00:00Z"
+        - name: endDate
+          in: query
+          required: false
+          description: Fecha de fin en formato ISO8601 (debe ser igual o posterior a startDate)
+          schema:
+            type: string
+            format: date-time
+            example: "2024-01-02T00:00:00Z"
+        - name: limit
+          in: query
+          required: false
+          description: Número máximo de trazas a analizar
+          schema:
+            type: integer
+            example: 100
+        - name: lookbackMinutes
+          in: query
+          required: false
+          description: Tiempo hacia atrás desde ahora en minutos (usado solo si no se especifican startDate y endDate)
+          schema:
+            type: integer
+            default: 60
+        - name: thresholdMs
+          in: query
+          required: false
+          description: Threshold de duración en milisegundos para clasificar trazas como aceptables
+          schema:
+            type: integer
+            default: 200
+            minimum: 1
+            example: 300
+      responses:
+        '200':
+          description: Audit creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auditId:
+                    type: string
+                    example: "audit-1736592000000"
+                  createdAt:
+                    type: string
+                    format: date-time
+                  compliant:
+                    type: boolean
+                    description: True si todas las trazas están por debajo del threshold
+                  metadata:
+                    type: object
+                    properties:
+                      totalTraces:
+                        type: integer
+                        description: Total de trazas analizadas
+                      tracesBelowThreshold:
+                        type: integer
+                        description: Número de trazas por debajo del threshold
+                      ratioBelowThreshold:
+                        type: number
+                        description: Proporción de trazas por debajo del threshold (0-1)
+                      thresholdMs:
+                        type: integer
+                        description: Threshold usado en el audit
+                      operation:
+                        type: string
+                        description: Descripción de la operación realizada
+                  evidences:
+                    type: array
+                    items:
+                      type: object
+                    description: Spans que cumplen con el criterio de estar por debajo del threshold
+        '400':
+          description: Parámetros de validación inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+        '500':
+          description: Error al crear audit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
                     type: string
   
   
