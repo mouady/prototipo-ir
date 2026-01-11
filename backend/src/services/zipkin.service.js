@@ -7,29 +7,28 @@ export async function getServices() {
     return response.data;
 }
 
-export async function getTracesByService(serviceName, limit = 10) {
-    const response = await axios.get(`${ZIPKIN_URL}/api/v2/traces`, {
-      params: {
-        serviceName,
-        limit
-      }
-    });
-    return response.data;
-}
-    
-export async function searchTraces(filters) {
-    const { serviceName, spanName, minDuration, maxDuration, endTs, lookback, limit } = filters;
-    const response = await axios.get(`${ZIPKIN_URL}/api/v2/traces`, {
-      params: {
-        serviceName,
-        spanName,
-        minDuration,
-        maxDuration,
-        endTs: endTs || Date.now(),
-        lookback: lookback || 3600000, // 1 hora por defecto
-        limit: limit || 10
-      }
-    });
-    return response.data;
-}
+export async function getTracesByService(serviceName, startDate, endDate, limit = 10, offset = 10) {
+  
+  let filters = {
+    serviceName,
+    limit
+  };
 
+  if (startDate && endDate) {
+    filters = {
+      ...filters,
+      endTs: new Date(endDate).getTime(),
+      lookback: new Date(endDate).getTime() - new Date(startDate).getTime()
+    };
+  } else {
+    filters = {
+      ...filters,
+      lookback: offset * 60 * 1000
+    };
+  }
+  
+  const response = await axios.get(`${ZIPKIN_URL}/api/v2/traces`, {
+    params: filters
+  });
+  return response.data;
+}

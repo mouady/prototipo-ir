@@ -9,8 +9,8 @@ const getAuditById = async (id) => {
  return await auditRepository.findByAuditId(id);
 };
 
-const auditTraces = async (limit) => {
- const traces = await getTracesByService('prototipo-ir', limit);
+const auditTraces = async (startDate, endDate, limit, offset) => {
+ const traces = await getTracesByService('prototipo-ir', startDate, endDate, limit, offset);
  
  const relevantTraces = traces.flatMap(trace => {
   return trace.filter(span => {
@@ -19,23 +19,23 @@ const auditTraces = async (limit) => {
    return httpRoute && httpRoute.startsWith('/');
   });
  });
- 
- const tracesWithHighDuration = relevantTraces.filter(span => (span.duration || 0) >= 200000);
+
  const totalTraces = relevantTraces.length;
- const ratioWithHighDuration = totalTraces === 0 ? 0 : tracesWithHighDuration.length / totalTraces;
+ const LowDurationTraces = relevantTraces.filter(span => (span.duration || 0) <= 200000);
+ const ratioWithLowDuration = totalTraces === 0 ? 0 : LowDurationTraces.length / totalTraces;
 
  const auditRecord = {
   auditId: `audit-${Date.now()}`,
   createdAt: new Date(),
-  compliant: ratioWithHighDuration === 0,
+  compliant: ratioWithLowDuration === 0,
   metadata: {
    totalTraces: totalTraces,
-   tracesWithHighDuration: tracesWithHighDuration.length,
-   ratioWithHighDuration: ratioWithHighDuration,
+   tracesWithLowDuration: LowDurationTraces.length,
+   ratioWithLowDuration: ratioWithLowDuration,
    thresholdMs: 200,
    operation: 'duration < 200ms for traces with http.route / and derivatives'
   },
-  evidences: tracesWithHighDuration
+  evidences: LowDurationTraces
  };
 
  const auditCreated = await auditRepository.create(auditRecord);

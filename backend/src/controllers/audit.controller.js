@@ -5,7 +5,8 @@ export const getAllAudits = async (req, res) => {
   const audits = await auditService.getAllAudits();
   res.status(200).json(audits);
  } catch (error) {
-  res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error'});
  }
 };
 
@@ -13,21 +14,25 @@ export const getAuditById = async (req, res) => {
  const auditId = req.params.auditId;
  try {
   const audit = await auditService.getAuditById(auditId);
-  if (!audit) {
-   return res.status(404).json({ message: 'Audit not found' });
-  }
+  if (!audit) {return res.status(404).json({ message: 'Audit not found' });}
   res.status(200).json(audit);
  } catch (error) {
-  res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error'});
  }
 };
 
 export const auditTraces = async (req, res) => {
  try {
-  const tracesAudit = await auditService.auditTraces();
+  const { offset, startDate, endDate, limit } = req.query;
+  const tracesAudit = await auditService.auditTraces(
+            startDate,
+            endDate,
+            limit ? parseInt(limit) : undefined,
+            offset ? parseInt(offset) : undefined);
   res.status(200).json(tracesAudit);
  } catch (error) {
-  console.error(error);
-  res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
  }
 };
