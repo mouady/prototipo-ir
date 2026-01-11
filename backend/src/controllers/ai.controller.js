@@ -1,60 +1,80 @@
-import { generateText } from '../services/ollama.service.js';
-import {metrics} from '@opentelemetry/api'
+import { createConversation, generateTextWithConversation, getConversation } from '../services/openai.service.js';
 
-const meter = metrics.getMeter('ai-controller-meter');
-const model = process.env.OLLAMA_MODEL || 'gemma3:4b';
-
-// Propongo tres métricas de las cuales 2 de ellas usan las semantic conventions.
-// https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-metrics/
-
-
-const numberOfRequestsInProgress = meter.createUpDownCounter('ai.requests.in_progress', {
-    description: 'Number of AI requests currently being processed',
-    unit: 'requests',
-});
-
-const operationDuration = meter.createHistogram('gen_ai.client.operation.duration', {
-    description: 'Duration of AI operations',
-    unit: 's'
-});
-
-const tokenUsage = meter.createHistogram('gen_ai.client.token.usage', {
-    description: 'Number of input and output tokens used.',
-    unit: '{token}'
-});
-
-// Atributos requeridos según Semantic Conventions
-    const attributes = {
-        'gen_ai.operation.name': 'chat', 
-        'gen_ai.provider.name': 'ollama',
-        'gen_ai.token.type': 'input',
-        'gen_ai.request.model': `${process.env.OLLAMA_MODEL}` || 'No model info available.', 
-    };
-
-export const generateAIResponse = async (req, res) => {
-    const startTime = Date.now();
-    numberOfRequestsInProgress.add(1);
-    
+export const createNewConversation = async (req, res) => {
     try {
-        const { prompt } = req.body;
-        const aiResponse = await generateText(prompt);
-        
-        // Duration
-        const duration = Date.now() - startTime;
-        operationDuration.record(duration, attributes);
+        const conversationId = await createConversation();
+        res.status(201).json({
+            conversationId,
+            message: 'Conversación creada exitosamente'
+        });
+    } catch (error) {
+        console.error('Error in createNewConversation:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al crear la conversación',
+            details: error.message
+        });
+    }
+};
 
-        // Tokens 
-        if (aiResponse.tokens) {
-            tokenUsage.record(aiResponse.tokens, attributes);
+export const generateAIResponseWithConversation = async (req, res) => {
+    try {
+        const { input, conversationId, previousResponseId } = req.body;
+
+        if (!input) {
+            return res.status(400).json({
+                success: false,
+                error: 'Se requiere el campo input'
+            });
         }
 
-        res.status(200).json({ response: aiResponse });
+        const response = await generateTextWithConversation(
+            input,
+            conversationId,
+            previousResponseId
+        );
+
+        res.status(200).json({
+            
+            data: {
+                responseId: response.id,
+                conversationId: response.conversationId,
+                text: response.outputText,
+                output: response.output,
+                usage: response.usage
+            }
+        });
     } catch (error) {
-        const duration = Date.now() - startTime;
-        operationDuration.record(duration, attributes);
-        
-        res.status(500).json({ message: 'Internal server error: ' + error.message });
-    } finally {
-        numberOfRequestsInProgress.add(-1);
+        console.error('Error in generateAIResponseWithConversation:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al generar respuesta',
+            details: error.message
+        });
+    }
+};
+
+
+export const retrieveConversation = async (req, res) => {
+    try {
+        const { conversationId } = req.params;
+
+        if (!conversationId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Se requiere conversationId'
+            });
+        }
+
+        const conversation = await getConversation(conversationId);
+
+        res.status(200).json({data: conversation});
+    } catch (error) {
+        console.error('Error in retrieveConversation:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al obtener la conversación',
+            details: error.message
+        });
     }
 };
