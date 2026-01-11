@@ -1,4 +1,4 @@
-import auditService from '../services/audit.services.js';
+import auditService from '../services/audit.service.js';
 
 export const getAllAudits = async (req, res) => {
  try {
@@ -22,10 +22,10 @@ export const getAuditById = async (req, res) => {
  }
 };
 
-export const auditIssues = async (req, res) => {
+export const auditTraces = async (req, res) => {
  try {
-  const githubIssues = await auditService.auditIssues();
-  res.status(200).json(githubIssues);
+  const tracesAudit = await auditService.auditTraces();
+  res.status(200).json(tracesAudit);
  } catch (error) {
   console.error(error);
   res.status(500).json({ message: 'Internal server error' });
