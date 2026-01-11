@@ -41,29 +41,3 @@ export const getTracesByService = async (req, res) => {
     }
 };
 
-export const searchTraces = async (req, res) => {
-    try {
-        const filters = {
-            serviceName: req.query.serviceName,
-            spanName: req.query.spanName,
-            minDuration: req.query.minDuration ? parseInt(req.query.minDuration) : undefined,
-            maxDuration: req.query.maxDuration ? parseInt(req.query.maxDuration) : undefined,
-            endTs: req.query.endTs ? parseInt(req.query.endTs) : undefined,
-            lookback: req.query.lookback ? parseInt(req.query.lookback) : undefined,
-            limit: req.query.limit ? parseInt(req.query.limit) : undefined
-        };
-        
-        const traces = await zipkinService.searchTraces(filters);
-        
-        res.json({
-            traces: traces,
-            count: traces.length,
-            filters: filters
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error al buscar trazas',
-            error: error.message
-        });
-    }
-};
