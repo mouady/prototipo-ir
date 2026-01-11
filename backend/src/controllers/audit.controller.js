@@ -24,12 +24,13 @@ export const getAuditById = async (req, res) => {
 
 export const auditTraces = async (req, res) => {
  try {
-  const { offset, startDate, endDate, limit } = req.query;
+  const { offset, startDate, endDate, limit, thresholdMs } = req.query;
   const tracesAudit = await auditService.auditTraces(
             startDate,
             endDate,
             limit ? parseInt(limit) : undefined,
-            offset ? parseInt(offset) : undefined);
+            offset ? parseInt(offset) : undefined,
+            thresholdMs ? parseInt(thresholdMs) : 200);
   res.status(200).json(tracesAudit);
  } catch (error) {
     console.error(error);

@@ -9,7 +9,7 @@ const getAuditById = async (id) => {
  return await auditRepository.findByAuditId(id);
 };
 
-const auditTraces = async (startDate, endDate, limit, offset) => {
+const auditTraces = async (startDate, endDate, limit, offset, thresholdMs = 200) => {
  const traces = await getTracesByService('prototipo-ir', startDate, endDate, limit, offset);
  
  const relevantTraces = traces.flatMap(trace => {
@@ -21,21 +21,22 @@ const auditTraces = async (startDate, endDate, limit, offset) => {
  });
 
  const totalTraces = relevantTraces.length;
- const LowDurationTraces = relevantTraces.filter(span => (span.duration || 0) <= 200000);
- const ratioWithLowDuration = totalTraces === 0 ? 0 : LowDurationTraces.length / totalTraces;
+ const thresholdMicroseconds = thresholdMs * 1000;
+ const belowThresholdTraces = relevantTraces.filter(span => (span.duration || 0) <= thresholdMicroseconds);
+ const ratioBelowThreshold = totalTraces === 0 ? 0 : belowThresholdTraces.length / totalTraces;
 
  const auditRecord = {
   auditId: `audit-${Date.now()}`,
   createdAt: new Date(),
-  compliant: ratioWithLowDuration === 0,
+  compliant: ratioBelowThreshold === 1,
   metadata: {
    totalTraces: totalTraces,
-   tracesWithLowDuration: LowDurationTraces.length,
-   ratioWithLowDuration: ratioWithLowDuration,
-   thresholdMs: 200,
-   operation: 'duration < 200ms for traces with http.route / and derivatives'
+   tracesBelowThreshold: belowThresholdTraces.length,
+   ratioBelowThreshold: ratioBelowThreshold,
+   thresholdMs: thresholdMs,
+   operation: `duration < ${thresholdMs}ms for traces with http.route / and derivatives`
   },
-  evidences: LowDurationTraces
+  evidences: belowThresholdTraces
  };
 
  const auditCreated = await auditRepository.create(auditRecord);

@@ -21,6 +21,11 @@ export const validateDates = [
             return true;
         }),
     
+    query('thresholdMs')
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage('thresholdMs debe ser un número entero positivo'),
+    
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
