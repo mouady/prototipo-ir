@@ -1,0 +1,189 @@
+openapi: 3.1.0
+info:
+  title: Prototipo-IR API
+  description: This the API for the Prototipo-IR project.
+  version: 1.0.0
+
+servers:
+  - url: /
+    description: Development server
+
+tags:
+  - name: Traces
+    description: Endpoints para consultar trazas de Zipkin
+
+paths:
+  /api/v1/traces/services:
+    get:
+      tags:
+        - Traces
+      summary: Obtener lista de servicios
+      description: Retorna la lista de servicios registrados en Zipkin
+      responses:
+        '200':
+          description: Lista de servicios obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  services:
+                    type: array
+                    items:
+                      type: string
+                    example: ["frontend-service", "backend-service", "auth-service"]
+                  count:
+                    type: integer
+                    example: 3
+        '500':
+          description: Error al obtener servicios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error al obtener servicios"
+                  error:
+                    type: string
+                    example: "Connection timeout"
+
+  /api/v1/traces/service/{serviceName}:
+    get:
+      tags:
+        - Traces
+      summary: Obtener trazas por servicio
+      description: Retorna las trazas de un servicio específico
+      parameters:
+        - name: serviceName
+          in: path
+          required: true
+          description: Nombre del servicio
+          schema:
+            type: string
+            example: "backend-service"
+        - name: limit
+          in: query
+          required: false
+          description: Número máximo de trazas a retornar
+          schema:
+            type: integer
+            default: 10
+            example: 20
+      responses:
+        '200':
+          description: Trazas obtenidas exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  traces:
+                    type: array
+                    items:
+                      type: object
+                  count:
+                    type: integer
+                    example: 10
+        '500':
+          description: Error al obtener trazas del servicio
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error al obtener trazas del servicio"
+                  error:
+                    type: string
+
+  /api/v1/traces/search:
+    get:
+      tags:
+        - Traces
+      summary: Buscar trazas con filtros
+      description: Busca trazas aplicando filtros específicos
+      parameters:
+        - name: serviceName
+          in: query
+          required: false
+          description: Nombre del servicio
+          schema:
+            type: string
+            example: "backend-service"
+        - name: spanName
+          in: query
+          required: false
+          description: Nombre del span
+          schema:
+            type: string
+            example: "GET /api/users"
+        - name: minDuration
+          in: query
+          required: false
+          description: Duración mínima en microsegundos
+          schema:
+            type: integer
+            example: 1000
+        - name: maxDuration
+          in: query
+          required: false
+          description: Duración máxima en microsegundos
+          schema:
+            type: integer
+            example: 5000000
+        - name: endTs
+          in: query
+          required: false
+          description: Timestamp de fin (milisegundos desde epoch)
+          schema:
+            type: integer
+            example: 1736592000000
+        - name: lookback
+          in: query
+          required: false
+          description: Tiempo hacia atrás desde endTs en milisegundos (por defecto 1 hora)
+          schema:
+            type: integer
+            default: 3600000
+            example: 7200000
+        - name: limit
+          in: query
+          required: false
+          description: Número máximo de trazas a retornar
+          schema:
+            type: integer
+            default: 10
+            example: 50
+      responses:
+        '200':
+          description: Búsqueda exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  traces:
+                    type: array
+                    items:
+                      type: object
+                  count:
+                    type: integer
+                  filters:
+                    type: object
+        '500':
+          description: Error en la búsqueda
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error en la búsqueda de trazas"
+                  error:
+                    type: string
+  
+  
