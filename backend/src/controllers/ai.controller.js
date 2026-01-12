@@ -4,8 +4,7 @@ export const createNewConversation = async (req, res) => {
     try {
         const conversationId = await createConversation();
         res.status(201).json({
-            conversationId,
-            message: 'Conversación creada exitosamente'
+            conversationId
         });
     } catch (error) {
         console.error('Error in createNewConversation:', error);
@@ -19,7 +18,7 @@ export const createNewConversation = async (req, res) => {
 
 export const generateAIResponseWithConversation = async (req, res) => {
     try {
-        const { input, conversationId, previousResponseId } = req.body;
+        const { input, conversationId } = req.body;
 
         if (!input) {
             return res.status(400).json({
@@ -28,11 +27,7 @@ export const generateAIResponseWithConversation = async (req, res) => {
             });
         }
 
-        const response = await generateTextWithConversation(
-            input,
-            conversationId,
-            previousResponseId
-        );
+        const response = await generateTextWithConversation(input, conversationId);
 
         res.status(200).json({
             responseId: response.id,

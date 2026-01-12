@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
-import { SYSTEM_PROMPT } from "../../utils/tools.js";
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+import { SYSTEM_PROMPT, tools, executeFunction  } from "../../utils/tools.js";
 
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 const model = process.env.OPENAI_MODEL || 'gpt-5-mini';
 
 
@@ -26,12 +26,52 @@ export const createConversation = async () => {
 
 export const generateTextWithConversation = async (input, conversationId) => {
     try {   
-        const response = await openai.responses.create({
+        // Array de input que se irá actualizando
+        let inputList = [{ role: 'user', content: input }];
+        
+        // 1. Primera llamada al modelo con tools
+        let response = await openai.responses.create({
             model: model,
-            input: [{ role: 'user', content: input }],
+            tools: tools,
+            input: inputList,
             conversation: conversationId,
             store: true
         });
+        
+        // 2. Verificar si hay function_calls en la respuesta
+        let hasFunctionCalls = false;
+        for (const item of response.output) {
+            console.log('Output item:', item);
+            if (item.type === 'function_call') {
+                hasFunctionCalls = true;
+                
+                // 3. Ejecutar la función correspondiente
+                const functionName = item.name;
+                const functionArgs = JSON.parse(item.arguments);
+                
+                console.log(`Ejecutando función: ${functionName} con args:`, functionArgs);
+                
+                const functionResult = await executeFunction(functionName, functionArgs);
+                
+                // 4. Agregar el resultado de la función al input
+                inputList.push({
+                    type: 'function_call_output',
+                    call_id: item.call_id,
+                    output: JSON.stringify(functionResult)
+                });
+            }
+        }
+        
+        // 5. Si hubo function calls, hacer una segunda llamada con los resultados
+        if (hasFunctionCalls) {
+            response = await openai.responses.create({
+                model: model,
+                tools: tools,
+                input: inputList,
+                conversation: conversationId,
+                store: true
+            });
+        }
         
         return {
             id: response.id,
