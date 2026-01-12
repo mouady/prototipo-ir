@@ -1,7 +1,8 @@
 import * as zipkinService from '../src/services/zipkin.service.js';
 import auditService from '../src/services/audit.service.js';
 
-export const SYSTEM_PROMPT = `Eres un asistente experto en análisis de trazas y auditorías de rendimiento.
+export const SYSTEM_PROMPT = 
+`Eres un asistente experto en análisis de trazas y auditorías de rendimiento.
 Tienes acceso a herramientas para:
 - Consultar servicios registrados en Zipkin
 - Obtener trazas de servicios específicos

@@ -35,14 +35,11 @@ export const generateAIResponseWithConversation = async (req, res) => {
         );
 
         res.status(200).json({
-            
-            data: {
-                responseId: response.id,
-                conversationId: response.conversationId,
-                text: response.outputText,
-                output: response.output,
-                usage: response.usage
-            }
+            responseId: response.id,
+            conversationId: response.conversationId,
+            text: response.outputText,
+            output: response.output,
+            usage: response.usage  
         });
     } catch (error) {
         console.error('Error in generateAIResponseWithConversation:', error);

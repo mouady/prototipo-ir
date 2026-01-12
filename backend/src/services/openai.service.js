@@ -1,43 +1,37 @@
 import OpenAI from 'openai';
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-})
+import { SYSTEM_PROMPT } from "../../utils/tools.js";
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 const model = process.env.OPENAI_MODEL || 'gpt-5-mini';
+
 
 export const createConversation = async () => {
     try {
         const conversation = await openai.conversations.create();
-        return conversation.id;
+        const conversationId = conversation.id;
+        
+        // Insertar el SYSTEM_PROMPT como el primer mensaje de la conversación
+        await openai.responses.create({
+            model: model,
+            input: [{"role": "assistant", "content": SYSTEM_PROMPT}],
+            conversation: conversationId,
+        });
+        
+        return conversationId;
     } catch (error) {
         console.error('Error creating conversation:', error);
         throw error;
     }
 };
 
-export const generateTextWithConversation = async (input, conversationId = null, previousResponseId = null) => {
-    try {
-        const params = {
+export const generateTextWithConversation = async (input, conversationId) => {
+    try {   
+        const response = await openai.responses.create({
             model: model,
-            input: Array.isArray(input) ? input : [{ role: 'user', content: input }],
+            input: [{ role: 'user', content: input }],
+            conversation: conversationId,
             store: true
-        };
-
-        if (conversationId) {
-            params.conversation = conversationId;
-        }
-
-        if (previousResponseId) {
-            params.previous_response_id = previousResponseId;
-        }
-
-        console.log('Generating text with params:', { 
-            hasConversationId: !!conversationId, 
-            hasPreviousResponseId: !!previousResponseId 
         });
-
-        const response = await openai.responses.create(params);
         
         return {
             id: response.id,
