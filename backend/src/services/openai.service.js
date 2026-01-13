@@ -76,7 +76,6 @@ export const generateTextWithConversation = async (input, conversationId) => {
                 
                 iteration++;
             } else {
-                // No hay más function calls, salimos del bucle
                 break;
             }
         }

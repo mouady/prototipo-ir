@@ -129,7 +129,7 @@ export const callFunction = async (functionName, args) => {
                 return await zipkinService.getServices();
             
             case 'get_traces_by_service':
-                return await zipkinService.getTracesByServzice(
+                return await zipkinService.getTracesByService(
                     args.serviceName,
                     args.startDate,
                     args.endDate,

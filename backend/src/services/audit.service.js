@@ -17,7 +17,7 @@ const auditTraces = async (startDate, endDate, limit, lookbackMinutes, threshold
  const relevantTraces = traces.flatMap(trace => {
   return trace.filter(span => {
    if (!span.tags) return false;
-   const httpRoute = span.tags['http.route'];
+   const httpRoute = span.tags['http.target'];
    return httpRoute && httpRoute.startsWith('/');
   });
  });
@@ -33,6 +33,16 @@ const auditTraces = async (startDate, endDate, limit, lookbackMinutes, threshold
  if (limit !== undefined) filters.limit = limit;
  if (lookbackMinutes !== undefined) filters.lookbackMinutes = lookbackMinutes;
 
+ // Información sobre filters + Descrición de la operación
+ let operationDescription = `duration < ${thresholdMs}ms for all traces`;
+ const filterParts = [];
+ if (lookbackMinutes !== undefined) filterParts.push(`last ${lookbackMinutes} minutes`);
+ if (startDate !== (undefined || '') && endDate !== (undefined || '')) filterParts.push(`from ${startDate} to ${endDate}`);
+ if (limit !== undefined) filterParts.push(`limit: ${limit}`);
+ if (filterParts.length > 0) {
+  operationDescription += ` (${filterParts.join(', ')})`;
+ }
+
  const auditRecord = {
   auditId: `audit-${Date.now()}`,
   createdAt: new Date(),
@@ -42,9 +52,9 @@ const auditTraces = async (startDate, endDate, limit, lookbackMinutes, threshold
    tracesBelowThreshold: belowThresholdTraces.length,
    ratioBelowThreshold: ratioBelowThreshold,
    thresholdMs: thresholdMs,
-   operation: `duration < ${thresholdMs}ms for traces with http.route / and derivatives`
+   operation: operationDescription,
+   filters: filters
   },
-  filters: filters,
   evidences: belowThresholdTraces
  };
 
