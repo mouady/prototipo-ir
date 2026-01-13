@@ -49,7 +49,7 @@ export const generateTextWithConversation = async (input, conversationId) => {
                     console.log(`[DEBUG] Iteración ${iteration + 1} - Llamando función: ${item.name}`);
                     console.log(`[DEBUG] Argumentos:`, item.arguments);
                     
-                    const functionResponse = await callFunction(item.name, item.arguments);
+                    const functionResponse = await callFunction(item.name, JSON.parse(item.arguments));
                     console.log(`[DEBUG] Respuesta de función:`, functionResponse);
                         
                     inputList.push({

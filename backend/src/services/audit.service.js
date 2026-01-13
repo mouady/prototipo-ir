@@ -1,6 +1,8 @@
 import auditRepository from '../repositories/audit.repository.js';
 import {getTracesByService} from './zipkin.service.js';
 
+const DEFAULT_THRESHOLD_MS = parseInt(process.env.DEFAULT_THRESHOLD_MS || '200');
+
 const getAllAudits = async () => {
  return await auditRepository.findAll();
 };
@@ -9,7 +11,7 @@ const getAuditById = async (id) => {
  return await auditRepository.findByAuditId(id);
 };
 
-const auditTraces = async (startDate, endDate, limit, lookbackMinutes, thresholdMs = 200) => {
+const auditTraces = async (startDate, endDate, limit, lookbackMinutes, thresholdMs = DEFAULT_THRESHOLD_MS) => {
  const traces = await getTracesByService('prototipo-ir', startDate, endDate, limit, lookbackMinutes);
  
  const relevantTraces = traces.flatMap(trace => {
@@ -25,6 +27,12 @@ const auditTraces = async (startDate, endDate, limit, lookbackMinutes, threshold
  const belowThresholdTraces = relevantTraces.filter(span => (span.duration || 0) <= thresholdMicroseconds);
  const ratioBelowThreshold = totalTraces === 0 ? 0 : belowThresholdTraces.length / totalTraces;
 
+ const filters = {};
+ if (startDate !== undefined) filters.startDate = startDate;
+ if (endDate !== undefined) filters.endDate = endDate;
+ if (limit !== undefined) filters.limit = limit;
+ if (lookbackMinutes !== undefined) filters.lookbackMinutes = lookbackMinutes;
+
  const auditRecord = {
   auditId: `audit-${Date.now()}`,
   createdAt: new Date(),
@@ -36,12 +44,7 @@ const auditTraces = async (startDate, endDate, limit, lookbackMinutes, threshold
    thresholdMs: thresholdMs,
    operation: `duration < ${thresholdMs}ms for traces with http.route / and derivatives`
   },
-  filters: {
-    startDate,
-    endDate,
-    limit,
-    lookbackMinutes
-  },
+  filters: filters,
   evidences: belowThresholdTraces
  };
 

@@ -1,6 +1,11 @@
 import * as zipkinService from '../src/services/zipkin.service.js';
 import auditService from '../src/services/audit.service.js';
 
+const MAX_ITERATIONS = parseInt(process.env.MAX_ITERATIONS || '5');
+const DEFAULT_TRACE_LIMIT = parseInt(process.env.DEFAULT_TRACE_LIMIT || '10');
+const DEFAULT_LOOKBACK_MINUTES = parseInt(process.env.DEFAULT_LOOKBACK_MINUTES || '15');
+const DEFAULT_THRESHOLD_MS = parseInt(process.env.DEFAULT_THRESHOLD_MS || '200');
+
 export const SYSTEM_PROMPT = 
 `Eres un asistente experto en análisis de trazas y auditorías de rendimiento.
 Tienes acceso a herramientas para:
@@ -11,7 +16,7 @@ Tienes acceso a herramientas para:
 A tener en cuenta:
 - Usa estas herramientas cuando el usuario te pida información sobre servicios, trazas o rendimiento.
 - Si hay una pregunta sobre trazas y no se especifica el servicio, comprobar que esta disponible 'prototipo-ir' y usarlo por defecto.
-- Dispones de un maximo de ${process.env.MAX_ITERATIONS || 5} llamadas a funciones por interacción.
+- Dispones de un maximo de ${MAX_ITERATIONS} llamadas a funciones por interacción.
 
 
 Responde siempre en español y de forma clara, estructurada y concisa.
@@ -49,11 +54,11 @@ export const tools = [
                 },
                 limit: {
                     type: 'number',
-                    description: 'Número máximo de trazas a retornar (default: 10)'
+                    description: `Número máximo de trazas a retornar (default: ${DEFAULT_TRACE_LIMIT})`
                 },
                 lookbackMinutes: {
                     type: 'number',
-                    description: 'Tiempo hacia atrás desde ahora en minutos (default: 60)'
+                    description: `Tiempo hacia atrás desde ahora en minutos (default: ${DEFAULT_LOOKBACK_MINUTES})`
                 }
             },
             required: ['serviceName']
@@ -101,15 +106,15 @@ export const tools = [
                 },
                 limit: {
                     type: 'number',
-                    description: 'Número máximo de trazas a analizar'
+                    description: `Número máximo de trazas a analizar (default: ${DEFAULT_TRACE_LIMIT})`
                 },
                 lookbackMinutes: {
                     type: 'number',
-                    description: 'Tiempo hacia atrás desde ahora en minutos (default: 60)'
+                    description: `Tiempo hacia atrás desde ahora en minutos (default: ${DEFAULT_LOOKBACK_MINUTES})`
                 },
                 thresholdMs: {
                     type: 'number',
-                    description: 'Threshold de duración en milisegundos (default: 200)'
+                    description: `Threshold de duración en milisegundos (default: ${DEFAULT_THRESHOLD_MS})`
                 }
             },
             required: []
@@ -124,7 +129,7 @@ export const callFunction = async (functionName, args) => {
                 return await zipkinService.getServices();
             
             case 'get_traces_by_service':
-                return await zipkinService.getTracesByService(
+                return await zipkinService.getTracesByServzice(
                     args.serviceName,
                     args.startDate,
                     args.endDate,

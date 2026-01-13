@@ -1,5 +1,7 @@
 import auditService from '../services/audit.service.js';
 
+const DEFAULT_THRESHOLD_MS = parseInt(process.env.DEFAULT_THRESHOLD_MS || '200');
+
 export const getAllAudits = async (req, res) => {
  try {
   const audits = await auditService.getAllAudits();
@@ -30,7 +32,7 @@ export const auditTraces = async (req, res) => {
             endDate,
             limit ? parseInt(limit) : undefined,
             lookbackMinutes ? parseInt(lookbackMinutes) : undefined,
-            thresholdMs ? parseInt(thresholdMs) : 200);
+            thresholdMs ? parseInt(thresholdMs) : DEFAULT_THRESHOLD_MS);
   res.status(200).json(tracesAudit);
  } catch (error) {
     console.error(error);
