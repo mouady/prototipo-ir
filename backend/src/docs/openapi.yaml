@@ -13,6 +13,8 @@ tags:
     description: Endpoints para consultar trazas de Zipkin
   - name: Audits
     description: Endpoints para gestionar audits de rendimiento
+  - name: AI
+    description: Endpoints para interactuar con servicios de IA
 
 paths:
   /api/v1/traces/services:
@@ -347,6 +349,208 @@ paths:
                 type: object
                 properties:
                   message:
+                    type: string
+
+  /api/v1/ai/conversations:
+    post:
+      tags:
+        - AI
+      summary: Crear una nueva conversación
+      description: Crea una nueva conversación con el servicio de IA
+      responses:
+        '201':
+          description: Conversación creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversationId:
+                    type: string
+                    example: "conv-1736592000000"
+        '500':
+          description: Error al crear la conversación
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Error al crear la conversación"
+                  details:
+                    type: string
+
+  /api/v1/ai/conversations/generate:
+    post:
+      tags:
+        - AI
+      summary: Generar respuesta de IA con conversación
+      description: Genera una respuesta de IA basada en el input proporcionado y el contexto de la conversación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - input
+              properties:
+                input:
+                  type: string
+                  description: Texto de entrada para generar la respuesta
+                  example: "¿Cómo puedo mejorar el rendimiento de mi aplicación?"
+                conversationId:
+                  type: string
+                  description: ID de conversación existente (opcional)
+                  example: "conv-1736592000000"
+      responses:
+        '200':
+          description: Respuesta generada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  responseId:
+                    type: string
+                    example: "resp-1736592000001"
+                  conversationId:
+                    type: string
+                    example: "conv-1736592000000"
+                  response:
+                    type: string
+                    example: "Para mejorar el rendimiento de tu aplicación..."
+                  usage:
+                    type: object
+                    description: Información sobre el uso de tokens
+        '400':
+          description: Parámetros inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Se requiere el campo input"
+        '500':
+          description: Error al generar respuesta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Error al generar respuesta"
+                  details:
+                    type: string
+
+  /api/v1/ai/conversations/{conversationId}:
+    get:
+      tags:
+        - AI
+      summary: Obtener conversación por ID
+      description: Recupera el historial completo de una conversación
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          description: ID de la conversación
+          schema:
+            type: string
+            example: "conv-1736592000000"
+      responses:
+        '200':
+          description: Conversación obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    description: Datos de la conversación
+        '400':
+          description: ID de conversación no proporcionado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Se requiere conversationId"
+        '500':
+          description: Error al obtener la conversación
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Error al obtener la conversación"
+                  details:
+                    type: string
+
+  /api/v1/ai/diagram:
+    post:
+      tags:
+        - AI
+      summary: Estructurar diagrama UML
+      description: Convierte un diagrama UML en una respuesta estructurada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - umlDiagram
+              properties:
+                umlDiagram:
+                  type: string
+                  description: Diagrama UML a estructurar
+                  example: "@startuml\nAlice -> Bob: Hello\n@enduml"
+      responses:
+        '200':
+          description: Diagrama estructurado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Respuesta estructurada del diagrama
+        '500':
+          description: Error al estructurar el diagrama
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Error al estructurar el diagrama"
+                  details:
                     type: string
   
   
