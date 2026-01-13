@@ -32,8 +32,7 @@ export const generateAIResponseWithConversation = async (req, res) => {
         res.status(200).json({
             responseId: response.id,
             conversationId: response.conversationId,
-            text: response.outputText,
-            output: response.output,
+            response: response.outputText,
             usage: response.usage  
         });
     } catch (error) {
