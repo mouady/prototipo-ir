@@ -17,6 +17,9 @@ const auditSchema = new mongoose.Schema({
  metadata: {
   type: Object,
  },
+ filters: {
+    type: Object,   
+},
  evidences: {
   type: [Object],
   required: true,

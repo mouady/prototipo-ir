@@ -36,6 +36,12 @@ const auditTraces = async (startDate, endDate, limit, lookbackMinutes, threshold
    thresholdMs: thresholdMs,
    operation: `duration < ${thresholdMs}ms for traces with http.route / and derivatives`
   },
+  filters: {
+    startDate,
+    endDate,
+    limit,
+    lookbackMinutes
+  },
   evidences: belowThresholdTraces
  };
 

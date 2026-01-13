@@ -36,27 +36,32 @@ export const generateTextWithConversation = async (input, conversationId) => {
             store: true
         });
         
-        let hasFunctionCall = false;
-        for (const item of response.output) {
-            if (item.type == "function_call") {
-                hasFunctionCall = true;
-                console.log(`[DEBUG] Llamando función: ${item.name}`);
-                console.log(`[DEBUG] Argumentos:`, item.arguments);
-                
-                const functionResponse = await callFunction(item.name, item.arguments);
-                functionResponse.timestamp = new Date().toISOString();
-                console.log(`[DEBUG] Respuesta de función:`, functionResponse);
+        
+        let maxIterations = process.env.MAX_ITERATIONS || 5;
+        let iteration = 0;
+        
+        while (iteration < maxIterations) {
+            let hasFunctionCall = false;
+            
+            for (const item of response.output) {
+                if (item.type == "function_call") {
+                    hasFunctionCall = true;
+                    console.log(`[DEBUG] Iteración ${iteration + 1} - Llamando función: ${item.name}`);
+                    console.log(`[DEBUG] Argumentos:`, item.arguments);
                     
-                inputList.push({
-                    type: "function_call_output",
-                    call_id: item.call_id,
-                    output: JSON.stringify(functionResponse)
-                });                                
+                    const functionResponse = await callFunction(item.name, item.arguments);
+                    console.log(`[DEBUG] Respuesta de función:`, functionResponse);
+                        
+                    inputList.push({
+                        type: "function_call_output",
+                        call_id: item.call_id,
+                        output: JSON.stringify(functionResponse)
+                    });                                
+                }
             }
-        }
 
-        if (hasFunctionCall) {
-                console.log("[FUNCTION CALL] - Calling function(s), preparing new input...");
+            if (hasFunctionCall) {
+                console.log(`[FUNCTION CALL] - Iteración ${iteration + 1}: Ejecutando función(es), preparando nueva entrada...`);
                 console.log(JSON.stringify(inputList, null, 2));
 
                 response = await openai.responses.create({
@@ -66,10 +71,19 @@ export const generateTextWithConversation = async (input, conversationId) => {
                     conversation: conversationId,
                     store: true
                 });
-                console.log("[FUNCTION CALL] - New response after function call:");
+                console.log(`[FUNCTION CALL] - Nueva respuesta después de llamada a función (iteración ${iteration + 1}):`);
                 console.log(JSON.stringify(response, null, 2));
+                
+                iteration++;
+            } else {
+                // No hay más function calls, salimos del bucle
+                break;
             }
-            
+        }
+        
+        if (iteration >= maxIterations) {
+            console.warn(`[WARNING] Se alcanzó el límite de ${maxIterations} iteraciones de function calls`);
+        }
         
         return {
             id: response.id,
