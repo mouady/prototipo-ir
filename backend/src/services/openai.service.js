@@ -1,4 +1,4 @@
-import { SYSTEM_PROMPT, tools, callFunction  } from "../../utils/tools.js";
+import { SYSTEM_PROMPT, tools, callFunction  } from "../utils/tools.js";
 import OpenAI from 'openai';
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";

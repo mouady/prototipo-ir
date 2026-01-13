@@ -1,5 +1,5 @@
-import * as zipkinService from '../src/services/zipkin.service.js';
-import auditService from '../src/services/audit.service.js';
+import * as zipkinService from '../services/zipkin.service.js';
+import auditService from '../services/audit.service.js';
 
 const MAX_ITERATIONS = parseInt(process.env.MAX_ITERATIONS || '5');
 const DEFAULT_TRACE_LIMIT = parseInt(process.env.DEFAULT_TRACE_LIMIT || '10');
