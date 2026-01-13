@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {getServices, getTracesByService}  from '../controllers/traces.controller.js';
-import { validateDates } from "../../middlewares/traces.middleware.js";
+import { validateDates } from "../middlewares/traces.middleware.js";
 
 const tracesRouter = Router();
 
