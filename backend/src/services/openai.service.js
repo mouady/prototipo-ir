@@ -1,5 +1,8 @@
-import OpenAI from 'openai';
 import { SYSTEM_PROMPT, tools, callFunction  } from "../../utils/tools.js";
+import OpenAI from 'openai';
+import { zodTextFormat } from "openai/helpers/zod";
+import { z } from "zod";
+
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 const model = process.env.OPENAI_MODEL || 'gpt-5-mini';
@@ -105,4 +108,76 @@ export const getConversation = async (conversationId) => {
         console.error('Error retrieving conversation:', error);
         throw error;
     }
+};
+
+export const UMLdiagram2structuredResponse = async (umlDiagram) => {
+    const UMLStructure = z.object({
+        diagramName: z.string(),
+
+        classes: z.array(
+            z.object({
+            name: z.string(),
+            stereotype: z.string().nullable(),
+
+            attributes: z.array(
+                z.object({
+                name: z.string(),
+                type: z.string(),
+                visibility: z.enum(["public", "private", "protected"]),
+                static: z.boolean().nullable(),
+                abstract: z.boolean().nullable(),
+                })
+            ),
+
+            methods: z.array(
+                z.object({
+                name: z.string(),
+                visibility: z.enum(["public", "private", "protected"]),
+                static: z.boolean().nullable(),
+                abstract: z.boolean().nullable(),
+                returnType: z.string(),
+                parameters: z.array(
+                    z.object({
+                    name: z.string(),
+                    type: z.string(),
+                    })
+                ),
+                })
+            ),
+            })
+        ),
+
+        relationships: z.array(
+            z.object({
+            type: z.enum([
+                "association",
+                "inheritance",
+                "aggregation",
+                "composition",
+                "dependency",
+            ]),
+            from: z.string(),
+            to: z.string(),
+            label: z.string().nullable(),
+            multiplicityFrom: z.string().nullable(),
+            multiplicityTo: z.string().nullable(),
+            })
+        ),
+    });
+
+    const response = await openai.responses.parse({
+        model: model,
+        input: [
+            { role: "system", content: "Extract the event information." },
+            {
+            role: "user",
+            content: JSON.stringify(umlDiagram),
+            },
+        ],
+        text: {
+            format: zodTextFormat(UMLStructure, "event"),
+        },
+    });
+
+    return response.output_parsed;
 };

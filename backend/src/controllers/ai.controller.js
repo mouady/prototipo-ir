@@ -1,4 +1,4 @@
-import { createConversation, generateTextWithConversation, getConversation } from '../services/openai.service.js';
+import { createConversation, generateTextWithConversation, getConversation, UMLdiagram2structuredResponse } from '../services/openai.service.js';
 
 export const createNewConversation = async (req, res) => {
     try {
@@ -65,6 +65,20 @@ export const retrieveConversation = async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Error al obtener la conversación',
+            details: error.message
+        });
+    }
+};
+
+export const structuredDiagram = async (req, res) => {
+    try {
+        const response = await UMLdiagram2structuredResponse(req.body.umlDiagram);
+        res.status(200).json(response);
+    } catch (error) {
+        console.error('Error in structuredDiagram:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al estructurar el diagrama',
             details: error.message
         });
     }
