@@ -2,6 +2,7 @@ import { SYSTEM_PROMPT, tools, callFunction  } from "../../utils/tools.js";
 import OpenAI from 'openai';
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
+import diagramRepository from "../repositories/diagram.repository.js";
 
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
@@ -179,5 +180,12 @@ export const UMLdiagram2structuredResponse = async (umlDiagram) => {
         },
     });
 
-    return response.output_parsed;
+    const diagramRecord = {
+        diagramId: `diagram-${Date.now()}`,
+        createdAt: new Date(),
+        ...response.output_parsed,
+    };
+
+    const diagramCreated = await diagramRepository.create(diagramRecord);
+    return diagramCreated;
 };
