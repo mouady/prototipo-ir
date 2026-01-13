@@ -1,0 +1,85 @@
+import { createConversation, generateTextWithConversation, getConversation, UMLdiagram2structuredResponse } from '../services/openai.service.js';
+
+export const createNewConversation = async (req, res) => {
+    try {
+        const conversationId = await createConversation();
+        res.status(201).json({
+            conversationId
+        });
+    } catch (error) {
+        console.error('Error in createNewConversation:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al crear la conversación',
+            details: error.message
+        });
+    }
+};
+
+export const generateAIResponseWithConversation = async (req, res) => {
+    try {
+        const { input, conversationId } = req.body;
+
+        if (!input) {
+            return res.status(400).json({
+                success: false,
+                error: 'Se requiere el campo input'
+            });
+        }
+
+        const response = await generateTextWithConversation(input, conversationId);
+
+        res.status(200).json({
+            responseId: response.id,
+            conversationId: response.conversationId,
+            response: response.outputText,
+            usage: response.usage  
+        });
+    } catch (error) {
+        console.error('Error in generateAIResponseWithConversation:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al generar respuesta',
+            details: error.message
+        });
+    }
+};
+
+
+export const retrieveConversation = async (req, res) => {
+    try {
+        const { conversationId } = req.params;
+
+        if (!conversationId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Se requiere conversationId'
+            });
+        }
+
+        const conversation = await getConversation(conversationId);
+
+        res.status(200).json({data: conversation});
+    } catch (error) {
+        console.error('Error in retrieveConversation:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al obtener la conversación',
+            details: error.message
+        });
+    }
+};
+
+export const structuredDiagram = async (req, res) => {
+    try {
+        const response = await UMLdiagram2structuredResponse(req.body.umlDiagram);
+        res.status(200).json(response);
+    } catch (error) {
+        console.error('Error in structuredDiagram:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al estructurar el diagrama',
+            details: error.message
+        });
+    }
+};

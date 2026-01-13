@@ -3,12 +3,14 @@
 import { X, Clock, Bell, LogOut, User, LayoutGrid, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
 import { getPublicPath } from "@/lib/path";
 
 export interface MenuOption {
   label: string;
   id: string;
   icon: React.ReactNode;
+  href: string;
 }
 
 export interface UserProfile {
@@ -23,8 +25,7 @@ interface SideMenuProps {
   onClose: () => void;
   profile: UserProfile;
   menuOptions: MenuOption[];
-  activeView: string;
-  onViewChange: (viewId: string) => void;
+  activeView?: string;
   accentColor?: string;
 }
 
@@ -34,12 +35,16 @@ export default function SideMenu({
   profile,
   menuOptions,
   activeView,
-  onViewChange,
   accentColor = "#101828",
 }: SideMenuProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   
-  const handleOptionClick = (viewId: string) => {
-    onViewChange(viewId);
+  // Determinar la vista activa desde la ruta si no se proporciona
+  const currentView = activeView || menuOptions.find(option => pathname?.includes(option.id))?.id;
+  
+  const handleOptionClick = (href: string) => {
+    router.push(href);
     onClose();
   };
 
@@ -100,12 +105,12 @@ export default function SideMenu({
           {menuOptions.map((option) => (
             <button
               key={option.id}
-              onClick={() => handleOptionClick(option.id)}
+              onClick={() => handleOptionClick(option.href)}
               className={`w-full flex items-center gap-4 px-6 py-3 text-gray-700 hover:bg-gray-100 transition-colors ${
-                activeView === option.id ? "bg-gray-100 border-r-4" : ""
+                currentView === option.id ? "bg-gray-100 border-r-4" : ""
               }`}
               style={{
-                borderRightColor: activeView === option.id ? accentColor : "transparent",
+                borderRightColor: currentView === option.id ? accentColor : "transparent",
               }}
             >
               <span style={{ color: accentColor }}>{option.icon}</span>
@@ -151,16 +156,19 @@ export const CAMARERO_MENU_OPTIONS: MenuOption[] = [
     label: "Fichajes",
     id: CamareroView.FICHAJES,
     icon: <Clock className="w-5 h-5" />,
+    href: "/mobile/camarero/fichajes",
   },
   {
     label: "Mesas",
     id: CamareroView.MESAS,
     icon: <LayoutGrid className="w-5 h-5" />,
+    href: "/mobile/camarero/mesas",
   },
   {
     label: "Reservas",
     id: CamareroView.RESERVAS,
     icon: <CalendarDays className="w-5 h-5" />,
+    href: "/mobile/camarero/reservas",
   },
 ];
 
@@ -170,10 +178,12 @@ export const COCINERO_MENU_OPTIONS: MenuOption[] = [
     label: "Fichajes",
     id: CocineroView.FICHAJES,
     icon: <Clock className="w-5 h-5" />,
+    href: "/mobile/cocinero/fichajes",
   },
   {
     label: "Avisos",
     id: CocineroView.AVISOS,
     icon: <Bell className="w-5 h-5" />,
+    href: "/mobile/cocinero/avisos",
   },
 ];

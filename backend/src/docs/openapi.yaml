@@ -1,0 +1,556 @@
+openapi: 3.1.0
+info:
+  title: Prototipo-IR API
+  description: This the API for the Prototipo-IR project.
+  version: 1.0.0
+
+servers:
+  - url: /
+    description: Development server
+
+tags:
+  - name: Traces
+    description: Endpoints para consultar trazas de Zipkin
+  - name: Audits
+    description: Endpoints para gestionar audits de rendimiento
+  - name: AI
+    description: Endpoints para interactuar con servicios de IA
+
+paths:
+  /api/v1/traces/services:
+    get:
+      tags:
+        - Traces
+      summary: Obtener lista de servicios
+      description: Retorna la lista de servicios registrados en Zipkin
+      responses:
+        '200':
+          description: Lista de servicios obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  services:
+                    type: array
+                    items:
+                      type: string
+                    example: ["frontend-service", "backend-service", "auth-service"]
+                  count:
+                    type: integer
+                    example: 3
+        '500':
+          description: Error al obtener servicios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error al obtener servicios"
+                  error:
+                    type: string
+                    example: "Connection timeout"
+
+  /api/v1/traces/service/{serviceName}:
+    get:
+      tags:
+        - Traces
+      summary: Obtener trazas por servicio
+      description: Retorna las trazas de un servicio específico con filtrado por rango de fechas
+      parameters:
+        - name: serviceName
+          in: path
+          required: true
+          description: Nombre del servicio
+          schema:
+            type: string
+            example: "prototipo-ir"
+        - name: startDate
+          in: query
+          required: false
+          description: Fecha de inicio en formato ISO8601
+          schema:
+            type: string
+            format: date-time
+            example: "2024-01-01T00:00:00Z"
+        - name: endDate
+          in: query
+          required: false
+          description: Fecha de fin en formato ISO8601 (debe ser igual o posterior a startDate)
+          schema:
+            type: string
+            format: date-time
+            example: "2024-01-02T00:00:00Z"
+        - name: limit
+          in: query
+          required: false
+          description: Número máximo de trazas a retornar
+          schema:
+            type: integer
+            default: 10
+            example: 20
+        - name: lookbackMinutes
+          in: query
+          required: false
+          description: Tiempo hacia atrás desde ahora en minutos (usado solo si no se especifican startDate y endDate)
+          schema:
+            type: integer
+            default: 60
+            example: 120
+      responses:
+        '200':
+          description: Trazas obtenidas exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  traces:
+                    type: array
+                    items:
+                      type: object
+                  count:
+                    type: integer
+                    example: 10
+        '400':
+          description: Parámetros de validación inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+        '500':
+          description: Error al obtener trazas del servicio
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error al obtener trazas del servicio"
+                  error:
+                    type: string
+
+  /api/v1/audits:
+    get:
+      tags:
+        - Audits
+      summary: Obtener todos los audits
+      description: Retorna la lista de todos los audits realizados
+      responses:
+        '200':
+          description: Lista de audits obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    auditId:
+                      type: string
+                      example: "audit-1736592000000"
+                    createdAt:
+                      type: string
+                      format: date-time
+                    compliant:
+                      type: boolean
+                    metadata:
+                      type: object
+                      properties:
+                        totalTraces:
+                          type: integer
+                        tracesBelowThreshold:
+                          type: integer
+                        ratioBelowThreshold:
+                          type: number
+                        thresholdMs:
+                          type: integer
+                        operation:
+                          type: string
+                    evidences:
+                      type: array
+                      items:
+                        type: object
+        '500':
+          description: Error al obtener audits
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/v1/audits/{auditId}:
+    get:
+      tags:
+        - Audits
+      summary: Obtener audit por ID
+      description: Retorna los detalles de un audit específico
+      parameters:
+        - name: auditId
+          in: path
+          required: true
+          description: ID del audit
+          schema:
+            type: string
+            example: "audit-1736592000000"
+      responses:
+        '200':
+          description: Audit obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auditId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  compliant:
+                    type: boolean
+                  metadata:
+                    type: object
+                  evidences:
+                    type: array
+                    items:
+                      type: object
+        '404':
+          description: Audit no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Audit not found"
+        '500':
+          description: Error al obtener audit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/v1/audits/traces:
+    post:
+      tags:
+        - Audits
+      summary: Crear audit de rendimiento de trazas
+      description: Crea un audit analizando las trazas en un rango de fechas y compara su duración contra un threshold configurable
+      parameters:
+        - name: startDate
+          in: query
+          required: false
+          description: Fecha de inicio en formato ISO8601
+          schema:
+            type: string
+            format: date-time
+            example: "2024-01-01T00:00:00Z"
+        - name: endDate
+          in: query
+          required: false
+          description: Fecha de fin en formato ISO8601 (debe ser igual o posterior a startDate)
+          schema:
+            type: string
+            format: date-time
+            example: "2024-01-02T00:00:00Z"
+        - name: limit
+          in: query
+          required: false
+          description: Número máximo de trazas a analizar
+          schema:
+            type: integer
+            example: 100
+        - name: lookbackMinutes
+          in: query
+          required: false
+          description: Tiempo hacia atrás desde ahora en minutos (usado solo si no se especifican startDate y endDate)
+          schema:
+            type: integer
+            default: 60
+        - name: thresholdMs
+          in: query
+          required: false
+          description: Threshold de duración en milisegundos para clasificar trazas como aceptables
+          schema:
+            type: integer
+            default: 200
+            minimum: 1
+            example: 300
+      responses:
+        '200':
+          description: Audit creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auditId:
+                    type: string
+                    example: "audit-1736592000000"
+                  createdAt:
+                    type: string
+                    format: date-time
+                  compliant:
+                    type: boolean
+                    description: True si todas las trazas están por debajo del threshold
+                  metadata:
+                    type: object
+                    properties:
+                      totalTraces:
+                        type: integer
+                        description: Total de trazas analizadas
+                      tracesBelowThreshold:
+                        type: integer
+                        description: Número de trazas por debajo del threshold
+                      ratioBelowThreshold:
+                        type: number
+                        description: Proporción de trazas por debajo del threshold (0-1)
+                      thresholdMs:
+                        type: integer
+                        description: Threshold usado en el audit
+                      operation:
+                        type: string
+                        description: Descripción de la operación realizada
+                  evidences:
+                    type: array
+                    items:
+                      type: object
+                    description: Spans que cumplen con el criterio de estar por debajo del threshold
+        '400':
+          description: Parámetros de validación inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+        '500':
+          description: Error al crear audit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/v1/ai/conversations:
+    post:
+      tags:
+        - AI
+      summary: Crear una nueva conversación
+      description: Crea una nueva conversación con el servicio de IA
+      responses:
+        '201':
+          description: Conversación creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversationId:
+                    type: string
+                    example: "conv-1736592000000"
+        '500':
+          description: Error al crear la conversación
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Error al crear la conversación"
+                  details:
+                    type: string
+
+  /api/v1/ai/conversations/generate:
+    post:
+      tags:
+        - AI
+      summary: Generar respuesta de IA con conversación
+      description: Genera una respuesta de IA basada en el input proporcionado y el contexto de la conversación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - input
+              properties:
+                input:
+                  type: string
+                  description: Texto de entrada para generar la respuesta
+                  example: "¿Cómo puedo mejorar el rendimiento de mi aplicación?"
+                conversationId:
+                  type: string
+                  description: ID de conversación existente (opcional)
+                  example: "conv-1736592000000"
+      responses:
+        '200':
+          description: Respuesta generada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  responseId:
+                    type: string
+                    example: "resp-1736592000001"
+                  conversationId:
+                    type: string
+                    example: "conv-1736592000000"
+                  response:
+                    type: string
+                    example: "Para mejorar el rendimiento de tu aplicación..."
+                  usage:
+                    type: object
+                    description: Información sobre el uso de tokens
+        '400':
+          description: Parámetros inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Se requiere el campo input"
+        '500':
+          description: Error al generar respuesta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Error al generar respuesta"
+                  details:
+                    type: string
+
+  /api/v1/ai/conversations/{conversationId}:
+    get:
+      tags:
+        - AI
+      summary: Obtener conversación por ID
+      description: Recupera el historial completo de una conversación
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          description: ID de la conversación
+          schema:
+            type: string
+            example: "conv-1736592000000"
+      responses:
+        '200':
+          description: Conversación obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    description: Datos de la conversación
+        '400':
+          description: ID de conversación no proporcionado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Se requiere conversationId"
+        '500':
+          description: Error al obtener la conversación
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Error al obtener la conversación"
+                  details:
+                    type: string
+
+  /api/v1/ai/diagram:
+    post:
+      tags:
+        - AI
+      summary: Estructurar diagrama UML
+      description: Convierte un diagrama UML en una respuesta estructurada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - umlDiagram
+              properties:
+                umlDiagram:
+                  type: string
+                  description: Diagrama UML a estructurar
+                  example: "@startuml\nAlice -> Bob: Hello\n@enduml"
+      responses:
+        '200':
+          description: Diagrama estructurado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Respuesta estructurada del diagrama
+        '500':
+          description: Error al estructurar el diagrama
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Error al estructurar el diagrama"
+                  details:
+                    type: string
+  
+  

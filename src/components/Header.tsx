@@ -3,26 +3,32 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getPublicPath } from "@/lib/path";
 
 export type SeccionActiva = "horarios" | "comandas" | "empleados" | "inventario" | "estadisticas";
 
-const navItems: { label: string; id: SeccionActiva }[] = [
-  { label: "Horarios", id: "horarios" },
-  { label: "Comandas", id: "comandas" },
-  { label: "Empleados", id: "empleados" },
-  { label: "Inventario", id: "inventario" },
-  { label: "Estadísticas", id: "estadisticas" },
+const navItems: { label: string; id: SeccionActiva; href: string }[] = [
+  { label: "Horarios", id: "horarios", href: "/desktop/gerente/horarios" },
+  { label: "Comandas", id: "comandas", href: "/desktop/gerente/comandas" },
+  { label: "Empleados", id: "empleados", href: "/desktop/gerente/empleados" },
+  { label: "Inventario", id: "inventario", href: "/desktop/gerente/inventario" },
+  { label: "Estadísticas", id: "estadisticas", href: "/desktop/gerente/estadisticas" },
 ];
 
 interface HeaderProps {
-  seccionActiva: SeccionActiva;
-  onSeccionChange: (seccion: SeccionActiva) => void;
+  seccionActiva?: SeccionActiva;
 }
 
-export function Header({ seccionActiva, onSeccionChange }: HeaderProps) {
+export function Header({ seccionActiva }: HeaderProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Determinar la sección activa desde la ruta si no se proporciona
+  const currentSeccion = seccionActiva || navItems.find(item => pathname?.includes(item.id))?.id;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="flex h-14 items-center justify-between px-4">
@@ -52,10 +58,10 @@ export function Header({ seccionActiva, onSeccionChange }: HeaderProps) {
             {navItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => onSeccionChange(item.id)}
+                onClick={() => router.push(item.href)}
                 className={cn(
                   "px-3 py-2 text-sm font-medium transition-colors rounded-md",
-                  seccionActiva === item.id
+                  currentSeccion === item.id
                     ? "bg-gray-900 text-white"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 )}
