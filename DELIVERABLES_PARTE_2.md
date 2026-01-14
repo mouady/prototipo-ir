@@ -9,6 +9,7 @@
 | **Proyecto Base** | Nivel 0 (N0-1) + Nivel 1 (N1-2, N1-3) | [mouady/devdays](https://github.com/mouady/devdays) |
 | **Prototipo-IR** | Nivel 2 Propuesta 1 (N2-P1-A, N2-P1-B, N2-P1-C) + Extra (N2-EX-1) | [mouady/prototipo-ir/tree/devdays](https://github.com/mouady/prototipo-ir/tree/devdays) |
 
+> Seleccionar la rama `devdays` en el repositorio del Prototipo-IR para acceder a los retos correspondientes.
 ---
 
 ## 📊 Retos Realizados
