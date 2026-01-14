@@ -1,0 +1,258 @@
+{
+	"info": {
+		"_postman_id": "9450c2f9-6efb-4071-b707-8b2b01050753",
+		"name": "prototipo ir",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43184787"
+	},
+	"item": [
+		{
+			"name": "ia",
+			"item": [
+				{
+					"name": "crear conver",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/api/v1/ai/conversations",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"v1",
+								"ai",
+								"conversations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generar a traves de conversationId",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\":\"Publica una auditoria con los parametros por defecto\",\r\n    \"conversationId\": \"conv_6966edfe451c819490989a0af9caf6010584e2522c95af41\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/api/v1/ai/conversations/generate",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"v1",
+								"ai",
+								"conversations",
+								"generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get conversation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/api/v1/ai/conversations/conv_6963f138e074819488dd4e4465a025240ef22f369683cbac",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"v1",
+								"ai",
+								"conversations",
+								"conv_6963f138e074819488dd4e4465a025240ef22f369683cbac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "diagrama",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n// Aqui se prueba con un diagrama de PlantUML reducido de la applicación de prototipo-ir\r\n\r\n{\r\n    \"umlDiagram\" : \"@startuml mc-ir-reducido\\n\\nclass Restaurante {\\n  nombre\\n}\\n\\nclass User {\\n  username\\n  password\\n}\\n\\nclass Gerente\\nclass Empleado\\nclass Camarero\\nclass Cocinero\\n\\nclass Mesa {\\n  numMesa\\n}\\n\\nclass Cuenta {\\n  fecha\\n}\\n\\nclass Comanda {\\n  estado\\n}\\n\\nclass Plato {\\n  nombre\\n  precio\\n}\\n\\nclass Bebida {\\n  nombre\\n  precio\\n}\\n\\nclass Producto {\\n  nombre\\n}\\n\\nclass Proveedor {\\n  nombre\\n}\\n\\nUser <|-- Gerente\\nUser <|-- Empleado\\nEmpleado <|-- Camarero\\nEmpleado <|-- Cocinero\\nProducto <|-- Plato\\nProducto <|-- Bebida\\n\\nRestaurante \\\"1\\\" -- \\\"1\\\" Gerente\\nRestaurante \\\"1\\\" -- \\\"0..*\\\" Mesa\\nCuenta \\\"1\\\" -- \\\"0..*\\\" Comanda\\nComanda \\\"0..*\\\" -- \\\"1\\\" Mesa\\nComanda \\\"0..*\\\" -- \\\"0..*\\\" Plato\\nComanda \\\"0..*\\\" -- \\\"0..*\\\" Bebida\\nProveedor \\\"1..*\\\" -- \\\"1..*\\\" Producto\\nCamarero \\\"1\\\" -- \\\"0..*\\\" Cuenta\\n\\n@enduml\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/api/v1/ai/diagram",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"v1",
+								"ai",
+								"diagram"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ver si funciona",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000",
+					"host": [
+						"localhost"
+					],
+					"port": "4000"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "servicios",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/api/v1/traces/services",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"traces",
+						"services"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "trazas por servicio",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/api/v1/traces/service/prototipo-ir?startDate=2026-01-11T11:35:37Z&endDate=2026-01-11T11:35:36Z",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"traces",
+						"service",
+						"prototipo-ir"
+					],
+					"query": [
+						{
+							"key": "offset",
+							"value": "15",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "35",
+							"disabled": true
+						},
+						{
+							"key": "startDate",
+							"value": "2026-01-11T11:35:37Z"
+						},
+						{
+							"key": "endDate",
+							"value": "2026-01-11T11:35:36Z"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post audits",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/api/v1/audits/traces?limit=50&startDate=2026-01-13T00:32:30Z&endDate=2026-01-14T12:32:30Z&thresholdMs=300",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"audits",
+						"traces"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "50"
+						},
+						{
+							"key": "startDate",
+							"value": "2026-01-13T00:32:30Z"
+						},
+						{
+							"key": "endDate",
+							"value": "2026-01-14T12:32:30Z"
+						},
+						{
+							"key": "loopbackMinutes",
+							"value": "5",
+							"disabled": true
+						},
+						{
+							"key": "thresholdMs",
+							"value": "300"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get audits",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
