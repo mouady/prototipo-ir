@@ -1,4 +1,4 @@
-# EXECUTION.md - DevDays 2025-26
+# EXECUTION.md PARTE 2/2 - DevDays 2025-26
 
 ### Configurar variables de entorno:
 En la carpeta raíz, duplicar `.env.example` y renombrarlo a `.env`. Ajusta las variables si es necesario:
